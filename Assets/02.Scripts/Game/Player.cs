@@ -6,26 +6,58 @@ using UnityEngine;
 public class Player_stat
 {
 
-    public int int_Atk;
-    public int int_Hp;
-    public int int_Atk_Speed;
-    public int int_Critical;
-    public int int_Critical_Percent;
-    public int int_Speed;
+    public static int int_Atk;
+    public static int int_Hp;
+    public static int int_Atk_Speed;
+    public static int int_Critical;
+    public static int int_Critical_Percent;
+    public static int int_Speed;
 
+    public static float int_Top_Scroll_Speed;
+    public static float int_Btm_Scroll_Speed;
+
+    public static void Set_Player_Stat()
+    {
+        //공격력 레벨당 10퍼 상승
+        //체력 5퍼 상승
+
+        int_Atk = 100 + (100 / 20) * (BackEndDataManager.instance.Character_Data.int_character_Lv - 1);
+        int_Hp = 2000 + (2000 / 20) * (BackEndDataManager.instance.Character_Data.int_character_Lv - 1);
+        int_Atk_Speed = 100;
+        int_Critical = 5;
+        int_Critical_Percent = 1;
+        int_Speed = 100;
+        int_Top_Scroll_Speed = -int_Speed / 90.0f;
+        int_Btm_Scroll_Speed = -int_Speed / 60.0f;
+
+        Debug.Log("top "+int_Top_Scroll_Speed);
+        Debug.Log("btm "+int_Btm_Scroll_Speed);
+
+        UiManager.instance.Set_Character_Stat();
+    }
+
+    public static void Buy_Lv()
+    {
+
+        BackEndDataManager.instance.Character_Data.int_character_Lv += 1;
+
+        Set_Player_Stat();
+        UiManager.instance.Set_Character_Lv();
+        UiManager.instance.Set_Buy_Lv();
+
+        BackEndDataManager.instance.Save_Character_Data();
+        
+    }
 }
 
 public class Player : MonoBehaviour
 {
 
-    Player_stat player_Stat = new Player_stat();
-
     Animator anim_Player;
 
-    private void Awake()
+    public void Init()
     {
         anim_Player = GetComponent<Animator>();
-        Set_Player_Stat();
     }
 
     public void Start_Run()
@@ -54,24 +86,12 @@ public class Player : MonoBehaviour
 
             yield return new WaitForSeconds(length);
 
-            PlayManager.instance.sc_Monster.Hit(player_Stat.int_Atk);
-
-            yield return new WaitForSeconds(1.0f);
+            PlayManager.instance.sc_Monster.Hit(Player_stat.int_Atk);
+            
+            yield return new WaitForSeconds( 100 / Player_stat.int_Atk_Speed );
 
         }
     }
 
-    public void Set_Player_Stat()
-    {
-        //공격력 레벨당 10퍼 상승
-        //체력 5퍼 상승
-
-        player_Stat.int_Atk = 100 + (100 * (BackEndDataManager.instance.Character_Data.int_character_Lv / 10)); 
-        player_Stat.int_Hp = 2000 + (2000 * (BackEndDataManager.instance.Character_Data.int_character_Lv / 20));
-        player_Stat.int_Atk_Speed = 100;
-        player_Stat.int_Critical = 5;
-        player_Stat.int_Critical_Percent = 1;
-        player_Stat.int_Speed = 100;
-
-    }
+    
 }

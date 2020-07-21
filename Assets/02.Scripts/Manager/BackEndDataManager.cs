@@ -8,6 +8,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum Data_Type
+{
+    user_info,
+    player_info,
+    character_info,
+    stage_info
+}
+
 [DynamoDBTable("user_info")]
 public class User_Data
 {
@@ -58,6 +66,8 @@ public class Stage_Data
     public int int_stage { get; set; }
     [DynamoDBProperty]
     public int int_step { get; set; }
+    [DynamoDBProperty]
+    public bool is_boss { get; set; }
 }
 
 public class BackEndDataManager : MonoBehaviour
@@ -76,7 +86,7 @@ public class BackEndDataManager : MonoBehaviour
     public Player_Data Player_Data { get => player_Data; }
     public Character_Data Character_Data { get => character_Data; }
     public Stage_Data Stage_Data { get => stage_Data; }
-    public User_Data User_Data { get => user_Data; }
+    public User_Data User_Data { get => user_Data; set => user_Data = value; }
 
     private bool[] Check_Data = new bool[] { false, false, false, false };
 
@@ -104,51 +114,56 @@ public class BackEndDataManager : MonoBehaviour
     {
 
 
-        User_Data user = new User_Data
+        user_Data = new User_Data
         {
             id = BackEndAuthManager.Get_UserId(),
             str_nick = "null"
         };
 
-        Player_Data player = new Player_Data
+        player_Data = new Player_Data
         {
             id = BackEndAuthManager.Get_UserId(),
-            int_lv = 1
+            int_lv = 1,
+            int_coin = 0,
+            int_dia = 0,
+            int_exp = 0,
+            int_steel = 0
 
         };
 
-        Character_Data character = new Character_Data
+        character_Data = new Character_Data
         {
             id = BackEndAuthManager.Get_UserId(),
-            int_character_Lv = 1
-
+            int_character_Lv = 1,
+            Int_character_Num = 0
         };
 
-        Stage_Data stage = new Stage_Data
+        stage_Data = new Stage_Data
         {
             id = BackEndAuthManager.Get_UserId(),
             int_chapter = 1,
             int_stage = 1,
-            int_step = 1
+            int_step = 1,
+            is_boss = false
 
         };
 
-        context.SaveAsync(user, (result) =>
+        context.SaveAsync(user_Data, (result) =>
         {
             if (result.Exception == null)
             {
-                Check_Data[0] = true;
+                Sucess_Data(Data_Type.user_info);
                 Debug.Log(" User_Data Save");
             }
             else
                 Debug.Log(result.Exception);
         });
 
-        context.SaveAsync(player, (result) =>
+        context.SaveAsync(player_Data, (result) =>
         {
             if (result.Exception == null)
             {
-                Check_Data[1] = true;
+                Sucess_Data(Data_Type.player_info);
 
                 Debug.Log("Player_Data Save");
 
@@ -157,11 +172,11 @@ public class BackEndDataManager : MonoBehaviour
                 Debug.Log(result.Exception);
         });
 
-        context.SaveAsync(character, (result) =>
+        context.SaveAsync(character_Data, (result) =>
         {
             if (result.Exception == null)
             {
-                Check_Data[2] = true;
+                Sucess_Data(Data_Type.character_info);
 
                 Debug.Log("character_Data Save");
 
@@ -170,11 +185,11 @@ public class BackEndDataManager : MonoBehaviour
                 Debug.Log(result.Exception);
         });
 
-        context.SaveAsync(stage, (result) =>
+        context.SaveAsync(Stage_Data, (result) =>
         {
             if (result.Exception == null)
             {
-                Check_Data[3] = true;
+                Sucess_Data(Data_Type.stage_info);
 
                 Debug.Log("Stage_Data Save");
 
@@ -211,38 +226,47 @@ public class BackEndDataManager : MonoBehaviour
 
             Debug.Log(Check ? "없음" : "중복");
 
+            Debug.Log(Check);
+
             if (!Check)
             {
+                Debug.Log("중복됨");
+
                 UiManager.instance.Check_Nick_State(false);
-                return;
 
+            }
+            else{
+
+                user_Data.str_nick = NickName;
+
+                context.SaveAsync(user_Data, (result2) =>
+                {
+                    if (result2.Exception == null)
+                    {
+                        Debug.Log("닉네임");
+                        PopupManager.Close_Popup();
+                        PlayManager.instance.Play_Game();
+                    }
+                    else
+                        Debug.Log(result2.Exception);
+                });
             }
 
 
         });
 
-        user_Data.str_nick = NickName;
 
-        context.SaveAsync(user_Data, (result) =>
-        {
-            if (result.Exception == null)
-            {
-                Debug.Log("닉네임");
-                PopupManager.Close_Popup();
-                PlayManager.instance.Play_Game();
-            }
-            else
-                Debug.Log(result.Exception);
-        });
 
     }
 
 
     public void Get_First_Game()
     {
-        StartCoroutine("Co_Check_Get_Data");
-        context.LoadAsync<User_Data>(BackEndAuthManager.Get_UserId(), (AmazonDynamoDBResult<User_Data> result) =>
+        Debug.Log("이거 시작 아닌가????? ");
+
+        context.LoadAsync(BackEndAuthManager.Get_UserId(), (AmazonDynamoDBResult<User_Data> result) =>
         {
+            Debug.Log("왜안나오니??");
 
             if (result.Result == null)
             {
@@ -258,21 +282,23 @@ public class BackEndDataManager : MonoBehaviour
 
         }, null);
 
+    }
+
+    public void Sucess_Data(Data_Type type)
+    {
+
+        Check_Data[(int)type] = true;
+        Check_All_Data();
 
     }
 
-    IEnumerator Co_Check_Get_Data()
+    public void Check_All_Data()
     {
-        bool total_check = false;
 
-        while (!total_check)
+        for (int i = 0; i < Check_Data.Length; i++)
         {
-            for (int i = 0; i < Check_Data.Length; i++)
-            {
-                total_check = Check_Data[i];
-            }
-
-            yield return new WaitForSeconds(0.1f);
+            if (!Check_Data[i])
+                return;
         }
 
         IntroManager.instance.Check_Next();
@@ -290,7 +316,9 @@ public class BackEndDataManager : MonoBehaviour
 
     public void Get_User_Data() //DB에서 캐릭터 정보 받기
     {
-        context.LoadAsync<User_Data>(BackEndAuthManager.Get_UserId(), (AmazonDynamoDBResult<User_Data> result) =>
+        Debug.Log("Get_User_Data");
+
+        context.LoadAsync(BackEndAuthManager.Get_UserId(), (AmazonDynamoDBResult<User_Data> result) =>
         {
             // id가 abcd인 캐릭터 정보를 DB에서 받아옴
             if (result.Exception != null)
@@ -299,17 +327,20 @@ public class BackEndDataManager : MonoBehaviour
                 return;
             }
 
-            Check_Data[0] = true;
-
             user_Data = result.Result;
-            Debug.Log(player_Data.int_lv); //찾은 캐릭터 정보 중 아이템 정보 출력
+            Debug.Log("닉네임"+user_Data.str_nick); //찾은 캐릭터 정보 중 아이템 정보 출력
+
+            Sucess_Data(Data_Type.user_info);
+
         }, null);
     }
 
 
     public void Get_Player_Data() //DB에서 캐릭터 정보 받기
     {
-        context.LoadAsync<Player_Data>(BackEndAuthManager.Get_UserId(), (AmazonDynamoDBResult<Player_Data> result) =>
+        Debug.Log("Get_Player_Data");
+
+        context.LoadAsync(BackEndAuthManager.Get_UserId(), (AmazonDynamoDBResult<Player_Data> result) =>
         {
             // id가 abcd인 캐릭터 정보를 DB에서 받아옴
             if (result.Exception != null)
@@ -318,16 +349,20 @@ public class BackEndDataManager : MonoBehaviour
                 return;
             }
 
-            Check_Data[1] = true;
-
             player_Data = result.Result;
-            Debug.Log(player_Data.int_lv); //찾은 캐릭터 정보 중 아이템 정보 출력
+            Debug.Log("플레이어 레벨"+player_Data.int_lv); //찾은 캐릭터 정보 중 아이템 정보 출력
+
+            Sucess_Data(Data_Type.player_info);
+
+
         }, null);
     }
 
     public void Get_Character_Data() //DB에서 캐릭터 정보 받기
     {
-        context.LoadAsync<Character_Data>(BackEndAuthManager.Get_UserId(), (AmazonDynamoDBResult<Character_Data> result) =>
+        Debug.Log("Get_Character_Data");
+
+        context.LoadAsync(BackEndAuthManager.Get_UserId(), (AmazonDynamoDBResult<Character_Data> result) =>
         {
             // id가 abcd인 캐릭터 정보를 DB에서 받아옴
             if (result.Exception != null)
@@ -336,16 +371,20 @@ public class BackEndDataManager : MonoBehaviour
                 return;
             }
 
-            Check_Data[2] = true;
-
             character_Data = result.Result;
-            Debug.Log(player_Data.int_lv); //찾은 캐릭터 정보 중 아이템 정보 출력
+            Debug.Log("캐릭터 레벨"+character_Data.int_character_Lv); //찾은 캐릭터 정보 중 아이템 정보 출력
+
+            Sucess_Data(Data_Type.character_info);
+
+
         }, null);
     }
 
     public void Get_Stage_Data() //DB에서 캐릭터 정보 받기
     {
-        context.LoadAsync<Stage_Data>(BackEndAuthManager.Get_UserId(), (AmazonDynamoDBResult<Stage_Data> result) =>
+        Debug.Log("Get_Stage_Data");
+
+        context.LoadAsync(BackEndAuthManager.Get_UserId(), (AmazonDynamoDBResult<Stage_Data> result) =>
         {
             // id가 abcd인 캐릭터 정보를 DB에서 받아옴
             if (result.Exception != null)
@@ -354,10 +393,15 @@ public class BackEndDataManager : MonoBehaviour
                 return;
             }
 
-            Check_Data[3] = true;
-
             stage_Data = result.Result;
-            Debug.Log(player_Data.int_lv); //찾은 캐릭터 정보 중 아이템 정보 출력
+
+            Debug.Log("챕터" + stage_Data.int_chapter); //찾은 캐릭터 정보 중 아이템 정보 출력
+            Debug.Log("스테이지" + stage_Data.int_stage); //찾은 캐릭터 정보 중 아이템 정보 출력
+            Debug.Log("스텝" + stage_Data.int_step); //찾은 캐릭터 정보 중 아이템 정보 출력
+
+            Sucess_Data(Data_Type.stage_info);
+
+
         }, null);
     }
 
@@ -389,7 +433,7 @@ public class BackEndDataManager : MonoBehaviour
             if (result.Exception == null)
             {
                 Check_Data[0] = true;
-                Debug.Log(" User_Data Save");
+                Debug.Log(" player_Data Save");
             }
             else
                 Debug.Log(result.Exception);
@@ -403,7 +447,7 @@ public class BackEndDataManager : MonoBehaviour
             if (result.Exception == null)
             {
                 Check_Data[0] = true;
-                Debug.Log(" User_Data Save");
+                Debug.Log(" character Save");
             }
             else
                 Debug.Log(result.Exception);
@@ -417,7 +461,7 @@ public class BackEndDataManager : MonoBehaviour
             if (result.Exception == null)
             {
                 Check_Data[0] = true;
-                Debug.Log(" User_Data Save");
+                Debug.Log(" stage_Data Save");
             }
             else
                 Debug.Log(result.Exception);

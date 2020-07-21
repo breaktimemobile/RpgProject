@@ -19,6 +19,7 @@ public class PopupManager
         {
             GameObject obj = objects.Pop();
             obj.gameObject.SetActive(false);
+            Debug.Log(obj.name);
         }
 
     }

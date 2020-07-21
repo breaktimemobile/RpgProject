@@ -43,6 +43,12 @@ public class UiManager : MonoBehaviour
     private Text txt_State_Chapter;
     private Text txt_State_Stage;
 
+    public Slider slider_Boss_Timer;
+    public Text txt_Boss_Timer;
+
+    public Button btn_Boss;
+    public Button btn_Boss_Exit;
+
     #endregion
 
 
@@ -64,7 +70,6 @@ public class UiManager : MonoBehaviour
 
     private Text txt_State_Name;
     private Text txt_State_Lv;
-    private Text txt_State_Add_Lv;
 
     private Transform pos_Character;
 
@@ -96,6 +101,9 @@ public class UiManager : MonoBehaviour
     private GameObject txt_NickName_Fail;
 
     #endregion
+
+    public GameObject txt_Damege;
+    public GameObject txt_Critical_Damege;
 
     private void Awake()
     {
@@ -137,6 +145,12 @@ public class UiManager : MonoBehaviour
         txt_State_Chapter = obj_Stage.transform.Find("state_Stage/txt_State_Chapter").GetComponent<Text>();
         txt_State_Stage = obj_Stage.transform.Find("state_Stage/txt_State_Stage").GetComponent<Text>();
 
+        slider_Boss_Timer = obj_Stage.transform.Find("slider_Boss_Timer").GetComponent<Slider>();
+        txt_Boss_Timer = slider_Boss_Timer.transform.Find("txt_Boss_Timer").GetComponent<Text>();
+
+        btn_Boss = obj_Stage.transform.Find("Stage_Content/btn_Boss").GetComponent<Button>();
+        btn_Boss_Exit = obj_Stage.transform.Find("Stage_Content/btn_Boss_Exit").GetComponent<Button>();
+
         #endregion
 
         #region obj_Content
@@ -161,7 +175,6 @@ public class UiManager : MonoBehaviour
 
         txt_State_Name = popup_State.transform.Find("img_State_Bg/txt_State_Name").GetComponent<Text>();
         txt_State_Lv = popup_State.transform.Find("img_State_Bg/txt_State_Lv").GetComponent<Text>();
-        txt_State_Add_Lv = popup_State.transform.Find("img_State_Bg/txt_State_Add_Lv").GetComponent<Text>();
 
         pos_Character = popup_State.transform.Find("img_Chatacter_Bg/pos_Character");
 
@@ -184,6 +197,10 @@ public class UiManager : MonoBehaviour
 
         #region NickNamePopup
 
+        btn_Lv_1.onClick.AddListener(() => Player_stat.Buy_Lv());
+        //btn_Lv_10
+        //btn_Lv_100
+
         Input_NickName = NickNamePopup.transform.Find("Input_NickName").GetComponent<InputField>();
 
         btn_NickName_Ok = NickNamePopup.transform.Find("btn_NickName_Ok").GetComponent<Button>();
@@ -201,6 +218,9 @@ public class UiManager : MonoBehaviour
         btn_Skill.onClick.AddListener(() => Change_Content_Popup(Popup.popup_Skill));
         btn_Upgrade.onClick.AddListener(() => Change_Content_Popup(Popup.popup_Upgrade));
         btn_Limit.onClick.AddListener(() => Change_Content_Popup(Popup.popup_Limit));
+
+        btn_Boss.onClick.AddListener(() => PlayManager.instance.Start_Boss_Stage());
+        btn_Boss_Exit.onClick.AddListener(() => PlayManager.instance.Stop_Boss_Timer(true));
     }
 
     private void Start()
@@ -217,11 +237,6 @@ public class UiManager : MonoBehaviour
     {
         Debug.Log(BackEndDataManager.instance.User_Data.str_nick);
 
-#if UNITY_EDITOR
-        PlayManager.instance.Play_Game();
-
-#elif UNITY_ANDROID
-
         if (BackEndDataManager.instance.User_Data.str_nick.Equals("null"))
         {
             //닉네임 팝업
@@ -232,8 +247,6 @@ public class UiManager : MonoBehaviour
             //게임시작
             PlayManager.instance.Play_Game();
         }
-#endif
-
 
     }
 
@@ -274,6 +287,11 @@ public class UiManager : MonoBehaviour
         Set_Txt_Chapter();
         Set_Txt_Stage();
 
+        Set_Character_Name();
+        Set_Character_Lv();
+        Set_Character_obj();
+        Set_Character_Stat();
+        Set_Buy_Lv();
     }
 
     #region PlayerUI 세팅
@@ -349,17 +367,66 @@ public class UiManager : MonoBehaviour
         {
             txt_State_Stage.text = BackEndDataManager.instance.Stage_Data.int_stage.ToString() + " 스테이지 " +
               BackEndDataManager.instance.Stage_Data.int_step.ToString() + "/10";
+
+            btn_Boss.gameObject.SetActive(false);
+            btn_Boss_Exit.gameObject.SetActive(false);
         }
         else
         {
-            txt_State_Stage.text = BackEndDataManager.instance.Stage_Data.int_stage.ToString() + " 스테이지 " + "보스";
+            if (!BackEndDataManager.instance.Stage_Data.is_boss)
+            {
+                txt_State_Stage.text = BackEndDataManager.instance.Stage_Data.int_stage.ToString() + " 스테이지 " + "보스";
+                btn_Boss.gameObject.SetActive(false);
+                btn_Boss_Exit.gameObject.SetActive(true);
+            }
+            else
+            {
+                txt_State_Stage.text = BackEndDataManager.instance.Stage_Data.int_stage.ToString() + " 스테이지 " + "무한";
+                btn_Boss.gameObject.SetActive(true);
+                btn_Boss_Exit.gameObject.SetActive(false);
+            }
         }
     }
-
 
     #endregion
 
     #region CharacterUI 세팅
+
+    public void Set_Character_Name()
+    {
+        txt_State_Name.text = "데스나이트";
+
+    }
+
+    public void Set_Character_Lv()
+    {
+        txt_State_Lv.text = string.Format("Lv.{0}(+{1})", 
+            BackEndDataManager.instance.Character_Data.int_character_Lv,
+            0);
+        
+    }
+
+    public void Set_Character_obj()
+    {
+        Instantiate(PlayManager.instance.
+            Characters[BackEndDataManager.instance.Character_Data.Int_character_Num],
+            pos_Character);
+    }
+
+    public void Set_Buy_Lv()
+    {
+        int lv = BackEndDataManager.instance.Character_Data.int_character_Lv;
+        int lv_1 = 500 + (500 / 20) * (lv - 1);
+
+
+        txt_Lv_1_Val.text = lv_1.ToString();
+        txt_Lv_10_Val.text = (lv_1*10).ToString();
+        txt_Lv_100_Val.text = (lv_1*100).ToString();
+        
+        //btn_Lv_1
+        //    btn_Lv_10
+        //    btn_Lv_100
+    }
 
     #endregion
 
@@ -379,4 +446,20 @@ public class UiManager : MonoBehaviour
     }
 
     #endregion
+
+    #region Character
+
+    public void Set_Character_Stat()
+    {
+        txt_State_Atk_Val.text = Player_stat.int_Atk.ToString();
+        txt_State_Hp_Val.text = Player_stat.int_Hp.ToString();
+        txt_State_Atk_Speed_Val.text = Player_stat.int_Atk_Speed.ToString();
+        txt_State_Critical_Val.text = string.Format("{0}{1}", Player_stat.int_Critical ,"%");
+        txt_State_Critical_Percent_Val.text = string.Format("{0}{1}", Player_stat.int_Critical_Percent, "%");
+        txt_State_Speed_Val.text = string.Format("{0}{1}", Player_stat.int_Atk_Speed, "%");
+    }
+
+    #endregion
+
+    
 }

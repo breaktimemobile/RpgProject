@@ -51,6 +51,8 @@ public class IntroManager : MonoBehaviour
 
     #endregion
 
+    public Button logout;
+
     private void Awake()
     {
         instance = this;
@@ -58,10 +60,10 @@ public class IntroManager : MonoBehaviour
         Find_Obj();
         AddListener();
 
-        BackEndAuthManager.init();
+        BackEndAuthManager.Init();
         SocalManager.Init();
 
-
+        
     }
 
     private void Start()
@@ -104,10 +106,11 @@ public class IntroManager : MonoBehaviour
         btn_Service_Ok.onClick.AddListener(() => Open_Login());
 
         btn_Google.onClick.AddListener(() => SocalManager.Login());
-        //btn_Guest.onClick.AddListener(() => BackEndAuthManager.OnClickSignUp());
+        btn_Guest.onClick.AddListener(() => BackEndAuthManager.GoogleFireAnonymousLogin());
 
         btn_Next.onClick.AddListener(() => Main_Scene());
 
+        logout.onClick.AddListener(() => BackEndAuthManager.Firebase_Logout());
     }
 
     /// <summary>
@@ -153,10 +156,22 @@ public class IntroManager : MonoBehaviour
         //구글에 로그인 안됐을때
         //그냥 로그인 안됏을때
 
+
         if (BackEndAuthManager.Get_Join_User())
         {
-            Debug.Log("로그인 되있음");
-            SocalManager.Login();
+
+            if (BackEndAuthManager.Get_User_Type())
+            {
+                //게스트 로그인
+                BackEndAuthManager.GoogleFireBaseLogin();
+            }
+            else
+            {
+                //구글 로그인
+                Debug.Log("로그인 되있음");
+                SocalManager.Login();
+            }
+
 
         }
         else
@@ -172,8 +187,11 @@ public class IntroManager : MonoBehaviour
     /// </summary>
     public void Check_Next()
     {
+
         PopupManager.Open_Popup(NextPopup);
         txt_Next.DOFade(0, 2).SetLoops(-1, LoopType.Yoyo);
+
+        Player_stat.Set_Player_Stat();
 
     }
 

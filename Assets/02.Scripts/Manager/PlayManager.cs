@@ -15,8 +15,8 @@ public class PlayManager : MonoBehaviour
 
     Player_State player_State = Player_State.None;
 
-    [SerializeField] List<GameObject> Characters;
-    [SerializeField] List<GameObject> Monsters;
+    public List<GameObject> Characters;
+    public List<GameObject> Monsters;
 
     Transform pos_Character;
     Transform pos_Monster;
@@ -24,11 +24,9 @@ public class PlayManager : MonoBehaviour
     Player sc_Player;
     public Monster sc_Monster;
 
-    GameObject obj_Monster;
-
     public Player_State Player_State { get => player_State; set => player_State = value; }
 
-     
+
     public void Change_State(Player_State _State)
     {
         Player_State = _State;
@@ -42,7 +40,12 @@ public class PlayManager : MonoBehaviour
                 sc_Player.Start_Run();
                 break;
             case Player_State.Fight:
+
                 sc_Player.Start_Atk();
+
+                if (sc_Monster.monster_Type.Equals(Monster_Type.Boss))
+                    Start_Boss_Timer();
+
                 break;
             default:
                 break;
@@ -65,34 +68,111 @@ public class PlayManager : MonoBehaviour
         Set_Monster();
 
         Change_State(Player_State.Run);
-        
+
     }
 
     public void Set_Character()
     {
         GameObject obj_Player = Instantiate(Characters[0], UiManager.instance.obj_Stage.transform);
         obj_Player.transform.position = pos_Character.position;
-     
+
         sc_Player = obj_Player.GetComponent<Player>();
+        sc_Player.Init();
     }
 
     public void Set_Monster()
     {
 
-        obj_Monster = Instantiate(Monsters[0], UiManager.instance.obj_Stage.transform);
+        GameObject obj_Monster = Instantiate(Monsters[0], UiManager.instance.obj_Stage.transform);
         obj_Monster.transform.position = pos_Monster.position;
 
         sc_Monster = obj_Monster.GetComponent<Monster>();
 
+
         if (BackEndDataManager.instance.Stage_Data.int_step > 10)
         {
-            sc_Monster.Set_Monster(Monster_Type.Boss, 500);
+            if (!BackEndDataManager.instance.Stage_Data.is_boss)
+            {
+                sc_Monster.Set_Monster(Monster_Type.Boss, 500);
 
+            }
+            else
+            {
+                sc_Monster.Set_Monster(Monster_Type.Basic, 300);
+
+            }
         }
         else
         {
             sc_Monster.Set_Monster(Monster_Type.Basic, 300);
 
         }
+    }
+
+    public void Start_Boss_Timer()
+    {
+        StartCoroutine("Co_Boss_Timer");
+    }
+
+    public void Stop_Boss_Timer(bool isboss)
+    {
+        StopCoroutine("Co_Boss_Timer");
+
+        BackEndDataManager.instance.Stage_Data.is_boss = isboss;
+        BackEndDataManager.instance.Save_Stage_Data();
+
+        UiManager.instance.slider_Boss_Timer.gameObject.SetActive(false);
+
+        Destroy(sc_Monster.gameObject);
+
+        Set_Monster();
+
+        Change_State(Player_State.Run);
+
+        UiManager.instance.Set_Txt_Stage();
+
+    }
+
+    IEnumerator Co_Boss_Timer()
+    {
+        float timer = 20;
+
+        UiManager.instance.slider_Boss_Timer.maxValue = timer;
+        UiManager.instance.slider_Boss_Timer.value = timer;
+
+        UiManager.instance.slider_Boss_Timer.gameObject.SetActive(true);
+
+        UiManager.instance.txt_Boss_Timer.text = string.Format("{0:00}:{1:00}", 0, timer);
+
+        while (timer > 0)
+        {
+
+            yield return new WaitForSeconds(0.1f);
+
+            timer -= 0.1f;
+
+            UiManager.instance.slider_Boss_Timer.value = timer;
+
+            UiManager.instance.txt_Boss_Timer.text = string.Format("{0:00}:{1:00}", 0, (int)timer);
+
+        }
+
+        //보스 못잡음 
+        Stop_Boss_Timer(true);
+    }
+
+    public void Start_Boss_Stage()
+    {
+
+        BackEndDataManager.instance.Stage_Data.is_boss = false;
+        BackEndDataManager.instance.Save_Stage_Data();
+
+        Destroy(sc_Monster.gameObject);
+
+        Set_Monster();
+
+        Change_State(Player_State.Run);
+
+        UiManager.instance.Set_Txt_Stage();
     }
 }
