@@ -5,12 +5,24 @@ using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.UI;
 
-public enum Popup
+public enum Character_Popup
 {
-    popup_State,
-    popup_Skill,
-    popup_Upgrade,
-    popup_Limit,
+   State,
+   Skill,
+   Upgrade,
+   Limit,
+}
+
+public enum Icon_Popup
+{
+    Content,
+    Character,
+    Pet,
+    Weapon,
+    Job,
+    Relics,
+    Shop
+    
 }
 
 public class UiManager : MonoBehaviour
@@ -18,6 +30,7 @@ public class UiManager : MonoBehaviour
     public static UiManager instance;
 
     private GameObject NickNamePopup;
+    private GameObject DungeonPopup;
 
     private GameObject obj_Top;
     public GameObject obj_Stage;
@@ -51,6 +64,13 @@ public class UiManager : MonoBehaviour
 
     #endregion
 
+    private GameObject Content_Content;
+    private GameObject Content_Character;
+    private GameObject Content_Pet;
+    private GameObject Content_Weapon;
+    private GameObject Content_Job;
+    private GameObject Content_Relics;
+    private GameObject Content_Shop;
 
     #region Content_Character
 
@@ -92,6 +112,14 @@ public class UiManager : MonoBehaviour
 
     #region obj_Icon
 
+    public Button btn_Icon_Content;
+    public Button btn_Icon_Character;
+    public Button btn_Icon_Pet;
+    public Button btn_Icon_Weapon;
+    public Button btn_Icon_Job;
+    public Button btn_Icon_Relics;
+    public Button btn_Icon_Shop;
+
     #endregion
 
     #region NickNamePopup
@@ -121,6 +149,8 @@ public class UiManager : MonoBehaviour
         Transform Popup = GameObject.Find("Popup").transform;
 
         NickNamePopup = Popup.Find("NickNamePopup").gameObject;
+
+        DungeonPopup = Popup.Find("DungeonPopup").gameObject;
 
         obj_Top = Game.Find("obj_Top").gameObject;
         obj_Stage = Game.Find("obj_Stage").gameObject;
@@ -155,23 +185,43 @@ public class UiManager : MonoBehaviour
 
         #region obj_Content
 
+        Content_Content = obj_Content.transform.Find("Content_Content").gameObject;
+        Content_Character = obj_Content.transform.Find("Content_Character").gameObject;
+        Content_Pet = obj_Content.transform.Find("Content_Pet").gameObject;
+        Content_Weapon = obj_Content.transform.Find("Content_Weapon").gameObject;
+        Content_Job = obj_Content.transform.Find("Content_Job").gameObject;
+        Content_Relics = obj_Content.transform.Find("Content_Relics").gameObject;
+        Content_Shop = obj_Content.transform.Find("Content_Shop").gameObject;
+
         #region Content_Character
 
-        btn_State = obj_Content.transform.Find("Content_Character/grid_Btn/btn_State").GetComponent<Button>();
-        btn_Skill = obj_Content.transform.Find("Content_Character/grid_Btn/btn_Skill").GetComponent<Button>();
-        btn_Upgrade = obj_Content.transform.Find("Content_Character/grid_Btn/btn_Upgrade").GetComponent<Button>();
-        btn_Limit = obj_Content.transform.Find("Content_Character/grid_Btn/btn_Limit").GetComponent<Button>();
+        btn_State = Content_Character.transform.Find("grid_Btn/btn_State").GetComponent<Button>();
+        btn_Skill = Content_Character.transform.Find("grid_Btn/btn_Skill").GetComponent<Button>();
+        btn_Upgrade = Content_Character.transform.Find("grid_Btn/btn_Upgrade").GetComponent<Button>();
+        btn_Limit = Content_Character.transform.Find("grid_Btn/btn_Limit").GetComponent<Button>();
 
-        popup_State = obj_Content.transform.Find("Content_Character/contents/popup_State").gameObject;
-        popup_Skill = obj_Content.transform.Find("Content_Character/contents/popup_Skill").gameObject;
-        popup_Upgrade = obj_Content.transform.Find("Content_Character/contents/popup_Upgrade").gameObject;
-        popup_Limit = obj_Content.transform.Find("Content_Character/contents/popup_Limit").gameObject;
-
-        #endregion
+        popup_State = Content_Character.transform.Find("contents/popup_State").gameObject;
+        popup_Skill = Content_Character.transform.Find("contents/popup_Skill").gameObject;
+        popup_Upgrade = Content_Character.transform.Find("contents/popup_Upgrade").gameObject;
+        popup_Limit = Content_Character.transform.Find("contents/popup_Limit").gameObject;
 
         #endregion
 
-        #region  popup_State;
+        #endregion
+
+        #region obj_Icon
+
+        btn_Icon_Content = obj_Icon.transform.Find("grid_Icon/btn_Icon_Content").GetComponent<Button>();
+        btn_Icon_Character = obj_Icon.transform.Find("grid_Icon/btn_Icon_Character").GetComponent<Button>();
+        btn_Icon_Pet = obj_Icon.transform.Find("grid_Icon/btn_Icon_Pet").GetComponent<Button>();
+        btn_Icon_Weapon = obj_Icon.transform.Find("grid_Icon/btn_Icon_Weapon").GetComponent<Button>();
+        btn_Icon_Job = obj_Icon.transform.Find("grid_Icon/btn_Icon_Job").GetComponent<Button>();
+        btn_Icon_Relics = obj_Icon.transform.Find("grid_Icon/btn_Icon_Relics").GetComponent<Button>();
+        btn_Icon_Shop = obj_Icon.transform.Find("grid_Icon/btn_Icon_Shop").GetComponent<Button>();
+
+        #endregion
+
+        #region  popup_State
 
         txt_State_Name = popup_State.transform.Find("img_State_Bg/txt_State_Name").GetComponent<Text>();
         txt_State_Lv = popup_State.transform.Find("img_State_Bg/txt_State_Lv").GetComponent<Text>();
@@ -197,10 +247,6 @@ public class UiManager : MonoBehaviour
 
         #region NickNamePopup
 
-        btn_Lv_1.onClick.AddListener(() => Player_stat.Buy_Lv());
-        //btn_Lv_10
-        //btn_Lv_100
-
         Input_NickName = NickNamePopup.transform.Find("Input_NickName").GetComponent<InputField>();
 
         btn_NickName_Ok = NickNamePopup.transform.Find("btn_NickName_Ok").GetComponent<Button>();
@@ -214,13 +260,27 @@ public class UiManager : MonoBehaviour
     {
         btn_NickName_Ok.onClick.AddListener(() => Check_Nickname());
 
-        btn_State.onClick.AddListener(() => Change_Content_Popup(Popup.popup_State));
-        btn_Skill.onClick.AddListener(() => Change_Content_Popup(Popup.popup_Skill));
-        btn_Upgrade.onClick.AddListener(() => Change_Content_Popup(Popup.popup_Upgrade));
-        btn_Limit.onClick.AddListener(() => Change_Content_Popup(Popup.popup_Limit));
+        btn_State.onClick.AddListener(() => Change_Content_Popup(Character_Popup.State));
+        btn_Skill.onClick.AddListener(() => Change_Content_Popup(Character_Popup.Skill));
+        btn_Upgrade.onClick.AddListener(() => Change_Content_Popup(Character_Popup.Upgrade));
+        btn_Limit.onClick.AddListener(() => Change_Content_Popup(Character_Popup.Limit));
 
         btn_Boss.onClick.AddListener(() => PlayManager.instance.Start_Boss_Stage());
         btn_Boss_Exit.onClick.AddListener(() => PlayManager.instance.Stop_Boss_Timer(true));
+
+        btn_Lv_1.onClick.AddListener(() => BackEndDataManager.instance.Buy_Character_Lv(Character_Lv.lv_1));
+        btn_Lv_10.onClick.AddListener(() => BackEndDataManager.instance.Buy_Character_Lv(Character_Lv.lv_10));
+        btn_Lv_100.onClick.AddListener(() => BackEndDataManager.instance.Buy_Character_Lv(Character_Lv.lv_100));
+
+        btn_Icon_Content.onClick.AddListener(() => Change_Icon_Popup(Icon_Popup.Content));
+        btn_Icon_Character.onClick.AddListener(() => Change_Icon_Popup(Icon_Popup.Character));
+        btn_Icon_Pet.onClick.AddListener(() => Change_Icon_Popup(Icon_Popup.Pet));
+        btn_Icon_Weapon.onClick.AddListener(() => Change_Icon_Popup(Icon_Popup.Weapon));
+        btn_Icon_Job.onClick.AddListener(() => Change_Icon_Popup(Icon_Popup.Job));
+        btn_Icon_Relics.onClick.AddListener(() => Change_Icon_Popup(Icon_Popup.Relics));
+        btn_Icon_Shop.onClick.AddListener(() => Change_Icon_Popup(Icon_Popup.Shop));
+
+        
     }
 
     private void Start()
@@ -273,6 +333,20 @@ public class UiManager : MonoBehaviour
 
     #endregion
 
+    public string GetGoldString(ulong gold)
+    {
+        Debug.Log(gold);
+
+        if (gold >= 1000)
+        {
+            int count = gold.ToString("n0").Split(',').Length - 1;
+
+            float tempGold = gold / Mathf.Pow(1000f, count);
+            return tempGold.ToString("n1") + (char)(64 + count);
+        }
+
+        return gold.ToString("n0");
+    }
 
     public void Set_Ui()
     {
@@ -338,18 +412,27 @@ public class UiManager : MonoBehaviour
 
     public void Set_Txt_Steel()
     {
-        txt_Steel_Val.text = BackEndDataManager.instance.Player_Data.int_steel.ToString();
+        txt_Steel_Val.text = GetGoldString(BackEndDataManager.instance.Player_Data.int_steel);
     }
 
     public void Set_Txt_Coin()
     {
-        txt_Coin_Val.text = BackEndDataManager.instance.Player_Data.int_coin.ToString();
+        txt_Coin_Val.text = GetGoldString(BackEndDataManager.instance.Player_Data.int_coin);
 
     }
 
     public void Set_Txt_Dia()
     {
-        txt_Dia_Val.text = BackEndDataManager.instance.Player_Data.int_dia.ToString();
+        txt_Dia_Val.text = GetGoldString(BackEndDataManager.instance.Player_Data.int_dia);
+    }
+
+
+    public void Add_Coin(int coin)
+    {
+        BackEndDataManager.instance.Player_Data.int_coin += (ulong)coin;
+        UiManager.instance.Set_Txt_Coin();
+        UiManager.instance.Set_Buy_Lv();
+
     }
 
     #endregion
@@ -415,34 +498,43 @@ public class UiManager : MonoBehaviour
 
     public void Set_Buy_Lv()
     {
-        int lv = BackEndDataManager.instance.Character_Data.int_character_Lv;
-        int lv_1 = 500 + (500 / 20) * (lv - 1);
+        ulong lv = (ulong)BackEndDataManager.instance.Character_Data.int_character_Lv;
+        ulong lv_1 = 500 + (500 / 20) * (lv - 1);
 
 
-        txt_Lv_1_Val.text = lv_1.ToString();
-        txt_Lv_10_Val.text = (lv_1*10).ToString();
-        txt_Lv_100_Val.text = (lv_1*100).ToString();
-        
-        //btn_Lv_1
-        //    btn_Lv_10
-        //    btn_Lv_100
+        txt_Lv_1_Val.text = GetGoldString(lv_1);
+        txt_Lv_10_Val.text = GetGoldString(lv_1 * 10);
+        txt_Lv_100_Val.text = GetGoldString(lv_1 * 100);
+
+        btn_Lv_1.interactable = BackEndDataManager.instance.Player_Data.int_coin >= lv_1;
+        btn_Lv_10.interactable = BackEndDataManager.instance.Player_Data.int_coin >= lv_1*10;
+        btn_Lv_100.interactable = BackEndDataManager.instance.Player_Data.int_coin >= lv_1*100;
+
+
     }
 
     #endregion
 
     #region Popup 
 
-    public void Change_Main_Popup()
+    public void Change_Icon_Popup(Icon_Popup popup)
     {
+        Content_Content.SetActive(popup.Equals(Icon_Popup.Content));
+        Content_Character.SetActive(popup.Equals(Icon_Popup.Character));
+        Content_Pet.SetActive(popup.Equals(Icon_Popup.Pet));
+        Content_Weapon.SetActive(popup.Equals(Icon_Popup.Weapon));
+        Content_Job.SetActive(popup.Equals(Icon_Popup.Job));
+        Content_Relics.SetActive(popup.Equals(Icon_Popup.Relics));
+        Content_Shop.SetActive(popup.Equals(Icon_Popup.Shop));
 
     }
 
-    public void Change_Content_Popup(Popup popup)
+    public void Change_Content_Popup(Character_Popup popup)
     {
-        popup_State.SetActive(popup.Equals(Popup.popup_State));
-        popup_Skill.SetActive(popup.Equals(Popup.popup_Skill));
-        popup_Upgrade.SetActive(popup.Equals(Popup.popup_Upgrade));
-        popup_Limit.SetActive(popup.Equals(Popup.popup_Limit));
+        popup_State.SetActive(popup.Equals(Character_Popup.State));
+        popup_Skill.SetActive(popup.Equals(Character_Popup.Skill));
+        popup_Upgrade.SetActive(popup.Equals(Character_Popup.Upgrade));
+        popup_Limit.SetActive(popup.Equals(Character_Popup.Limit));
     }
 
     #endregion
@@ -451,8 +543,8 @@ public class UiManager : MonoBehaviour
 
     public void Set_Character_Stat()
     {
-        txt_State_Atk_Val.text = Player_stat.int_Atk.ToString();
-        txt_State_Hp_Val.text = Player_stat.int_Hp.ToString();
+        txt_State_Atk_Val.text = GetGoldString(Player_stat.int_Atk);
+        txt_State_Hp_Val.text = GetGoldString(Player_stat.int_Hp);
         txt_State_Atk_Speed_Val.text = Player_stat.int_Atk_Speed.ToString();
         txt_State_Critical_Val.text = string.Format("{0}{1}", Player_stat.int_Critical ,"%");
         txt_State_Critical_Percent_Val.text = string.Format("{0}{1}", Player_stat.int_Critical_Percent, "%");
@@ -461,5 +553,9 @@ public class UiManager : MonoBehaviour
 
     #endregion
 
+    public void Dungeon()
+    {
+        PopupManager.Open_Popup(DungeonPopup);
+    }
     
 }

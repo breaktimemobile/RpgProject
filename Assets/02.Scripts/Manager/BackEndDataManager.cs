@@ -4,6 +4,7 @@ using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
 using Amazon.DynamoDBv2.Model;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,6 +15,13 @@ public enum Data_Type
     player_info,
     character_info,
     stage_info
+}
+
+public enum Character_Lv
+{
+    lv_1,
+    lv_10,
+    lv_100
 }
 
 [DynamoDBTable("user_info")]
@@ -36,11 +44,11 @@ public class Player_Data
     [DynamoDBProperty]
     public int int_exp { get; set; }
     [DynamoDBProperty]
-    public int int_steel { get; set; }
+    public ulong int_steel { get; set; }
     [DynamoDBProperty]
-    public int int_coin { get; set; }
+    public ulong int_coin { get; set; }
     [DynamoDBProperty]
-    public int int_dia { get; set; }
+    public ulong int_dia { get; set; }
 }
 
 [DynamoDBTable("character_info")]
@@ -235,7 +243,8 @@ public class BackEndDataManager : MonoBehaviour
                 UiManager.instance.Check_Nick_State(false);
 
             }
-            else{
+            else
+            {
 
                 user_Data.str_nick = NickName;
 
@@ -328,7 +337,7 @@ public class BackEndDataManager : MonoBehaviour
             }
 
             user_Data = result.Result;
-            Debug.Log("닉네임"+user_Data.str_nick); //찾은 캐릭터 정보 중 아이템 정보 출력
+            Debug.Log("닉네임" + user_Data.str_nick); //찾은 캐릭터 정보 중 아이템 정보 출력
 
             Sucess_Data(Data_Type.user_info);
 
@@ -350,7 +359,7 @@ public class BackEndDataManager : MonoBehaviour
             }
 
             player_Data = result.Result;
-            Debug.Log("플레이어 레벨"+player_Data.int_lv); //찾은 캐릭터 정보 중 아이템 정보 출력
+            Debug.Log("플레이어 레벨" + player_Data.int_lv); //찾은 캐릭터 정보 중 아이템 정보 출력
 
             Sucess_Data(Data_Type.player_info);
 
@@ -372,7 +381,7 @@ public class BackEndDataManager : MonoBehaviour
             }
 
             character_Data = result.Result;
-            Debug.Log("캐릭터 레벨"+character_Data.int_character_Lv); //찾은 캐릭터 정보 중 아이템 정보 출력
+            Debug.Log("캐릭터 레벨" + character_Data.int_character_Lv); //찾은 캐릭터 정보 중 아이템 정보 출력
 
             Sucess_Data(Data_Type.character_info);
 
@@ -469,4 +478,49 @@ public class BackEndDataManager : MonoBehaviour
     }
 
     #endregion
+
+    public void Add_Coin(UInt64 coin)
+    {
+        Debug.Log(player_Data.int_coin + "    "+coin);
+        player_Data.int_coin += coin;
+        UiManager.instance.Set_Txt_Coin();
+        UiManager.instance.Set_Buy_Lv();
+
+    }
+
+    public void Minus_Coin(UInt64 coin)
+    {
+        Debug.Log(player_Data.int_coin + "    " + coin);
+        player_Data.int_coin -= coin;
+        UiManager.instance.Set_Txt_Coin();
+        UiManager.instance.Set_Buy_Lv();
+
+    }
+
+
+    public void Buy_Character_Lv(Character_Lv character_Lv)
+    {
+        ulong lv = (ulong)Character_Data.int_character_Lv;
+        ulong lv_1 = 500 + (500 / 20) * (lv - 1);
+
+        switch (character_Lv)
+        {
+            case Character_Lv.lv_1:
+                Minus_Coin(lv_1);
+                Player_stat.Add_Lv(1);
+                break;
+            case Character_Lv.lv_10:
+                Minus_Coin(lv_1 * 10);
+                Player_stat.Add_Lv(10);
+
+                break;
+            case Character_Lv.lv_100:
+                Minus_Coin(lv_1 * 100);
+                Player_stat.Add_Lv(100);
+
+                break;
+            default:
+                break;
+        }
+    }
 }

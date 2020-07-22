@@ -5,9 +5,9 @@ using DG.Tweening;
 public class Damege : MonoBehaviour
 {
   
-    public void Set_Txt(int damege)
+    public void Set_Txt(ulong damege)
     {
-        GetComponent<Text>().text = damege.ToString();
+        GetComponent<Text>().text = UiManager.instance.GetGoldString(damege);
 
         transform.DOLocalMoveY(10, 1.0f);
         GetComponent<Text>().DOFade(0, 1.0f).OnComplete(() =>{

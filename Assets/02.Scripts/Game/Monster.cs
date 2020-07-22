@@ -60,17 +60,17 @@ public class Monster : MonoBehaviour
         }
     }
 
-    public void Hit(int damege)
+    public void Hit(ulong damege)
     {
         anim_Monster.Play("hit");
 
-        int total_damege = 0;
+        ulong total_damege = 0;
         int Rd = Random.Range(0, 100);
 
         if (Player_stat.int_Critical_Percent >= Rd)
         {
 
-            total_damege = damege + (damege * Player_stat.int_Critical / 100);
+            total_damege = damege + (damege * (ulong)Player_stat.int_Critical / 100);
 
             Damege sc_damege = Instantiate(UiManager.instance.txt_Critical_Damege, UiManager.instance.obj_Stage.transform).GetComponent<Damege>();
             sc_damege.transform.position = this.transform.position;
@@ -126,7 +126,7 @@ public class Monster : MonoBehaviour
     {
 
         BackEndDataManager.instance.Player_Data.int_exp += 1;
-        BackEndDataManager.instance.Player_Data.int_coin += 100;
+        BackEndDataManager.instance.Add_Coin(100);
 
         switch (monster_Type)
         {
@@ -144,7 +144,6 @@ public class Monster : MonoBehaviour
 
         UiManager.instance.Set_Txt_Stage();
         UiManager.instance.Set_Txt_Exp();
-        UiManager.instance.Set_Txt_Coin();
 
         BackEndDataManager.instance.Save_Player_Data();
         BackEndDataManager.instance.Save_Stage_Data();

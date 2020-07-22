@@ -6,8 +6,8 @@ using UnityEngine;
 public class Player_stat
 {
 
-    public static int int_Atk;
-    public static int int_Hp;
+    public static ulong int_Atk;
+    public static ulong int_Hp;
     public static int int_Atk_Speed;
     public static int int_Critical;
     public static int int_Critical_Percent;
@@ -21,8 +21,8 @@ public class Player_stat
         //공격력 레벨당 10퍼 상승
         //체력 5퍼 상승
 
-        int_Atk = 100 + (100 / 20) * (BackEndDataManager.instance.Character_Data.int_character_Lv - 1);
-        int_Hp = 2000 + (2000 / 20) * (BackEndDataManager.instance.Character_Data.int_character_Lv - 1);
+        int_Atk = 100 + (100 / 20) * ((ulong)BackEndDataManager.instance.Character_Data.int_character_Lv - 1);
+        int_Hp = 2000 + (2000 / 20) * ((ulong)BackEndDataManager.instance.Character_Data.int_character_Lv - 1);
         int_Atk_Speed = 100;
         int_Critical = 5;
         int_Critical_Percent = 1;
@@ -36,10 +36,10 @@ public class Player_stat
         UiManager.instance.Set_Character_Stat();
     }
 
-    public static void Buy_Lv()
+    public static void Add_Lv(int lv)
     {
 
-        BackEndDataManager.instance.Character_Data.int_character_Lv += 1;
+        BackEndDataManager.instance.Character_Data.int_character_Lv += lv;
 
         Set_Player_Stat();
         UiManager.instance.Set_Character_Lv();
