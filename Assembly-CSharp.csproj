@@ -60,6 +60,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\02.Scripts\Configs.cs" />
+    <Compile Include="Assets\02.Scripts\Game\BackGroundScrolling.cs" />
+    <Compile Include="Assets\02.Scripts\Game\Damege.cs" />
+    <Compile Include="Assets\02.Scripts\Game\Dungeon_Panel.cs" />
     <Compile Include="Assets\02.Scripts\Game\Monster.cs" />
     <Compile Include="Assets\02.Scripts\Game\Player.cs" />
     <Compile Include="Assets\02.Scripts\Manager\BackEndAuthManager.cs" />
@@ -76,8 +80,6 @@
     <Compile Include="Assets\02.Scripts\Utill\Language\LanguageComponent.cs" />
     <Compile Include="Assets\02.Scripts\Utill\ObjectPool\ObjectPool.cs" />
     <Compile Include="Assets\02.Scripts\Utill\ObjectRecycle.cs" />
-    <Compile Include="Assets\BackGroundScrolling.cs" />
-    <Compile Include="Assets\Damege.cs" />
     <Compile Include="Assets\Demigiant\DOTween\Modules\DOTweenModuleAudio.cs" />
     <Compile Include="Assets\Demigiant\DOTween\Modules\DOTweenModulePhysics.cs" />
     <Compile Include="Assets\Demigiant\DOTween\Modules\DOTweenModulePhysics2D.cs" />
@@ -151,6 +153,7 @@
     <Compile Include="Assets\GooglePlayGames\Platforms\TokenClient.cs" />
     <Compile Include="Assets\GooglePlayGames\PluginVersion.cs" />
     <Compile Include="Assets\GPGSIds.cs" />
+    <Compile Include="Assets\Inventory_Panel.cs" />
     <Compile Include="Assets\Unity-Logs-Viewer\Reporter\MultiKeyDictionary.cs" />
     <Compile Include="Assets\Unity-Logs-Viewer\Reporter\Reporter.cs" />
     <Compile Include="Assets\Unity-Logs-Viewer\Reporter\ReporterGUI.cs" />

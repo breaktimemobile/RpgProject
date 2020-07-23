@@ -1,29 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Text;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.UI;
-
-public enum Character_Popup
-{
-   State,
-   Skill,
-   Upgrade,
-   Limit,
-}
-
-public enum Icon_Popup
-{
-    Content,
-    Character,
-    Pet,
-    Weapon,
-    Job,
-    Relics,
-    Shop
-    
-}
 
 public class UiManager : MonoBehaviour
 {
@@ -31,11 +12,20 @@ public class UiManager : MonoBehaviour
 
     private GameObject NickNamePopup;
     private GameObject DungeonPopup;
+    private GameObject InventoryPopup;
 
     private GameObject obj_Top;
     public GameObject obj_Stage;
     private GameObject obj_Content;
     private GameObject obj_Icon;
+
+    private GameObject Content_Content;
+    private GameObject Content_Character;
+    private GameObject Content_Pet;
+    private GameObject Content_Weapon;
+    private GameObject Content_Job;
+    private GameObject Content_Relics;
+    private GameObject Content_Shop;
 
     #region obj_Top
 
@@ -50,7 +40,6 @@ public class UiManager : MonoBehaviour
 
     #endregion
 
-
     #region obj_Stage
 
     private Text txt_State_Chapter;
@@ -61,16 +50,9 @@ public class UiManager : MonoBehaviour
 
     public Button btn_Boss;
     public Button btn_Boss_Exit;
+    public Button btn_Inventory;
 
     #endregion
-
-    private GameObject Content_Content;
-    private GameObject Content_Character;
-    private GameObject Content_Pet;
-    private GameObject Content_Weapon;
-    private GameObject Content_Job;
-    private GameObject Content_Relics;
-    private GameObject Content_Shop;
 
     #region Content_Character
 
@@ -130,8 +112,31 @@ public class UiManager : MonoBehaviour
 
     #endregion
 
+    #region DungeonPopup
+
+    //private InputField Input_NickName;
+    //private Button btn_NickName_Ok;
+    //private GameObject txt_NickName_Fail;
+
+    #endregion
+
+    #region InvantoryPopup
+
+    private Inventory_Panel[] Inventory_Panels;
+    private Button btn_Invantory_Close;
+
+    //scroll_Invantory
+
+
+    #endregion
+
+
+    #region Prefabs
+
     public GameObject txt_Damege;
     public GameObject txt_Critical_Damege;
+
+    #endregion
 
     private void Awake()
     {
@@ -151,6 +156,7 @@ public class UiManager : MonoBehaviour
         NickNamePopup = Popup.Find("NickNamePopup").gameObject;
 
         DungeonPopup = Popup.Find("DungeonPopup").gameObject;
+        InventoryPopup = Popup.Find("InventoryPopup").gameObject;
 
         obj_Top = Game.Find("obj_Top").gameObject;
         obj_Stage = Game.Find("obj_Stage").gameObject;
@@ -180,6 +186,7 @@ public class UiManager : MonoBehaviour
 
         btn_Boss = obj_Stage.transform.Find("Stage_Content/btn_Boss").GetComponent<Button>();
         btn_Boss_Exit = obj_Stage.transform.Find("Stage_Content/btn_Boss_Exit").GetComponent<Button>();
+        btn_Inventory = obj_Stage.transform.Find("Stage_Content/btn_Inventory").GetComponent<Button>();
 
         #endregion
 
@@ -254,6 +261,13 @@ public class UiManager : MonoBehaviour
 
         #endregion
 
+        #region InvantoryPopup
+
+        Inventory_Panels = InventoryPopup.transform.GetComponentsInChildren<Inventory_Panel>();
+        btn_Invantory_Close = InventoryPopup.transform.Find("btn_Invantory_Close").GetComponent<Button>();
+
+
+        #endregion
     }
 
     private void AddListener()
@@ -267,6 +281,7 @@ public class UiManager : MonoBehaviour
 
         btn_Boss.onClick.AddListener(() => PlayManager.instance.Start_Boss_Stage());
         btn_Boss_Exit.onClick.AddListener(() => PlayManager.instance.Stop_Boss_Timer(true));
+        btn_Inventory.onClick.AddListener(() => PopupManager.Open_Popup(InventoryPopup));
 
         btn_Lv_1.onClick.AddListener(() => BackEndDataManager.instance.Buy_Character_Lv(Character_Lv.lv_1));
         btn_Lv_10.onClick.AddListener(() => BackEndDataManager.instance.Buy_Character_Lv(Character_Lv.lv_10));
@@ -280,7 +295,9 @@ public class UiManager : MonoBehaviour
         btn_Icon_Relics.onClick.AddListener(() => Change_Icon_Popup(Icon_Popup.Relics));
         btn_Icon_Shop.onClick.AddListener(() => Change_Icon_Popup(Icon_Popup.Shop));
 
-        
+        btn_Invantory_Close.onClick.AddListener(() => PopupManager.Close_Popup());
+
+
     }
 
     private void Start()
@@ -295,9 +312,9 @@ public class UiManager : MonoBehaviour
     /// </summary>
     private void Check_Nick_Popup()
     {
-        Debug.Log(BackEndDataManager.instance.User_Data.str_nick);
+        Debug.Log(BackEndDataManager.instance.Player_Data.str_nick);
 
-        if (BackEndDataManager.instance.User_Data.str_nick.Equals("null"))
+        if (BackEndDataManager.instance.Player_Data.str_nick.Equals("null"))
         {
             //닉네임 팝업
             PopupManager.Open_Popup(NickNamePopup);
@@ -333,16 +350,24 @@ public class UiManager : MonoBehaviour
 
     #endregion
 
-    public string GetGoldString(ulong gold)
+    public string GetGoldString(BigInteger gold)
     {
         Debug.Log(gold);
 
         if (gold >= 1000)
         {
+            BigInteger total_Gold = gold;
+
             int count = gold.ToString("n0").Split(',').Length - 1;
 
-            float tempGold = gold / Mathf.Pow(1000f, count);
-            return tempGold.ToString("n1") + (char)(64 + count);
+            for (int i = 0; i < count - 1; i++)
+            {
+                gold /= 1000;
+            }
+
+            float so = (int)gold / 1000.0f;
+
+            return so.ToString("n1") + (char)(64 + count);
         }
 
         return gold.ToString("n0");
@@ -366,6 +391,8 @@ public class UiManager : MonoBehaviour
         Set_Character_obj();
         Set_Character_Stat();
         Set_Buy_Lv();
+
+        Set_Inventory();
     }
 
     #region PlayerUI 세팅
@@ -388,7 +415,7 @@ public class UiManager : MonoBehaviour
 
     public void Set_Txt_NickName()
     {
-        txt_NickName.text = BackEndDataManager.instance.User_Data.str_nick;
+        txt_NickName.text = BackEndDataManager.instance.Player_Data.str_nick;
     }
 
     public void Set_Txt_Exp()
@@ -412,27 +439,20 @@ public class UiManager : MonoBehaviour
 
     public void Set_Txt_Steel()
     {
-        txt_Steel_Val.text = GetGoldString(BackEndDataManager.instance.Player_Data.int_steel);
+        BigInteger big = BigInteger.Parse(BackEndDataManager.instance.Get_Item(Item_Type.steel));
+        txt_Steel_Val.text = GetGoldString(big);
     }
 
     public void Set_Txt_Coin()
     {
-        txt_Coin_Val.text = GetGoldString(BackEndDataManager.instance.Player_Data.int_coin);
-
+        BigInteger big = BigInteger.Parse(BackEndDataManager.instance.Get_Item(Item_Type.coin));
+        txt_Coin_Val.text = GetGoldString(big);
     }
 
     public void Set_Txt_Dia()
     {
-        txt_Dia_Val.text = GetGoldString(BackEndDataManager.instance.Player_Data.int_dia);
-    }
-
-
-    public void Add_Coin(int coin)
-    {
-        BackEndDataManager.instance.Player_Data.int_coin += (ulong)coin;
-        UiManager.instance.Set_Txt_Coin();
-        UiManager.instance.Set_Buy_Lv();
-
+        BigInteger big = BigInteger.Parse(BackEndDataManager.instance.Get_Item(Item_Type.crystal));
+        txt_Dia_Val.text = GetGoldString(big);
     }
 
     #endregion
@@ -483,10 +503,10 @@ public class UiManager : MonoBehaviour
 
     public void Set_Character_Lv()
     {
-        txt_State_Lv.text = string.Format("Lv.{0}(+{1})", 
+        txt_State_Lv.text = string.Format("Lv.{0}(+{1})",
             BackEndDataManager.instance.Character_Data.int_character_Lv,
             0);
-        
+
     }
 
     public void Set_Character_obj()
@@ -506,9 +526,9 @@ public class UiManager : MonoBehaviour
         txt_Lv_10_Val.text = GetGoldString(lv_1 * 10);
         txt_Lv_100_Val.text = GetGoldString(lv_1 * 100);
 
-        btn_Lv_1.interactable = BackEndDataManager.instance.Player_Data.int_coin >= lv_1;
-        btn_Lv_10.interactable = BackEndDataManager.instance.Player_Data.int_coin >= lv_1*10;
-        btn_Lv_100.interactable = BackEndDataManager.instance.Player_Data.int_coin >= lv_1*100;
+        btn_Lv_1.interactable = BackEndDataManager.instance.Int_coin >= lv_1;
+        btn_Lv_10.interactable = BackEndDataManager.instance.Int_coin >= lv_1 * 10;
+        btn_Lv_100.interactable = BackEndDataManager.instance.Int_coin >= lv_1 * 100;
 
 
     }
@@ -546,7 +566,7 @@ public class UiManager : MonoBehaviour
         txt_State_Atk_Val.text = GetGoldString(Player_stat.int_Atk);
         txt_State_Hp_Val.text = GetGoldString(Player_stat.int_Hp);
         txt_State_Atk_Speed_Val.text = Player_stat.int_Atk_Speed.ToString();
-        txt_State_Critical_Val.text = string.Format("{0}{1}", Player_stat.int_Critical ,"%");
+        txt_State_Critical_Val.text = string.Format("{0}{1}", Player_stat.int_Critical, "%");
         txt_State_Critical_Percent_Val.text = string.Format("{0}{1}", Player_stat.int_Critical_Percent, "%");
         txt_State_Speed_Val.text = string.Format("{0}{1}", Player_stat.int_Atk_Speed, "%");
     }
@@ -557,5 +577,25 @@ public class UiManager : MonoBehaviour
     {
         PopupManager.Open_Popup(DungeonPopup);
     }
-    
+
+    public void Set_Inventory()
+    {
+        Debug.Log(BackEndDataManager.instance.Item_Data.item_Info.Count);
+
+        for (int i = 0; i < Inventory_Panels.Length; i++)
+        {
+            Inventory_Panels[i].gameObject.SetActive(false);
+
+            
+            if (i < BackEndDataManager.instance.Item_Data.item_Info.Count)
+            {
+                Inventory_Panels[i].Set_Inventory_Item((Item_Type)BackEndDataManager.instance.Item_Data.item_Info[i].type,
+        BigInteger.Parse(BackEndDataManager.instance.Item_Data.item_Info[i].str_val));
+
+                Inventory_Panels[i].gameObject.SetActive(true);
+            }
+
+        }
+
+    }
 }

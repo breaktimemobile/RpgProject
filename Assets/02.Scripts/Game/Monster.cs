@@ -145,7 +145,6 @@ public class Monster : MonoBehaviour
         UiManager.instance.Set_Txt_Stage();
         UiManager.instance.Set_Txt_Exp();
 
-        BackEndDataManager.instance.Save_Player_Data();
         BackEndDataManager.instance.Save_Stage_Data();
 
     }

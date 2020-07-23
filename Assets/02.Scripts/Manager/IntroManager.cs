@@ -5,12 +5,6 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public enum Intro_State
-{
-    Service,
-    Login,
-    Touch
-}
 
 /// <summary>
 /// 순서 : 게임이용약관 -> 로그인 -> 터치
