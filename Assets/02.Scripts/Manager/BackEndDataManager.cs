@@ -60,11 +60,28 @@ public class Item_Data
 
 }
 
+[DynamoDBTable("weapon_info")]
+public class Weapon_Data
+{
+    [DynamoDBHashKey] // Hash key.
+    public string id { get; set; }
+    [DynamoDBProperty("Weapon_info")]
+    public List<Weapon_info> weapon_Info { get; set; }
+
+}
+
 public class Item_Info
 {
     public int type { get; set; }
     public string str_val { get; set; }
+}
 
+public class Weapon_info
+{
+    public int int_num { get; set; }
+    public int int_lv { get; set; }
+    public int int_upgread { get; set; }
+    public int int_limit { get; set; }
 }
 
 public class BackEndDataManager : MonoBehaviour
@@ -75,6 +92,7 @@ public class BackEndDataManager : MonoBehaviour
     Character_Data character_Data = new Character_Data();
     Stage_Data stage_Data = new Stage_Data();
     Item_Data item_Data = new Item_Data();
+    Weapon_Data weapon_Data = new Weapon_Data();
 
     DynamoDBContext context;
     AmazonDynamoDBClient DBclient;
@@ -84,12 +102,14 @@ public class BackEndDataManager : MonoBehaviour
     public Character_Data Character_Data { get => character_Data; }
     public Stage_Data Stage_Data { get => stage_Data; }
     public Item_Data Item_Data { get => item_Data; }
+    public Weapon_Data Weapon_Data { get => weapon_Data; }
 
     public BigInteger Int_coin { get => int_coin; }
 
-    public List<Dictionary<string, object>> dungeon_data;         //던전 정보
+    public List<Dictionary<string, object>> dungeon_csv_data;         //던전 정보
+    public List<Dictionary<string, object>> weapon_csv_data;         //던전 정보
 
-    private bool[] Check_Data = new bool[] { false, false, false, false };
+    private bool[] Check_Data = new bool[] { false, false, false, false, false };
 
     private BigInteger int_coin = 0;
 
@@ -120,17 +140,9 @@ public class BackEndDataManager : MonoBehaviour
     void Get_Csv_Data()
     {
 
-        dungeon_data = CSVReader.Read("dungeon");
-
-
-        Dictionary<string, object> stage_Info = dungeon_data[14];
-
-        //Debug.Log(stage_Info["monster_hp_0"].ToString());
-
-        BigInteger a = BigInteger.Parse(stage_Info["monster_hp_1"].ToString());
-
-        //Debug.Log(a);
-
+        dungeon_csv_data = CSVReader.Read("dungeon");
+        weapon_csv_data = CSVReader.Read("weapon");
+        Debug.Log("weapon_data " + weapon_csv_data.Count);
     }
 
     private void CreateData() //캐릭터 정보를 DB에 올리기
@@ -177,13 +189,30 @@ public class BackEndDataManager : MonoBehaviour
 
         };
 
+        weapon_Data = new Weapon_Data
+        {
+            id = BackEndAuthManager.Get_UserId(),
+            weapon_Info = new List<Weapon_info>
+            {
+                new Weapon_info
+                {
+                    int_num = 0,
+                    int_lv =1,
+                    int_upgread =0,
+                    int_limit = 0
+                }
+            }
+
+        };
+
         context.SaveAsync(player_Data, (result) =>
         {
             if (result.Exception == null)
             {
+                Debug.Log("Player_Data Save");
+
                 Sucess_Data(Data_Type.player_info);
 
-                Debug.Log("Player_Data Save");
 
             }
             else
@@ -194,9 +223,10 @@ public class BackEndDataManager : MonoBehaviour
         {
             if (result.Exception == null)
             {
+                Debug.Log("character_Data Save");
+
                 Sucess_Data(Data_Type.character_info);
 
-                Debug.Log("character_Data Save");
 
             }
             else
@@ -207,9 +237,10 @@ public class BackEndDataManager : MonoBehaviour
         {
             if (result.Exception == null)
             {
+                Debug.Log("Stage_Data Save");
+
                 Sucess_Data(Data_Type.stage_info);
 
-                Debug.Log("Stage_Data Save");
 
             }
             else
@@ -220,9 +251,24 @@ public class BackEndDataManager : MonoBehaviour
         {
             if (result.Exception == null)
             {
+                Debug.Log("item_Data Save");
+
                 Sucess_Data(Data_Type.item_info);
 
-                Debug.Log("item_Data Save");
+
+            }
+            else
+                Debug.Log(result.Exception);
+        });
+
+        context.SaveAsync(weapon_Data, (result) =>
+        {
+            if (result.Exception == null)
+            {
+                Debug.Log("weapon_Data Save");
+
+                Sucess_Data(Data_Type.weapon_info);
+
 
             }
             else
@@ -341,6 +387,7 @@ public class BackEndDataManager : MonoBehaviour
         Get_Character_Data();
         Get_Stage_Data();
         Get_Item_Data();
+        Get_Weapon_Data();
 
     }
 
@@ -418,13 +465,35 @@ public class BackEndDataManager : MonoBehaviour
             // id가 abcd인 캐릭터 정보를 DB에서 받아옴
             if (result.Exception != null)
             {
-                Debug.LogException(result.Exception);
+                Debug.Log(result.Exception);
                 return;
             }
 
             item_Data = result.Result;
 
             Sucess_Data(Data_Type.item_info);
+
+
+        }, null);
+    }
+
+    public void Get_Weapon_Data() //DB에서 캐릭터 정보 받기
+    {
+        Debug.Log("Get_Weapon_Data");
+
+        context.LoadAsync(BackEndAuthManager.Get_UserId(), (AmazonDynamoDBResult<Weapon_Data> result) =>
+        {
+  
+            // id가 abcd인 캐릭터 정보를 DB에서 받아옴
+            if (result.Exception != null)
+            {
+                Debug.Log(result.Exception);
+                return;
+            }
+
+            weapon_Data = result.Result;
+
+            Sucess_Data(Data_Type.weapon_info);
 
 
         }, null);
@@ -486,12 +555,25 @@ public class BackEndDataManager : MonoBehaviour
         });
     }
 
+    public void Save_Weapon_Data() //DB에서 캐릭터 정보 받기
+    {
+        context.SaveAsync(weapon_Data, (result) =>
+        {
+            if (result.Exception == null)
+            {
+                Debug.Log(" item_Data Save");
+            }
+            else
+                Debug.Log(result.Exception);
+        });
+    }
+
     #endregion
 
     public void Add_Coin(ulong coin)
     {
         int_coin += coin;
-   
+
         Set_Item(Item_Type.coin, int_coin.ToString());
         UiManager.instance.Set_Txt_Coin();
         UiManager.instance.Set_Buy_Lv();
@@ -514,7 +596,7 @@ public class BackEndDataManager : MonoBehaviour
     {
         Item_Info item_Info = item_Data.item_Info.Find(x => x.type.Equals((int)type));
 
-        if(item_Info == null)
+        if (item_Info == null)
         {
 
             return "0";

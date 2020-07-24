@@ -4,8 +4,10 @@ public enum Data_Type
     item_info,
     player_info,
     character_info,
-    stage_info
+    stage_info,
+    weapon_info
 }
+
 
 public enum Character_Lv
 {
@@ -21,8 +23,7 @@ public enum Intro_State
     Touch
 }
 
-
-public enum Character_Popup
+public enum Character_Contnet
 {
     State,
     Skill,
@@ -30,7 +31,24 @@ public enum Character_Popup
     Limit,
 }
 
-public enum Icon_Popup
+public enum Weapon_Content
+{
+    Weapon,
+    Shield,
+    Accessory,
+    Costume,
+}
+
+public enum Weapon_Popup
+{
+    info,
+    upgrade,
+    mix,
+    roon,
+    decom
+}
+
+public enum Icon_Content
 {
     Content,
     Character,

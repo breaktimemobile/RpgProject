@@ -13,6 +13,7 @@ public class UiManager : MonoBehaviour
     private GameObject NickNamePopup;
     private GameObject DungeonPopup;
     private GameObject InventoryPopup;
+    private GameObject WeaponPopup;
 
     private GameObject obj_Top;
     public GameObject obj_Stage;
@@ -65,6 +66,25 @@ public class UiManager : MonoBehaviour
     private GameObject popup_Skill;
     private GameObject popup_Upgrade;
     private GameObject popup_Limit;
+
+    #endregion
+
+    #region Content_Weapon
+
+    private Button btn_Weapon;
+    private Button btn_Shield;
+    private Button btn_Accessory;
+    private Button btn_Costume;
+
+    private GameObject popup_Weapon;
+    private GameObject popup_Shield;
+    private GameObject popup_Accessory;
+    private GameObject popup_Costume;
+
+    private Weapon_Panel[] Weapon_Panels;
+    private Weapon_Panel[] Shield_Panels;
+    private Weapon_Panel[] Accessory_Panels;
+    private Weapon_Panel[] Costume_Panels;
 
     #endregion
 
@@ -125,8 +145,21 @@ public class UiManager : MonoBehaviour
     private Inventory_Panel[] Inventory_Panels;
     private Button btn_Invantory_Close;
 
-    //scroll_Invantory
+    #endregion
 
+    #region WeaponPopup
+
+    private Button btn_Weapon_Info;
+    private Button btn_Weapon_Upgrade;
+    private Button btn_Weapon_Mix;
+    private Button btn_Weapon_Roon;
+    private Button btn_Weapon_Decom;
+
+    private GameObject content_Weapon_Info;
+    private GameObject content_Weapon_Upgrade;
+    private GameObject content_Weapon_Mix;
+    private GameObject content_Weapon_Roon;
+    private GameObject content_Weapon_Decom;
 
     #endregion
 
@@ -135,6 +168,7 @@ public class UiManager : MonoBehaviour
 
     public GameObject txt_Damege;
     public GameObject txt_Critical_Damege;
+    public GameObject weapon_Panel;
 
     #endregion
 
@@ -154,9 +188,9 @@ public class UiManager : MonoBehaviour
         Transform Popup = GameObject.Find("Popup").transform;
 
         NickNamePopup = Popup.Find("NickNamePopup").gameObject;
-
         DungeonPopup = Popup.Find("DungeonPopup").gameObject;
         InventoryPopup = Popup.Find("InventoryPopup").gameObject;
+        WeaponPopup = Popup.Find("WeaponPopup").gameObject;
 
         obj_Top = Game.Find("obj_Top").gameObject;
         obj_Stage = Game.Find("obj_Stage").gameObject;
@@ -200,6 +234,8 @@ public class UiManager : MonoBehaviour
         Content_Relics = obj_Content.transform.Find("Content_Relics").gameObject;
         Content_Shop = obj_Content.transform.Find("Content_Shop").gameObject;
 
+        #endregion
+
         #region Content_Character
 
         btn_State = Content_Character.transform.Find("grid_Btn/btn_State").GetComponent<Button>();
@@ -213,6 +249,20 @@ public class UiManager : MonoBehaviour
         popup_Limit = Content_Character.transform.Find("contents/popup_Limit").gameObject;
 
         #endregion
+
+        #region Content_Weapon
+
+        btn_Weapon = Content_Weapon.transform.Find("grid_Btn/btn_Weapon").GetComponent<Button>();
+        btn_Shield = Content_Weapon.transform.Find("grid_Btn/btn_Shield").GetComponent<Button>();
+        btn_Accessory = Content_Weapon.transform.Find("grid_Btn/btn_Accessory").GetComponent<Button>();
+        btn_Costume = Content_Weapon.transform.Find("grid_Btn/btn_Costume").GetComponent<Button>();
+
+        popup_Weapon = Content_Weapon.transform.Find("contents/popup_Weapon").gameObject;
+        popup_Shield = Content_Weapon.transform.Find("contents/popup_Shield").gameObject;
+        popup_Accessory = Content_Weapon.transform.Find("contents/popup_Accessory").gameObject;
+        popup_Costume = Content_Weapon.transform.Find("contents/popup_Costume").gameObject;
+
+        Weapon_Panels = popup_Weapon.GetComponentsInChildren<Weapon_Panel>();
 
         #endregion
 
@@ -268,16 +318,45 @@ public class UiManager : MonoBehaviour
 
 
         #endregion
+
+        #region WeaponPopup
+
+        btn_Weapon_Info = WeaponPopup.transform.Find("btn_grids/btn_Weapon_Info").GetComponent<Button>();
+        btn_Weapon_Upgrade = WeaponPopup.transform.Find("btn_grids/btn_Weapon_Info").GetComponent<Button>();
+        btn_Weapon_Mix = WeaponPopup.transform.Find("btn_grids/btn_Weapon_Info").GetComponent<Button>();
+        btn_Weapon_Roon = WeaponPopup.transform.Find("btn_grids/btn_Weapon_Info").GetComponent<Button>();
+        btn_Weapon_Decom = WeaponPopup.transform.Find("btn_grids/btn_Weapon_Info").GetComponent<Button>();
+
+        content_Weapon_Info = WeaponPopup.transform.Find("contents/content_Weapon_Info").gameObject;
+        content_Weapon_Upgrade = WeaponPopup.transform.Find("contents/content_Weapon_Upgrade").gameObject;
+        content_Weapon_Mix = WeaponPopup.transform.Find("contents/content_Weapon_Mix").gameObject;
+        content_Weapon_Roon = WeaponPopup.transform.Find("contents/content_Weapon_Roon").gameObject;
+        content_Weapon_Decom = WeaponPopup.transform.Find("contents/content_Weapon_Decom").gameObject;
+
+        #endregion
     }
 
     private void AddListener()
     {
         btn_NickName_Ok.onClick.AddListener(() => Check_Nickname());
 
-        btn_State.onClick.AddListener(() => Change_Content_Popup(Character_Popup.State));
-        btn_Skill.onClick.AddListener(() => Change_Content_Popup(Character_Popup.Skill));
-        btn_Upgrade.onClick.AddListener(() => Change_Content_Popup(Character_Popup.Upgrade));
-        btn_Limit.onClick.AddListener(() => Change_Content_Popup(Character_Popup.Limit));
+        #region Content_Character
+
+        btn_State.onClick.AddListener(() => Change_Content_Content(Character_Contnet.State));
+        btn_Skill.onClick.AddListener(() => Change_Content_Content(Character_Contnet.Skill));
+        btn_Upgrade.onClick.AddListener(() => Change_Content_Content(Character_Contnet.Upgrade));
+        btn_Limit.onClick.AddListener(() => Change_Content_Content(Character_Contnet.Limit));
+
+        #endregion
+
+        #region Content_Weapon
+
+        btn_Weapon.onClick.AddListener(() => Change_Weapon_Contnet(Weapon_Content.Weapon));
+        btn_Shield.onClick.AddListener(() => Change_Weapon_Contnet(Weapon_Content.Shield));
+        btn_Accessory.onClick.AddListener(() => Change_Weapon_Contnet(Weapon_Content.Accessory));
+        btn_Costume.onClick.AddListener(() => Change_Weapon_Contnet(Weapon_Content.Costume));
+
+        #endregion
 
         btn_Boss.onClick.AddListener(() => PlayManager.instance.Start_Boss_Stage());
         btn_Boss_Exit.onClick.AddListener(() => PlayManager.instance.Stop_Boss_Timer(true));
@@ -287,17 +366,27 @@ public class UiManager : MonoBehaviour
         btn_Lv_10.onClick.AddListener(() => BackEndDataManager.instance.Buy_Character_Lv(Character_Lv.lv_10));
         btn_Lv_100.onClick.AddListener(() => BackEndDataManager.instance.Buy_Character_Lv(Character_Lv.lv_100));
 
-        btn_Icon_Content.onClick.AddListener(() => Change_Icon_Popup(Icon_Popup.Content));
-        btn_Icon_Character.onClick.AddListener(() => Change_Icon_Popup(Icon_Popup.Character));
-        btn_Icon_Pet.onClick.AddListener(() => Change_Icon_Popup(Icon_Popup.Pet));
-        btn_Icon_Weapon.onClick.AddListener(() => Change_Icon_Popup(Icon_Popup.Weapon));
-        btn_Icon_Job.onClick.AddListener(() => Change_Icon_Popup(Icon_Popup.Job));
-        btn_Icon_Relics.onClick.AddListener(() => Change_Icon_Popup(Icon_Popup.Relics));
-        btn_Icon_Shop.onClick.AddListener(() => Change_Icon_Popup(Icon_Popup.Shop));
+        btn_Icon_Content.onClick.AddListener(() => Change_Icon_Content(Icon_Content.Content));
+        btn_Icon_Character.onClick.AddListener(() => Change_Icon_Content(Icon_Content.Character));
+        btn_Icon_Pet.onClick.AddListener(() => Change_Icon_Content(Icon_Content.Pet));
+        btn_Icon_Weapon.onClick.AddListener(() => Change_Icon_Content(Icon_Content.Weapon));
+        btn_Icon_Job.onClick.AddListener(() => Change_Icon_Content(Icon_Content.Job));
+        btn_Icon_Relics.onClick.AddListener(() => Change_Icon_Content(Icon_Content.Relics));
+        btn_Icon_Shop.onClick.AddListener(() => Change_Icon_Content(Icon_Content.Shop));
 
         btn_Invantory_Close.onClick.AddListener(() => PopupManager.Close_Popup());
 
 
+
+        #region WeaponPopup
+
+        btn_Weapon_Info.onClick.AddListener(() => Change_Weapon_Popup(Weapon_Popup.info));
+        btn_Weapon_Upgrade.onClick.AddListener(() => Change_Weapon_Popup(Weapon_Popup.upgrade));
+        btn_Weapon_Mix.onClick.AddListener(() => Change_Weapon_Popup(Weapon_Popup.mix));
+        btn_Weapon_Roon.onClick.AddListener(() => Change_Weapon_Popup(Weapon_Popup.roon));
+        btn_Weapon_Decom.onClick.AddListener(() => Change_Weapon_Popup(Weapon_Popup.decom));
+
+        #endregion
     }
 
     private void Start()
@@ -393,6 +482,7 @@ public class UiManager : MonoBehaviour
         Set_Buy_Lv();
 
         Set_Inventory();
+        Set_Weapon_Popup();
     }
 
     #region PlayerUI 세팅
@@ -537,24 +627,42 @@ public class UiManager : MonoBehaviour
 
     #region Popup 
 
-    public void Change_Icon_Popup(Icon_Popup popup)
+    public void Change_Icon_Content(Icon_Content popup)
     {
-        Content_Content.SetActive(popup.Equals(Icon_Popup.Content));
-        Content_Character.SetActive(popup.Equals(Icon_Popup.Character));
-        Content_Pet.SetActive(popup.Equals(Icon_Popup.Pet));
-        Content_Weapon.SetActive(popup.Equals(Icon_Popup.Weapon));
-        Content_Job.SetActive(popup.Equals(Icon_Popup.Job));
-        Content_Relics.SetActive(popup.Equals(Icon_Popup.Relics));
-        Content_Shop.SetActive(popup.Equals(Icon_Popup.Shop));
+        Content_Content.SetActive(popup.Equals(Icon_Content.Content));
+        Content_Character.SetActive(popup.Equals(Icon_Content.Character));
+        Content_Pet.SetActive(popup.Equals(Icon_Content.Pet));
+        Content_Weapon.SetActive(popup.Equals(Icon_Content.Weapon));
+        Content_Job.SetActive(popup.Equals(Icon_Content.Job));
+        Content_Relics.SetActive(popup.Equals(Icon_Content.Relics));
+        Content_Shop.SetActive(popup.Equals(Icon_Content.Shop));
 
     }
 
-    public void Change_Content_Popup(Character_Popup popup)
+    public void Change_Content_Content(Character_Contnet popup)
     {
-        popup_State.SetActive(popup.Equals(Character_Popup.State));
-        popup_Skill.SetActive(popup.Equals(Character_Popup.Skill));
-        popup_Upgrade.SetActive(popup.Equals(Character_Popup.Upgrade));
-        popup_Limit.SetActive(popup.Equals(Character_Popup.Limit));
+        popup_State.SetActive(popup.Equals(Character_Contnet.State));
+        popup_Skill.SetActive(popup.Equals(Character_Contnet.Skill));
+        popup_Upgrade.SetActive(popup.Equals(Character_Contnet.Upgrade));
+        popup_Limit.SetActive(popup.Equals(Character_Contnet.Limit));
+    }
+
+    public void Change_Weapon_Contnet(Weapon_Content popup)
+    {
+        popup_Weapon.SetActive(popup.Equals(Weapon_Content.Weapon));
+        popup_Shield.SetActive(popup.Equals(Weapon_Content.Shield));
+        popup_Accessory.SetActive(popup.Equals(Weapon_Content.Accessory));
+        popup_Costume.SetActive(popup.Equals(Weapon_Content.Costume));
+    }
+
+    public void Change_Weapon_Popup(Weapon_Popup popup)
+    {
+        content_Weapon_Info.SetActive(popup.Equals(Weapon_Popup.info));
+        content_Weapon_Upgrade.SetActive(popup.Equals(Weapon_Popup.upgrade));
+        content_Weapon_Mix.SetActive(popup.Equals(Weapon_Popup.mix));
+        content_Weapon_Roon.SetActive(popup.Equals(Weapon_Popup.roon));
+        content_Weapon_Decom.SetActive(popup.Equals(Weapon_Popup.decom));
+
     }
 
     #endregion
@@ -573,10 +681,7 @@ public class UiManager : MonoBehaviour
 
     #endregion
 
-    public void Dungeon()
-    {
-        PopupManager.Open_Popup(DungeonPopup);
-    }
+    #region Inventory
 
     public void Set_Inventory()
     {
@@ -586,7 +691,7 @@ public class UiManager : MonoBehaviour
         {
             Inventory_Panels[i].gameObject.SetActive(false);
 
-            
+
             if (i < BackEndDataManager.instance.Item_Data.item_Info.Count)
             {
                 Inventory_Panels[i].Set_Inventory_Item((Item_Type)BackEndDataManager.instance.Item_Data.item_Info[i].type,
@@ -598,4 +703,29 @@ public class UiManager : MonoBehaviour
         }
 
     }
+
+    #endregion
+
+    #region Content_Weapon
+
+    //popup_Weapon;
+    //popup_Shield;
+    //popup_Accessory;
+    //popup_Costume;
+
+    public void Set_Weapon_Popup()
+    {
+        foreach (var item in BackEndDataManager.instance.weapon_csv_data)
+        {
+
+            Weapon_Panel weapon_ = Instantiate(weapon_Panel, popup_Weapon.transform
+                .Find("scroll_weapon/Viewport/Content")).GetComponent<Weapon_Panel>();
+
+            weapon_.Set_Weapon_Item(item);
+
+        }
+
+    }
+
+    #endregion
 }
