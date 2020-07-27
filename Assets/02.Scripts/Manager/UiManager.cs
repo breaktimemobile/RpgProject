@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
@@ -142,7 +143,7 @@ public class UiManager : MonoBehaviour
 
     #region InvantoryPopup
 
-    private Inventory_Panel[] Inventory_Panels;
+    private List<Inventory_Panel> Inventory_Panels = new List<Inventory_Panel>();
     private Button btn_Invantory_Close;
 
     #endregion
@@ -169,6 +170,7 @@ public class UiManager : MonoBehaviour
     public GameObject txt_Damege;
     public GameObject txt_Critical_Damege;
     public GameObject weapon_Panel;
+    public GameObject Inventory_Panel;
 
     #endregion
 
@@ -313,7 +315,6 @@ public class UiManager : MonoBehaviour
 
         #region InvantoryPopup
 
-        Inventory_Panels = InventoryPopup.transform.GetComponentsInChildren<Inventory_Panel>();
         btn_Invantory_Close = InventoryPopup.transform.Find("btn_Invantory_Close").GetComponent<Button>();
 
 
@@ -441,8 +442,6 @@ public class UiManager : MonoBehaviour
 
     public string GetGoldString(BigInteger gold)
     {
-        Debug.Log(gold);
-
         if (gold >= 1000)
         {
             BigInteger total_Gold = gold;
@@ -508,22 +507,13 @@ public class UiManager : MonoBehaviour
         txt_NickName.text = BackEndDataManager.instance.Player_Data.str_nick;
     }
 
+
+
     public void Set_Txt_Exp()
     {
-        if (BackEndDataManager.instance.Player_Data.int_exp == 10)
-        {
-            BackEndDataManager.instance.Player_Data.int_exp = 0;
-            BackEndDataManager.instance.Player_Data.int_lv += 1;
 
-            slider_Exp.value = 0;
-            Set_Txt_Lv();
-
-        }
-        else
-        {
-            slider_Exp.value = BackEndDataManager.instance.Player_Data.int_exp / 10F;
-        }
-
+        slider_Exp.value = (float)Math.Exp(BigInteger.Log(BackEndDataManager.instance.Int_exp) - 
+            BigInteger.Log(BackEndDataManager.instance.Total_exp()));
 
     }
 
@@ -687,21 +677,26 @@ public class UiManager : MonoBehaviour
     {
         Debug.Log(BackEndDataManager.instance.Item_Data.item_Info.Count);
 
-        for (int i = 0; i < Inventory_Panels.Length; i++)
+        foreach (var item in BackEndDataManager.instance.Item_Data.item_Info)
         {
-            Inventory_Panels[i].gameObject.SetActive(false);
+            GameObject obj = Instantiate(Inventory_Panel, InventoryPopup.transform
+                .Find("scroll_Invantory/Viewport/Content"));
 
+            Inventory_Panel Inventory = obj.GetComponent<Inventory_Panel>();
+            Inventory_Panels.Add(Inventory);
 
-            if (i < BackEndDataManager.instance.Item_Data.item_Info.Count)
-            {
-                Inventory_Panels[i].Set_Inventory_Item((Item_Type)BackEndDataManager.instance.Item_Data.item_Info[i].type,
-        BigInteger.Parse(BackEndDataManager.instance.Item_Data.item_Info[i].str_val));
-
-                Inventory_Panels[i].gameObject.SetActive(true);
-            }
-
+            obj.GetComponent<Inventory_Panel>().Set_Inventory_Item((Item_Type)item.type,
+                BigInteger.Parse(item.str_val));
         }
 
+    }
+
+    public void Set_Inventory_Val(Item_Type i)
+    {
+       Item_Info item_Info = BackEndDataManager.instance.Item_Data.item_Info.Find(x => x.type.Equals((int)i));
+
+        Inventory_Panels.Find(x => x.Item_Type.Equals(i)).
+            Set_Inventory_Val(BigInteger.Parse(item_Info.str_val));
     }
 
     #endregion

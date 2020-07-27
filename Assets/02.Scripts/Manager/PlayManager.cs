@@ -93,18 +93,18 @@ public class PlayManager : MonoBehaviour
         {
             if (!BackEndDataManager.instance.Stage_Data.is_boss)
             {
-                sc_Monster.Set_Monster(Monster_Type.Boss, 500);
+                sc_Monster.Set_Monster(Monster_Type.Boss, BackEndDataManager.instance.Monster_Hp(true));
 
             }
             else
             {
-                sc_Monster.Set_Monster(Monster_Type.Basic, 300);
+                sc_Monster.Set_Monster(Monster_Type.Basic, BackEndDataManager.instance.Monster_Hp(false));
 
             }
         }
         else
         {
-            sc_Monster.Set_Monster(Monster_Type.Basic, 300);
+            sc_Monster.Set_Monster(Monster_Type.Basic, BackEndDataManager.instance.Monster_Hp(false));
 
         }
     }
@@ -135,7 +135,8 @@ public class PlayManager : MonoBehaviour
 
     IEnumerator Co_Boss_Timer()
     {
-        float timer = 20;
+        Debug.Log(BackEndDataManager.instance.monster_csv_data[0]["Boss_Time"]);
+        float timer = float.Parse(BackEndDataManager.instance.monster_csv_data[0]["Boss_Time"].ToString());
 
         UiManager.instance.slider_Boss_Timer.maxValue = timer;
         UiManager.instance.slider_Boss_Timer.value = timer;

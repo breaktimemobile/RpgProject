@@ -1,7 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Numerics;
 using UnityEngine;
 using UnityEngine.UI;
+using Vector3 = UnityEngine.Vector3;
 
 public enum Monster_Type
 {
@@ -25,8 +28,8 @@ public class Monster : MonoBehaviour
     Monster_State monster_State = Monster_State.None;
     public Monster_Type monster_Type = Monster_Type.Basic;
 
-    public float hp = 0;
-    public float total_Hp = 0;
+    public BigInteger hp = 0;
+    public BigInteger total_Hp = 0;
 
     private void Awake()
     {
@@ -36,7 +39,7 @@ public class Monster : MonoBehaviour
 
     }
 
-    public void Set_Monster(Monster_Type _Type, float m_hp)
+    public void Set_Monster(Monster_Type _Type, BigInteger m_hp)
     {
         monster_Type = _Type;
 
@@ -65,7 +68,7 @@ public class Monster : MonoBehaviour
         anim_Monster.Play("hit");
 
         ulong total_damege = 0;
-        int Rd = Random.Range(0, 100);
+        int Rd = UnityEngine.Random.Range(0, 100);
 
         if (Player_stat.int_Critical_Percent >= Rd)
         {
@@ -87,7 +90,11 @@ public class Monster : MonoBehaviour
 
         hp -= total_damege;
 
-        slider_Hp.value = hp / total_Hp;
+        Debug.Log(hp + "  " + total_Hp);
+        Debug.Log((float)Math.Exp(BigInteger.Log(hp) - BigInteger.Log(total_Hp)));
+
+        //slider_Hp.maxValue = total_Hp;
+        slider_Hp.value = (float)Math.Exp(BigInteger.Log(hp) - BigInteger.Log(total_Hp));
 
         if (hp <= 0)
         {
@@ -125,25 +132,48 @@ public class Monster : MonoBehaviour
     public void Add_Stage_Data()
     {
 
-        BackEndDataManager.instance.Player_Data.int_exp += 1;
-        BackEndDataManager.instance.Add_Coin(100);
-
         switch (monster_Type)
         {
             case Monster_Type.Basic:
+
                 BackEndDataManager.instance.Stage_Data.int_step += 1;
-                break;
-            case Monster_Type.Boss:
-                BackEndDataManager.instance.Stage_Data.int_stage += 1;
-                BackEndDataManager.instance.Stage_Data.int_step = 1;
+                BackEndDataManager.instance.Add_Exp(BackEndDataManager.instance.Monster_Exp(false));
+
+
+                for (int i = 0; i < 2; i++)
+                {
+                    BackEndDataManager.instance.Monster_Reward(
+                        (Item_Type)(int)BackEndDataManager.instance.monster_csv_data[0]["reward_" + i],
+                        BigInteger.Parse(BackEndDataManager.instance.monster_csv_data[0]["reward_val_" + i].ToString()),
+                        false);
+
+                   }
 
                 break;
+
+            case Monster_Type.Boss:
+
+                BackEndDataManager.instance.Stage_Data.int_stage += 1;
+                BackEndDataManager.instance.Stage_Data.int_step = 1;
+                BackEndDataManager.instance.Add_Exp(BackEndDataManager.instance.Monster_Exp(true));
+
+                for (int i = 0; i < 2; i++)
+                {
+                    BackEndDataManager.instance.Monster_Reward(
+                        (Item_Type)(int)BackEndDataManager.instance.monster_csv_data[0]["reward_" + i],
+                        BigInteger.Parse(BackEndDataManager.instance.monster_csv_data[0]["reward_val_" + i].ToString()),
+                        false);
+
+                }
+
+                break;
+
             default:
                 break;
         }
 
         UiManager.instance.Set_Txt_Stage();
-        UiManager.instance.Set_Txt_Exp();
+        UiManager.instance.Set_Txt_Coin();
 
         BackEndDataManager.instance.Save_Stage_Data();
 
