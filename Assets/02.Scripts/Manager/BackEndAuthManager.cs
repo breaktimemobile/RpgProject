@@ -61,7 +61,7 @@ public class BackEndAuthManager
                 }
 
                 user_id = auth.CurrentUser.UserId;
-                BackEndDataManager.instance.Get_First_Game();
+                BackEndDataManager.instance.Get_First_Data();
 
             });
 
@@ -78,7 +78,7 @@ public class BackEndAuthManager
                 + auth.CurrentUser.UserId + " \n ");
 
             user_id = auth.CurrentUser.UserId;
-            BackEndDataManager.instance.Get_First_Game();
+            BackEndDataManager.instance.Get_First_Data();
 
         }
 
@@ -108,7 +108,7 @@ public class BackEndAuthManager
 
                 user_id = auth.CurrentUser.UserId;
                 Debug.Log("익명 아이디 " + user_id);
-                BackEndDataManager.instance.Get_First_Game();
+                BackEndDataManager.instance.Get_First_Data();
             });
 
         }
@@ -124,7 +124,7 @@ public class BackEndAuthManager
                 + auth.CurrentUser.UserId + " \n ");
 
             user_id = auth.CurrentUser.UserId;
-            BackEndDataManager.instance.Get_First_Game();
+            BackEndDataManager.instance.Get_First_Data();
 
         }
 

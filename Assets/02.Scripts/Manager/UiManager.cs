@@ -68,6 +68,7 @@ public class UiManager : MonoBehaviour
     private GameObject popup_Upgrade;
     private GameObject popup_Limit;
 
+
     #endregion
 
     #region Content_Weapon
@@ -113,6 +114,17 @@ public class UiManager : MonoBehaviour
 
     #endregion
 
+    #region popup_Skill
+
+    List<Skill_Panel> skill_Panels = new List<Skill_Panel>();
+
+    private Button btn_Skill_Lv1;
+    private Button btn_Skill_Lv10;
+    private Button btn_Skill_Lv100;
+
+    private Text txt_Skill_Soul_Val;
+
+    #endregion
     #region obj_Icon
 
     public Button btn_Icon_Content;
@@ -171,6 +183,7 @@ public class UiManager : MonoBehaviour
     public GameObject txt_Critical_Damege;
     public GameObject weapon_Panel;
     public GameObject Inventory_Panel;
+    public GameObject Skill_Panel;
 
     #endregion
 
@@ -304,6 +317,16 @@ public class UiManager : MonoBehaviour
 
         #endregion
 
+        #region popup_Skill
+
+        btn_Skill_Lv1 = popup_Skill.transform.Find("btn_Skill_Lv1").GetComponent<Button>();
+        btn_Skill_Lv10 = popup_Skill.transform.Find("btn_Skill_Lv10").GetComponent<Button>();
+        btn_Skill_Lv100 = popup_Skill.transform.Find("btn_Skill_Lv100").GetComponent<Button>();
+
+        txt_Skill_Soul_Val = popup_Skill.transform.Find("Soul_stone/txt_Skill_Soul_Val").GetComponent<Text>();
+
+        #endregion
+
         #region NickNamePopup
 
         Input_NickName = NickNamePopup.transform.Find("Input_NickName").GetComponent<InputField>();
@@ -376,8 +399,10 @@ public class UiManager : MonoBehaviour
         btn_Icon_Shop.onClick.AddListener(() => Change_Icon_Content(Icon_Content.Shop));
 
         btn_Invantory_Close.onClick.AddListener(() => PopupManager.Close_Popup());
-
-
+        
+        btn_Skill_Lv1.onClick.AddListener(() => Set_Skill_Val(1));
+        btn_Skill_Lv10.onClick.AddListener(() => Set_Skill_Val(10));
+        btn_Skill_Lv100.onClick.AddListener(() => Set_Skill_Val(100));
 
         #region WeaponPopup
 
@@ -455,7 +480,7 @@ public class UiManager : MonoBehaviour
 
             float so = (int)gold / 1000.0f;
 
-            return so.ToString("n1") + (char)(64 + count);
+            return so.ToString("n2") + (char)(64 + count);
         }
 
         return gold.ToString("n0");
@@ -473,6 +498,7 @@ public class UiManager : MonoBehaviour
         Set_Txt_Dia();
         Set_Txt_Chapter();
         Set_Txt_Stage();
+        Set_Txt_Soul_Stone();
 
         Set_Character_Name();
         Set_Character_Lv();
@@ -482,6 +508,7 @@ public class UiManager : MonoBehaviour
 
         Set_Inventory();
         Set_Weapon_Popup();
+        Set_Skill_Popup();
     }
 
     #region PlayerUI 세팅
@@ -512,7 +539,7 @@ public class UiManager : MonoBehaviour
     public void Set_Txt_Exp()
     {
 
-        slider_Exp.value = (float)Math.Exp(BigInteger.Log(BackEndDataManager.instance.Int_exp) - 
+        slider_Exp.value = (float)Math.Exp(BigInteger.Log(BackEndDataManager.instance.Int_exp) -
             BigInteger.Log(BackEndDataManager.instance.Total_exp()));
 
     }
@@ -664,10 +691,51 @@ public class UiManager : MonoBehaviour
         txt_State_Atk_Val.text = GetGoldString(Player_stat.int_Atk);
         txt_State_Hp_Val.text = GetGoldString(Player_stat.int_Hp);
         txt_State_Atk_Speed_Val.text = Player_stat.int_Atk_Speed.ToString();
-        txt_State_Critical_Val.text = string.Format("{0}{1}", Player_stat.int_Critical, "%");
+        txt_State_Critical_Val.text = string.Format("{0}{1}", Player_stat.int_Critical_Damege, "%");
         txt_State_Critical_Percent_Val.text = string.Format("{0}{1}", Player_stat.int_Critical_Percent, "%");
         txt_State_Speed_Val.text = string.Format("{0}{1}", Player_stat.int_Atk_Speed, "%");
     }
+
+    #region Skill
+
+    public void Set_Skill_Popup()
+    {
+        Debug.Log(BackEndDataManager.instance.skill_csv_data.Count);
+
+        foreach (var item in BackEndDataManager.instance.skill_csv_data)
+        {
+
+            
+            Skill_Panel skill_ = Instantiate(Skill_Panel, popup_Skill.transform
+                .Find("scroll_skill/Viewport/Content")).GetComponent<Skill_Panel>();
+
+            skill_Panels.Add(skill_);
+
+            skill_.Set_Skill_Item(item);
+
+        }
+
+    }
+
+
+    public void Set_Txt_Soul_Stone()
+    {
+
+        BigInteger big = BigInteger.Parse(BackEndDataManager.instance.Get_Item(Item_Type.soul_stone));
+        txt_Skill_Soul_Val.text = GetGoldString(big);
+
+    }
+
+    public void Set_Skill_Val(int up_lv)
+    {
+        foreach (var item in skill_Panels)
+        {
+            item.Set_Upgrade(up_lv);
+        }
+        
+    }
+
+    #endregion
 
     #endregion
 
@@ -675,7 +743,6 @@ public class UiManager : MonoBehaviour
 
     public void Set_Inventory()
     {
-        Debug.Log(BackEndDataManager.instance.Item_Data.item_Info.Count);
 
         foreach (var item in BackEndDataManager.instance.Item_Data.item_Info)
         {
@@ -693,10 +760,26 @@ public class UiManager : MonoBehaviour
 
     public void Set_Inventory_Val(Item_Type i)
     {
-       Item_Info item_Info = BackEndDataManager.instance.Item_Data.item_Info.Find(x => x.type.Equals((int)i));
+        Item_Info item_Info = BackEndDataManager.instance.Item_Data.item_Info.Find(x => x.type.Equals((int)i));
 
-        Inventory_Panels.Find(x => x.Item_Type.Equals(i)).
-            Set_Inventory_Val(BigInteger.Parse(item_Info.str_val));
+
+        Inventory_Panel inven = Inventory_Panels.Find(x => x.Item_Type.Equals(i));
+
+        if (inven == null)
+        {
+            GameObject obj = Instantiate(Inventory_Panel, InventoryPopup.transform
+        .Find("scroll_Invantory/Viewport/Content"));
+            Inventory_Panel Inventory = obj.GetComponent<Inventory_Panel>();
+            Inventory_Panels.Add(Inventory);
+
+            obj.GetComponent<Inventory_Panel>().Set_Inventory_Item(i,
+                BigInteger.Parse(item_Info.str_val));
+        }
+        else
+        {
+            inven.Set_Inventory_Val(BigInteger.Parse(item_Info.str_val));
+
+        }
     }
 
     #endregion

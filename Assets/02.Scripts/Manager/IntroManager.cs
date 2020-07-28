@@ -205,6 +205,7 @@ public class IntroManager : MonoBehaviour
     {
         img_Return.gameObject.SetActive(true);
         txt_Loading.gameObject.SetActive(true);
+        PopupManager.objects.Clear();
 
         img_Return.transform.DORotate(new Vector3(0, 0, 360), 2.5f, RotateMode.FastBeyond360)
                      .SetEase(Ease.Linear)

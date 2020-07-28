@@ -9,7 +9,7 @@ public class Player_stat
     public static ulong int_Atk;
     public static ulong int_Hp;
     public static int int_Atk_Speed;
-    public static int int_Critical;
+    public static int int_Critical_Damege;
     public static int int_Critical_Percent;
     public static int int_Speed;
 
@@ -24,7 +24,7 @@ public class Player_stat
         int_Atk = 100 + (100 / 20) * ((ulong)BackEndDataManager.instance.Character_Data.int_character_Lv - 1);
         int_Hp = 2000 + (2000 / 20) * ((ulong)BackEndDataManager.instance.Character_Data.int_character_Lv - 1);
         int_Atk_Speed = 100;
-        int_Critical = 5;
+        int_Critical_Damege = 5;
         int_Critical_Percent = 1;
         int_Speed = 100;
         int_Top_Scroll_Speed = -int_Speed / 90.0f;

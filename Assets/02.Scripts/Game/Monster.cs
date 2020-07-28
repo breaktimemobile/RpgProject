@@ -73,7 +73,7 @@ public class Monster : MonoBehaviour
         if (Player_stat.int_Critical_Percent >= Rd)
         {
 
-            total_damege = damege + (damege * (ulong)Player_stat.int_Critical / 100);
+            total_damege = damege + (damege * (ulong)Player_stat.int_Critical_Damege / 100);
 
             Damege sc_damege = Instantiate(UiManager.instance.txt_Critical_Damege, UiManager.instance.obj_Stage.transform).GetComponent<Damege>();
             sc_damege.transform.position = this.transform.position;
@@ -89,9 +89,6 @@ public class Monster : MonoBehaviour
         }
 
         hp -= total_damege;
-
-        Debug.Log(hp + "  " + total_Hp);
-        Debug.Log((float)Math.Exp(BigInteger.Log(hp) - BigInteger.Log(total_Hp)));
 
         //slider_Hp.maxValue = total_Hp;
         slider_Hp.value = (float)Math.Exp(BigInteger.Log(hp) - BigInteger.Log(total_Hp));

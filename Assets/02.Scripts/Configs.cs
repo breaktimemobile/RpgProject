@@ -5,9 +5,9 @@ public enum Data_Type
     player_info,
     character_info,
     stage_info,
-    weapon_info
+    weapon_info,
+    skill_info
 }
-
 
 public enum Character_Lv
 {
@@ -67,8 +67,8 @@ public enum Item_Type
     upgread_stone,
     limit_stone,
     steel,
-    tree,
-    block_stone,
+    soul_stone,
+    black_stone,
     topaz,
     ruby,
     emerald,
@@ -127,4 +127,39 @@ public enum Item_Type
     weapon_accessory_stone_s,
     weapon_accessory_stone_ss
 
+}
+
+public enum Skill_Type
+{
+    skill_atk,
+    skill_atk_speed,
+    skill_speed,
+    add_atk_speed,
+    add_speed,
+    add_critical_damege,
+    add_critical_percent,
+    level_up_decrease,
+    quest_upgrede_decrease,
+    quest_reward_increase,
+    monster_coin_increase,
+    monster_steel_increase,
+    steel_increase,
+    quset_time_decrease,
+    treasure_monster_steel_increase,
+    add_level,
+    add_atk,
+    boss_coin_increase,
+    treasure_monster_coin_increase,
+    under_boss_percent_increase,
+    treasure_monster_percent_increase,
+    critical_shield,
+    buy_reward_increase,
+    monster_coin_10_percent
+
+}
+
+public enum Integer_
+{
+    integer,
+    percent
 }

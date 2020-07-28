@@ -9,6 +9,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Numerics;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [DynamoDBTable("player_info")]
 public class Player_Data
@@ -70,6 +71,16 @@ public class Weapon_Data
 
 }
 
+[DynamoDBTable("skill_info")]
+public class Skill_Data
+{
+    [DynamoDBHashKey] // Hash key.
+    public string id { get; set; }
+    [DynamoDBProperty("skill_info")]
+    public List<skill_info> skill_Info { get; set; }
+
+}
+
 public class Item_Info
 {
     public int type { get; set; }
@@ -84,6 +95,13 @@ public class Weapon_info
     public int int_limit { get; set; }
 }
 
+public class skill_info
+{
+    public int int_num { get; set; }
+    public int int_lv { get; set; }
+
+}
+
 public class BackEndDataManager : MonoBehaviour
 {
     public static BackEndDataManager instance = null;
@@ -93,6 +111,7 @@ public class BackEndDataManager : MonoBehaviour
     Stage_Data stage_Data = new Stage_Data();
     Item_Data item_Data = new Item_Data();
     Weapon_Data weapon_Data = new Weapon_Data();
+    Skill_Data skill_Data = new Skill_Data();
 
     DynamoDBContext context;
     AmazonDynamoDBClient DBclient;
@@ -103,6 +122,7 @@ public class BackEndDataManager : MonoBehaviour
     public Stage_Data Stage_Data { get => stage_Data; }
     public Item_Data Item_Data { get => item_Data; }
     public Weapon_Data Weapon_Data { get => weapon_Data; }
+    public Skill_Data Skill_Data { get => skill_Data; }
 
     public BigInteger Int_coin { get => int_coin; }
     public BigInteger Int_exp { get => int_exp; }
@@ -110,8 +130,10 @@ public class BackEndDataManager : MonoBehaviour
     public List<Dictionary<string, object>> dungeon_csv_data;         //던전 정보
     public List<Dictionary<string, object>> weapon_csv_data;         //던전 정보
     public List<Dictionary<string, object>> monster_csv_data;         //던전 정보
+    public List<Dictionary<string, object>> skill_Explan_csv_data;         //던전 정보
+    public List<Dictionary<string, object>> skill_csv_data;         //던전 정보
 
-    private bool[] Check_Data = new bool[] { false, false, false, false, false };
+    private List<bool> Check_Data = new List<bool>();
 
     private BigInteger int_coin = 0;
     private BigInteger int_exp = 0;
@@ -133,6 +155,13 @@ public class BackEndDataManager : MonoBehaviour
         credentials = new CognitoAWSCredentials("ap-northeast-2:f497c006-2a2e-4336-b2da-7d8bb5c45f24", RegionEndpoint.APNortheast2);
         DBclient = new AmazonDynamoDBClient(credentials, RegionEndpoint.APNortheast2);
         context = new DynamoDBContext(DBclient);
+        
+
+        for (int i = 0; i < Enum.GetValues(typeof(Data_Type)).Length; i++)
+        {
+            Check_Data.Add(false);
+
+        }
 
         Get_Csv_Data();
     }
@@ -146,141 +175,14 @@ public class BackEndDataManager : MonoBehaviour
         dungeon_csv_data = CSVReader.Read("dungeon");
         weapon_csv_data = CSVReader.Read("weapon");
         monster_csv_data = CSVReader.Read("monster");
+        skill_Explan_csv_data = CSVReader.Read("skill_explan");
+        skill_csv_data = CSVReader.Read("skill");
+
+
         Debug.Log("monster_csv_data " + monster_csv_data.Count);
         Debug.Log("monster_csv_data " + monster_csv_data[0]["reward_val_0"]);
 
 
-    }
-
-    private void CreateData() //캐릭터 정보를 DB에 올리기
-    {
-
-
-        player_Data = new Player_Data
-        {
-            id = BackEndAuthManager.Get_UserId(),
-            int_lv = 1,
-            int_exp = "0",
-            str_nick = "null"
-
-        };
-
-        character_Data = new Character_Data
-        {
-            id = BackEndAuthManager.Get_UserId(),
-            int_character_Lv = 1,
-            Int_character_Num = 0
-        };
-
-        stage_Data = new Stage_Data
-        {
-            id = BackEndAuthManager.Get_UserId(),
-            int_chapter = 1,
-            int_stage = 1,
-            int_step = 1,
-            is_boss = false
-
-        };
-
-        item_Data = new Item_Data
-        {
-            id = BackEndAuthManager.Get_UserId(),
-            item_Info = new List<Item_Info>
-            {
-                new Item_Info
-                {
-                    type = 1,
-                    str_val = "0"
-                }
-            }
-
-        };
-
-        weapon_Data = new Weapon_Data
-        {
-            id = BackEndAuthManager.Get_UserId(),
-            weapon_Info = new List<Weapon_info>
-            {
-                new Weapon_info
-                {
-                    int_num = 0,
-                    int_lv =1,
-                    int_upgread =0,
-                    int_limit = 0
-                }
-            }
-
-        };
-
-        context.SaveAsync(player_Data, (result) =>
-        {
-            if (result.Exception == null)
-            {
-                Debug.Log("Player_Data Save");
-
-                Sucess_Data(Data_Type.player_info);
-
-
-            }
-            else
-                Debug.Log(result.Exception);
-        });
-
-        context.SaveAsync(character_Data, (result) =>
-        {
-            if (result.Exception == null)
-            {
-                Debug.Log("character_Data Save");
-
-                Sucess_Data(Data_Type.character_info);
-
-
-            }
-            else
-                Debug.Log(result.Exception);
-        });
-
-        context.SaveAsync(Stage_Data, (result) =>
-        {
-            if (result.Exception == null)
-            {
-                Debug.Log("Stage_Data Save");
-
-                Sucess_Data(Data_Type.stage_info);
-
-
-            }
-            else
-                Debug.Log(result.Exception);
-        });
-
-        context.SaveAsync(item_Data, (result) =>
-        {
-            if (result.Exception == null)
-            {
-                Debug.Log("item_Data Save");
-
-                Sucess_Data(Data_Type.item_info);
-
-
-            }
-            else
-                Debug.Log(result.Exception);
-        });
-
-        context.SaveAsync(weapon_Data, (result) =>
-        {
-            if (result.Exception == null)
-            {
-                Debug.Log("weapon_Data Save");
-
-                Sucess_Data(Data_Type.weapon_info);
-
-
-            }
-            else
-                Debug.Log(result.Exception);
-        });
     }
 
     public void Set_NickName(string NickName)
@@ -300,7 +202,6 @@ public class BackEndDataManager : MonoBehaviour
 
             foreach (var item in result.Response.Items)
             {
-                List<string> list = new List<string>();
                 if (item.TryGetValue("str_nick", out test))
                 {
                     if (NickName.Equals(test.S))
@@ -343,43 +244,20 @@ public class BackEndDataManager : MonoBehaviour
 
 
     }
-
-    public void Get_First_Game()
-    {
-        Debug.Log("이거 시작 아닌가????? ");
-
-        context.LoadAsync(BackEndAuthManager.Get_UserId(), (AmazonDynamoDBResult<Player_Data> result) =>
-        {
-            Debug.Log("왜안나오니??");
-
-            if (result.Result == null)
-            {
-                Debug.Log("처음시작");
-                CreateData();
-            }
-            else
-            {
-                Debug.Log("데이터가 있음");
-                //데이터 불러오기
-                Get_First_Data();
-            }
-
-        }, null);
-
-    }
-
+    
     public void Sucess_Data(Data_Type type)
     {
-        Debug.Log(type.ToString());
-        Check_Data[(int)type] = true;
-        Check_All_Data();
-
+        if (SceneManager.GetActiveScene().name.Equals("Intro"))
+        {
+            Check_Data[(int)type] = true;
+            Check_All_Data();
+        }
     }
 
     public void Check_All_Data()
     {
 
-        for (int i = 0; i < Check_Data.Length; i++)
+        for (int i = 0; i < Check_Data.Count; i++)
         {
             if (!Check_Data[i])
                 return;
@@ -390,18 +268,256 @@ public class BackEndDataManager : MonoBehaviour
 
     public void Get_First_Data()
     {
-        Get_Player_Data();
-        Get_Character_Data();
-        Get_Stage_Data();
-        Get_Item_Data();
-        Get_Weapon_Data();
-
+        Check_Player_Data();
+        Check_Character_Data();
+        Check_Stage_Data();
+        Check_Item_Data();
+        Check_Weapon_Data();
+        Check_Skill_Data();
     }
+
+    #region Check_Data
+
+    public void Check_Player_Data()
+    {
+        ScanRequest request = new ScanRequest()
+        {
+            TableName = "player_info"
+        };
+
+        DBclient.ScanAsync(request, (result) =>
+        {
+
+            Dictionary<string, AttributeValue> t =
+              result.Response.Items.Find(x => x["id"].S.Equals(BackEndAuthManager.Get_UserId()));
+
+            Debug.Log(t == null ? "player 없음" : "player 있음");
+
+            if (t == null)
+            {
+                player_Data = new Player_Data
+                {
+                    id = BackEndAuthManager.Get_UserId(),
+                    int_lv = 1,
+                    int_exp = "0",
+                    str_nick = "null"
+
+                };
+
+                Save_Player_Data();
+            }
+            else
+            {
+                Get_Player_Data();
+            }
+
+        });
+    }
+
+    public void Check_Character_Data()
+    {
+        ScanRequest request = new ScanRequest()
+        {
+            TableName = "character_info"
+        };
+
+        DBclient.ScanAsync(request, (result) =>
+        {
+            
+            Dictionary<string, AttributeValue> t =
+              result.Response.Items.Find(x => x["id"].S.Equals(BackEndAuthManager.Get_UserId()));
+
+            Debug.Log(t == null ? "character_info 없음" : "character_info 있음");
+
+            if (t == null)
+            {
+
+                character_Data = new Character_Data
+                {
+                    id = BackEndAuthManager.Get_UserId(),
+                    int_character_Lv = 1,
+                    Int_character_Num = 0
+                };
+
+                Save_Character_Data();
+            }
+            else
+            {
+                Get_Character_Data();
+            }
+
+        });
+    }
+
+    public void Check_Stage_Data()
+    {
+        ScanRequest request = new ScanRequest()
+        {
+            TableName = "stage_info"
+        };
+
+        DBclient.ScanAsync(request, (result) =>
+        {
+
+            Dictionary<string, AttributeValue> t =
+              result.Response.Items.Find(x => x["id"].S.Equals(BackEndAuthManager.Get_UserId()));
+
+            Debug.Log(t == null ? "stage 없음" : "stage 있음");
+
+            if (t == null)
+            {
+                stage_Data = new Stage_Data
+                {
+                    id = BackEndAuthManager.Get_UserId(),
+                    int_chapter = 1,
+                    int_stage = 1,
+                    int_step = 1,
+                    is_boss = false
+
+                };
+
+                Save_Stage_Data();
+            }
+            else
+            {
+                Get_Stage_Data();
+            }
+
+        });
+    }
+
+    public void Check_Item_Data()
+    {
+        ScanRequest request = new ScanRequest()
+        {
+            TableName = "item_info"
+        };
+
+        DBclient.ScanAsync(request, (result) =>
+        {
+
+            Dictionary<string, AttributeValue> t =
+              result.Response.Items.Find(x => x["id"].S.Equals(BackEndAuthManager.Get_UserId()));
+
+            Debug.Log(t == null ? "item 없음" : "item 있음");
+
+            if (t == null)
+            {
+                item_Data = new Item_Data
+                {
+                    id = BackEndAuthManager.Get_UserId(),
+                    item_Info = new List<Item_Info>
+                    {
+                        new Item_Info
+                        {
+                            type = 1,
+                            str_val = "100"
+                        }
+                    }
+
+                };
+
+                Save_Item_Data();
+            }
+            else
+            {
+                Get_Item_Data();
+            }
+
+        });
+    }
+
+    public void Check_Weapon_Data()
+    {
+        ScanRequest request = new ScanRequest()
+        {
+            TableName = "weapon_info"
+        };
+
+        DBclient.ScanAsync(request, (result) =>
+        {
+
+            Dictionary<string, AttributeValue> t =
+              result.Response.Items.Find(x => x["id"].S.Equals(BackEndAuthManager.Get_UserId()));
+
+            Debug.Log(t == null ? "weapon 없음" : "weapon 있음");
+
+            if (t == null)
+            {
+                weapon_Data = new Weapon_Data
+                {
+                    id = BackEndAuthManager.Get_UserId(),
+                    weapon_Info = new List<Weapon_info>
+                    {
+                        new Weapon_info
+                        {
+                            int_num = 0,
+                            int_lv =1,
+                            int_upgread =0,
+                            int_limit = 0
+                        }
+                    }
+
+                };
+
+                Save_Weapon_Data();
+            }
+            else
+            {
+                Get_Weapon_Data();
+            }
+
+        });
+    }
+
+    public void Check_Skill_Data()
+    {
+        ScanRequest request = new ScanRequest()
+        {
+            TableName = "skill_info"
+        };
+
+        DBclient.ScanAsync(request, (result) =>
+        {
+
+            Dictionary<string, AttributeValue> t =
+              result.Response.Items.Find(x => x["id"].S.Equals(BackEndAuthManager.Get_UserId()));
+
+            Debug.Log(t == null ? "skill 없음" : "skill 있음");
+
+            if (t == null)
+            {
+                skill_Data = new Skill_Data
+                {
+                    id = BackEndAuthManager.Get_UserId(),
+                    skill_Info = new List<skill_info>
+                    {
+                        new skill_info
+                        {
+                            int_num = 0,
+                            int_lv =0
+
+                        }
+                    }
+                };
+
+                Save_Skill_Data();
+            }
+            else
+            {
+                Get_Skill_Data();
+            }
+
+        });
+    }
+
+    #endregion
 
     #region Get_Data
 
     public void Get_Player_Data() //DB에서 캐릭터 정보 받기
     {
+
         Debug.Log("Get_Player_Data");
 
         context.LoadAsync(BackEndAuthManager.Get_UserId(), (AmazonDynamoDBResult<Player_Data> result) =>
@@ -481,7 +597,7 @@ public class BackEndDataManager : MonoBehaviour
 
             Item_Info item_Info = item_Data.item_Info.Find(x => x.type.Equals((int)Item_Type.coin));
             int_coin = BigInteger.Parse(item_Info.str_val);
-            
+
             Sucess_Data(Data_Type.item_info);
 
 
@@ -494,7 +610,7 @@ public class BackEndDataManager : MonoBehaviour
 
         context.LoadAsync(BackEndAuthManager.Get_UserId(), (AmazonDynamoDBResult<Weapon_Data> result) =>
         {
-  
+
             // id가 abcd인 캐릭터 정보를 DB에서 받아옴
             if (result.Exception != null)
             {
@@ -505,6 +621,29 @@ public class BackEndDataManager : MonoBehaviour
             weapon_Data = result.Result;
 
             Sucess_Data(Data_Type.weapon_info);
+
+
+        }, null);
+    }
+
+    public void Get_Skill_Data() //DB에서 캐릭터 정보 받기
+    {
+      
+
+        Debug.Log("Get_Skill_Data");
+
+        context.LoadAsync(BackEndAuthManager.Get_UserId(), (AmazonDynamoDBResult<Skill_Data> result) =>
+        {
+            // id가 abcd인 캐릭터 정보를 DB에서 받아옴
+            if (result.Exception != null)
+            {
+                Debug.Log(result.Exception);
+                return;
+            }
+
+            skill_Data = result.Result;
+
+            Sucess_Data(Data_Type.skill_info);
 
 
         }, null);
@@ -521,6 +660,7 @@ public class BackEndDataManager : MonoBehaviour
             if (result.Exception == null)
             {
                 Debug.Log(" player_Data Save");
+                Sucess_Data(Data_Type.player_info);
             }
             else
                 Debug.Log(result.Exception);
@@ -534,6 +674,8 @@ public class BackEndDataManager : MonoBehaviour
             if (result.Exception == null)
             {
                 Debug.Log(" character Save");
+                Sucess_Data(Data_Type.character_info);
+
             }
             else
                 Debug.Log(result.Exception);
@@ -547,6 +689,8 @@ public class BackEndDataManager : MonoBehaviour
             if (result.Exception == null)
             {
                 Debug.Log(" stage_Data Save");
+                Sucess_Data(Data_Type.stage_info);
+
             }
             else
                 Debug.Log(result.Exception);
@@ -560,6 +704,8 @@ public class BackEndDataManager : MonoBehaviour
             if (result.Exception == null)
             {
                 Debug.Log(" item_Data Save");
+                Sucess_Data(Data_Type.item_info);
+
             }
             else
                 Debug.Log(result.Exception);
@@ -573,6 +719,23 @@ public class BackEndDataManager : MonoBehaviour
             if (result.Exception == null)
             {
                 Debug.Log(" item_Data Save");
+                Sucess_Data(Data_Type.weapon_info);
+
+            }
+            else
+                Debug.Log(result.Exception);
+        });
+    }
+
+    public void Save_Skill_Data() //DB에서 캐릭터 정보 받기
+    {
+        context.SaveAsync(skill_Data, (result) =>
+        {
+            if (result.Exception == null)
+            {
+                Debug.Log(" skill_Data Save");
+                Sucess_Data(Data_Type.skill_info);
+
             }
             else
                 Debug.Log(result.Exception);
@@ -581,7 +744,7 @@ public class BackEndDataManager : MonoBehaviour
 
     #endregion
 
-   
+
     public void Minus_Coin(ulong coin)
     {
         int_coin -= coin;
@@ -597,7 +760,7 @@ public class BackEndDataManager : MonoBehaviour
         int_exp += exp;
         BigInteger Total_ = Total_exp();
 
-        Debug.Log(int_exp +  "  " + Total_  );
+        Debug.Log(int_exp + "  " + Total_);
 
         if (int_exp >= Total_)
         {
@@ -667,14 +830,14 @@ public class BackEndDataManager : MonoBehaviour
         return total_exp;
     }
 
-    public void Monster_Reward(Item_Type i,BigInteger val,bool boss)
+    public void Monster_Reward(Item_Type i, BigInteger val, bool boss)
     {
 
-        Debug.Log(i +"  " + val);
+        Debug.Log(i + "  " + val);
 
-        BigInteger a =  BigInteger.Parse(Get_Item(i)) + val * (boss ? 2 : 1);
+        BigInteger a = BigInteger.Parse(Get_Item(i)) + val * (boss ? 2 : 1);
         Set_Item(i, a);
-        
+
     }
 
     public string Get_Item(Item_Type type)
@@ -730,9 +893,9 @@ public class BackEndDataManager : MonoBehaviour
                 UiManager.instance.Set_Txt_Steel();
 
                 break;
-            case Item_Type.tree:
+            case Item_Type.soul_stone:
                 break;
-            case Item_Type.block_stone:
+            case Item_Type.black_stone:
                 break;
             case Item_Type.topaz:
                 break;
