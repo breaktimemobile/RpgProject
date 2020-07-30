@@ -1,4 +1,7 @@
 ﻿
+using System.Collections.Generic;
+using UnityEngine;
+
 public enum Data_Type
 {
     item_info,
@@ -11,9 +14,9 @@ public enum Data_Type
 
 public enum Character_Lv
 {
-    lv_1,
-    lv_10,
-    lv_100
+    lv_1 = 1,
+    lv_10 = 10,
+    lv_100 = 100
 }
 
 public enum Intro_State
@@ -158,8 +161,59 @@ public enum Skill_Type
 
 }
 
-public enum Integer_
+public enum Calculate
 {
-    integer,
-    percent
+    plus,
+    mius
+}
+
+
+public class Skill_s
+{
+    public static List<Skill> skills = new List<Skill>();
+
+    public static Skill Get_Skill(Skill_Type skill_num)
+    {
+        Skill skill = skills.Find(x => x.stat_type.Equals((int)skill_num));
+
+        return skill;
+    }
+
+    public static float Get_Skill_Val(Skill_Type skill_num)
+    {
+
+        Skill skill = skills.Find(x => x.stat_type.Equals((int)skill_num));
+
+        return skill == null ? 0 : skill.f_total;
+    }
+
+    public static void Set_Skill_Val(int skill_num, int lv)
+    {
+        Skill skill = skills.Find(x => x.num.Equals(skill_num));
+
+        int per = skill.type.Equals(0) ? 100 : 1;
+
+        skill.f_total = (skill.base_stat * per) + (skill.stat_add * per) * (lv - 1);
+        
+    }
+
+}
+
+public class Skill
+{
+    public int num;
+    public int type;
+    public string name;
+    public int start_lv;
+    public int end_lv;
+    public int price_type;
+    public int price_val;
+    public float price_percent;
+    public int stat_type;
+    public float base_stat;
+    public float stat_add;
+    public int skill_time;
+    public int cool_time;
+    public float f_total;
+
 }

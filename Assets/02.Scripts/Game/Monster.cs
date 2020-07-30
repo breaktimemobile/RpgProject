@@ -63,11 +63,11 @@ public class Monster : MonoBehaviour
         }
     }
 
-    public void Hit(ulong damege)
+    public void Hit(BigInteger damege)
     {
         anim_Monster.Play("hit");
 
-        ulong total_damege = 0;
+        BigInteger total_damege = 0;
         int Rd = UnityEngine.Random.Range(0, 100);
 
         if (Player_stat.int_Critical_Percent >= Rd)

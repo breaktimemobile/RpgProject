@@ -18,8 +18,6 @@ public class BackEndAuthManager
 
     public static string Get_UserId()
     {
-        Debug.Log("Get_UserId" + auth.CurrentUser.UserId);
-
         return auth.CurrentUser.UserId;
     }
 

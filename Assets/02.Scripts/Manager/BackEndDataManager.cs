@@ -124,7 +124,6 @@ public class BackEndDataManager : MonoBehaviour
     public Weapon_Data Weapon_Data { get => weapon_Data; }
     public Skill_Data Skill_Data { get => skill_Data; }
 
-    public BigInteger Int_coin { get => int_coin; }
     public BigInteger Int_exp { get => int_exp; }
 
     public List<Dictionary<string, object>> dungeon_csv_data;         //던전 정보
@@ -135,7 +134,6 @@ public class BackEndDataManager : MonoBehaviour
 
     private List<bool> Check_Data = new List<bool>();
 
-    private BigInteger int_coin = 0;
     private BigInteger int_exp = 0;
 
     private void Awake()
@@ -182,6 +180,30 @@ public class BackEndDataManager : MonoBehaviour
         Debug.Log("monster_csv_data " + monster_csv_data.Count);
         Debug.Log("monster_csv_data " + monster_csv_data[0]["reward_val_0"]);
 
+        foreach (var data in skill_csv_data)
+        {
+            Skill skill = new Skill
+            {
+                num = int.Parse(data["num"].ToString()),
+                type = int.Parse(data["type"].ToString()),
+                name = data["name"].ToString(),
+                start_lv = int.Parse(data["start_lv"].ToString()),
+                end_lv = int.Parse(data["end_lv"].ToString()),
+                price_type = int.Parse(data["price_type"].ToString()),
+                price_val = int.Parse(data["price_val"].ToString()),
+                price_percent = float.Parse(data["price_percent"].ToString()),
+                stat_type = int.Parse(data["stat_type"].ToString()),
+                base_stat = float.Parse(data["base_stat"].ToString()),
+                stat_add = float.Parse(data["stat_add"].ToString()),
+                skill_time = int.Parse(data["skill_time"].ToString()),
+                cool_time = int.Parse(data["cool_time"].ToString()),
+                f_total = 0
+            };
+
+            Skill_s.skills.Add(skill);
+        }
+
+       
 
     }
 
@@ -595,9 +617,6 @@ public class BackEndDataManager : MonoBehaviour
 
             item_Data = result.Result;
 
-            Item_Info item_Info = item_Data.item_Info.Find(x => x.type.Equals((int)Item_Type.coin));
-            int_coin = BigInteger.Parse(item_Info.str_val);
-
             Sucess_Data(Data_Type.item_info);
 
 
@@ -643,6 +662,11 @@ public class BackEndDataManager : MonoBehaviour
 
             skill_Data = result.Result;
 
+            foreach (var item in skill_Data.skill_Info)
+            {
+                Skill_s.Set_Skill_Val(item.int_num,item.int_lv);
+            }
+            
             Sucess_Data(Data_Type.skill_info);
 
 
@@ -745,13 +769,10 @@ public class BackEndDataManager : MonoBehaviour
     #endregion
 
 
-    public void Minus_Coin(ulong coin)
+    public void Minus_Item(Item_Type item_Type, BigInteger coin)
     {
-        int_coin -= coin;
 
-        Set_Item(Item_Type.coin, int_coin);
-        UiManager.instance.Set_Txt_Coin();
-        UiManager.instance.Set_Buy_Lv();
+        Set_Item(item_Type, coin, Calculate.mius);
 
     }
 
@@ -812,7 +833,7 @@ public class BackEndDataManager : MonoBehaviour
         {
             total_hp = total_hp + BigInteger.Divide(total_hp, 2);
         }
-
+        Debug.Log(total_hp);
         return total_hp;
     }
 
@@ -835,23 +856,23 @@ public class BackEndDataManager : MonoBehaviour
 
         Debug.Log(i + "  " + val);
 
-        BigInteger a = BigInteger.Parse(Get_Item(i)) + val * (boss ? 2 : 1);
-        Set_Item(i, a);
+        BigInteger a = (val * (boss ? 2 : 1));
+        Set_Item(i, a,Calculate.plus);
 
     }
 
-    public string Get_Item(Item_Type type)
+    public BigInteger Get_Item(Item_Type type)
     {
         Item_Info item_Info = item_Data.item_Info.Find(x => x.type.Equals((int)type));
 
         if (item_Info == null)
-            return "0";
+            return 0;
         else
-            return item_Info.str_val;
+            return BigInteger.Parse(item_Info.str_val);
 
     }
 
-    public void Set_Item(Item_Type type, BigInteger val)
+    public void Set_Item(Item_Type type, BigInteger val , Calculate calculate)
     {
         Item_Info item_Info = item_Data.item_Info.Find(x => x.type.Equals((int)type));
 
@@ -868,7 +889,21 @@ public class BackEndDataManager : MonoBehaviour
         }
         else
         {
-            item_Info.str_val = val.ToString();
+            BigInteger total = Get_Item(type);
+            Debug.Log(val);
+            switch (calculate)
+            {
+                case Calculate.plus:
+                    total += val;
+                    break;
+                case Calculate.mius:
+                    total -= val;
+                    break;
+                default:
+                    break;
+            }
+
+            item_Info.str_val = total.ToString();
 
         }
 
@@ -877,10 +912,9 @@ public class BackEndDataManager : MonoBehaviour
         switch (type)
         {
             case Item_Type.crystal:
-                UiManager.instance.Set_Txt_Dia();
+                UiManager.instance.Set_Txt_Crystal();
                 break;
             case Item_Type.coin:
-                int_coin = val;
                 UiManager.instance.Set_Txt_Coin();
                 UiManager.instance.Set_Buy_Lv();
 
@@ -894,6 +928,7 @@ public class BackEndDataManager : MonoBehaviour
 
                 break;
             case Item_Type.soul_stone:
+                UiManager.instance.Set_Txt_Soul_Stone();
                 break;
             case Item_Type.black_stone:
                 break;
@@ -1020,27 +1055,11 @@ public class BackEndDataManager : MonoBehaviour
 
     public void Buy_Character_Lv(Character_Lv character_Lv)
     {
-        ulong lv = (ulong)Character_Data.int_character_Lv;
-        ulong lv_1 = 500 + (500 / 20) * (lv - 1);
+        BigInteger lv = Character_Data.int_character_Lv;
+        BigInteger lv_1 = 500 + (500 / 20) * (lv - 1);
 
-        switch (character_Lv)
-        {
-            case Character_Lv.lv_1:
-                Minus_Coin(lv_1);
-                Player_stat.Add_Lv(1);
-                break;
-            case Character_Lv.lv_10:
-                Minus_Coin(lv_1 * 10);
-                Player_stat.Add_Lv(10);
+        Minus_Item(Item_Type.coin, lv_1);
+        Player_stat.Add_Lv((int)character_Lv);
 
-                break;
-            case Character_Lv.lv_100:
-                Minus_Coin(lv_1 * 100);
-                Player_stat.Add_Lv(100);
-
-                break;
-            default:
-                break;
-        }
     }
 }

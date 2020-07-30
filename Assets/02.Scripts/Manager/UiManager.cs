@@ -50,9 +50,14 @@ public class UiManager : MonoBehaviour
     public Slider slider_Boss_Timer;
     public Text txt_Boss_Timer;
 
-    public Button btn_Boss;
-    public Button btn_Boss_Exit;
-    public Button btn_Inventory;
+    private Button btn_Boss;
+    private Button btn_Boss_Exit;
+    private Button btn_Inventory;
+
+
+    private Image img_Skill_0;
+    private Image img_Skill_0_bg;
+    private Text txt_Skill_0;
 
     #endregion
 
@@ -125,6 +130,29 @@ public class UiManager : MonoBehaviour
     private Text txt_Skill_Soul_Val;
 
     #endregion
+
+    #region popup_Upgrade
+
+    private Text txt_Upgrade_Soul_Stone_Val;
+
+    private Text txt_Upgrade_title;
+    private Text txt_Upgrade_Lv;
+    private Text txt_Upgrade_Next_Lv;
+    private Text txt_Upgrade_Percent;
+    private Text txt_Upgrade_Next_Percent;
+    private Text txt_Upgrade_Atk;
+    private Text txt_Upgrade_Next_Atk;
+
+    private Button btn_Upgrade_1;
+    private Button btn_Upgrade_10;
+    private Button btn_Upgrade_100;
+
+    private Text txt_Upgrade_1_Val;
+    private Text txt_Upgrade_10_Val;
+    private Text txt_Upgrade_100_Val;
+
+    #endregion
+
     #region obj_Icon
 
     public Button btn_Icon_Content;
@@ -187,6 +215,8 @@ public class UiManager : MonoBehaviour
 
     #endregion
 
+    public Character_Lv skill_lv = Character_Lv.lv_1;
+
     private void Awake()
     {
         instance = this;
@@ -236,6 +266,10 @@ public class UiManager : MonoBehaviour
         btn_Boss = obj_Stage.transform.Find("Stage_Content/btn_Boss").GetComponent<Button>();
         btn_Boss_Exit = obj_Stage.transform.Find("Stage_Content/btn_Boss_Exit").GetComponent<Button>();
         btn_Inventory = obj_Stage.transform.Find("Stage_Content/btn_Inventory").GetComponent<Button>();
+
+        img_Skill_0 = obj_Stage.transform.Find("Stage_Content/img_Skill_0").GetComponent<Image>();
+        img_Skill_0_bg = img_Skill_0.transform.Find("img_Skill_0_bg").GetComponent<Image>();
+        txt_Skill_0 = img_Skill_0.transform.Find("txt_Skill_0").GetComponent<Text>();
 
         #endregion
 
@@ -327,6 +361,27 @@ public class UiManager : MonoBehaviour
 
         #endregion
 
+        #region popup_Upgrade
+
+        txt_Upgrade_Soul_Stone_Val = popup_Upgrade.transform.Find("Soul_Stone/txt_Upgrade_Soul_Stone_Val").GetComponent<Text>();
+
+        txt_Upgrade_title = popup_Upgrade.transform.Find("Upgrade_State/txt_Upgrade_title").GetComponent<Text>();
+        txt_Upgrade_Lv = popup_Upgrade.transform.Find("Upgrade_State/txt_Upgrade_Lv").GetComponent<Text>();
+        txt_Upgrade_Next_Lv = popup_Upgrade.transform.Find("Upgrade_State/txt_Upgrade_Next_Lv").GetComponent<Text>();
+        txt_Upgrade_Percent = popup_Upgrade.transform.Find("Upgrade_State/txt_Upgrade_Percent").GetComponent<Text>();
+        txt_Upgrade_Next_Percent = popup_Upgrade.transform.Find("Upgrade_State/txt_Upgrade_Next_Percent").GetComponent<Text>();
+        txt_Upgrade_Atk = popup_Upgrade.transform.Find("Upgrade_State/txt_Upgrade_Atk").GetComponent<Text>();
+        txt_Upgrade_Next_Atk = popup_Upgrade.transform.Find("Upgrade_State/txt_Upgrade_Next_Atk").GetComponent<Text>();
+
+        btn_Upgrade_1 = popup_Upgrade.transform.Find("Upgrade_Btn/btn_Upgrade_1").GetComponent<Button>();
+        btn_Upgrade_10 = popup_Upgrade.transform.Find("Upgrade_Btn/btn_Upgrade_10").GetComponent<Button>();
+        btn_Upgrade_100 = popup_Upgrade.transform.Find("Upgrade_Btn/btn_Upgrade_100").GetComponent<Button>();
+
+        txt_Upgrade_1_Val = btn_Upgrade_1.transform.Find("txt_Upgrade_1_Val").GetComponent<Text>();
+        txt_Upgrade_10_Val = btn_Upgrade_10.transform.Find("txt_Upgrade_10_Val").GetComponent<Text>();
+        txt_Upgrade_100_Val = btn_Upgrade_100.transform.Find("txt_Upgrade_100_Val").GetComponent<Text>();
+
+        #endregion
         #region NickNamePopup
 
         Input_NickName = NickNamePopup.transform.Find("Input_NickName").GetComponent<InputField>();
@@ -399,10 +454,10 @@ public class UiManager : MonoBehaviour
         btn_Icon_Shop.onClick.AddListener(() => Change_Icon_Content(Icon_Content.Shop));
 
         btn_Invantory_Close.onClick.AddListener(() => PopupManager.Close_Popup());
-        
-        btn_Skill_Lv1.onClick.AddListener(() => Set_Skill_Val(1));
-        btn_Skill_Lv10.onClick.AddListener(() => Set_Skill_Val(10));
-        btn_Skill_Lv100.onClick.AddListener(() => Set_Skill_Val(100));
+
+        btn_Skill_Lv1.onClick.AddListener(() => Set_Skill_Val(Character_Lv.lv_1));
+        btn_Skill_Lv10.onClick.AddListener(() => Set_Skill_Val(Character_Lv.lv_10));
+        btn_Skill_Lv100.onClick.AddListener(() => Set_Skill_Val(Character_Lv.lv_100));
 
         #region WeaponPopup
 
@@ -413,6 +468,13 @@ public class UiManager : MonoBehaviour
         btn_Weapon_Decom.onClick.AddListener(() => Change_Weapon_Popup(Weapon_Popup.decom));
 
         #endregion
+    }
+
+    public void add()
+    {
+
+
+        BackEndDataManager.instance.Set_Item(Item_Type.coin, 109999900, Calculate.plus);
     }
 
     private void Start()
@@ -495,7 +557,7 @@ public class UiManager : MonoBehaviour
         Set_Txt_Exp();
         Set_Txt_Steel();
         Set_Txt_Coin();
-        Set_Txt_Dia();
+        Set_Txt_Crystal();
         Set_Txt_Chapter();
         Set_Txt_Stage();
         Set_Txt_Soul_Stone();
@@ -546,20 +608,17 @@ public class UiManager : MonoBehaviour
 
     public void Set_Txt_Steel()
     {
-        BigInteger big = BigInteger.Parse(BackEndDataManager.instance.Get_Item(Item_Type.steel));
-        txt_Steel_Val.text = GetGoldString(big);
+        txt_Steel_Val.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.steel));
     }
 
     public void Set_Txt_Coin()
     {
-        BigInteger big = BigInteger.Parse(BackEndDataManager.instance.Get_Item(Item_Type.coin));
-        txt_Coin_Val.text = GetGoldString(big);
+        txt_Coin_Val.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.coin));
     }
 
-    public void Set_Txt_Dia()
+    public void Set_Txt_Crystal()
     {
-        BigInteger big = BigInteger.Parse(BackEndDataManager.instance.Get_Item(Item_Type.crystal));
-        txt_Dia_Val.text = GetGoldString(big);
+        txt_Dia_Val.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.crystal));
     }
 
     #endregion
@@ -598,6 +657,19 @@ public class UiManager : MonoBehaviour
         }
     }
 
+    public void Set_Skill_0_Bg()
+    {
+        img_Skill_0_bg.gameObject.SetActive(!Player_stat.Use_skill);
+
+    }
+
+    public void Set_Skill_0_txt(float fill, int val)
+    {
+
+        img_Skill_0_bg.fillAmount = fill;
+        txt_Skill_0.text = val.ToString();
+    }
+
     #endregion
 
     #region CharacterUI 세팅
@@ -612,7 +684,7 @@ public class UiManager : MonoBehaviour
     {
         txt_State_Lv.text = string.Format("Lv.{0}(+{1})",
             BackEndDataManager.instance.Character_Data.int_character_Lv,
-            0);
+            Skill_s.Get_Skill_Val(Skill_Type.add_level));
 
     }
 
@@ -633,9 +705,11 @@ public class UiManager : MonoBehaviour
         txt_Lv_10_Val.text = GetGoldString(lv_1 * 10);
         txt_Lv_100_Val.text = GetGoldString(lv_1 * 100);
 
-        btn_Lv_1.interactable = BackEndDataManager.instance.Int_coin >= lv_1;
-        btn_Lv_10.interactable = BackEndDataManager.instance.Int_coin >= lv_1 * 10;
-        btn_Lv_100.interactable = BackEndDataManager.instance.Int_coin >= lv_1 * 100;
+        BigInteger coin = BackEndDataManager.instance.Get_Item(Item_Type.coin);
+
+        btn_Lv_1.interactable = coin >= lv_1;
+        btn_Lv_10.interactable = coin >= lv_1 * 10;
+        btn_Lv_100.interactable = coin >= lv_1 * 100;
 
 
     }
@@ -688,7 +762,8 @@ public class UiManager : MonoBehaviour
 
     public void Set_Character_Stat()
     {
-        txt_State_Atk_Val.text = GetGoldString(Player_stat.int_Atk);
+        Debug.Log(Player_stat.int_Total_Atk);
+        txt_State_Atk_Val.text = GetGoldString(Player_stat.int_Total_Atk);
         txt_State_Hp_Val.text = GetGoldString(Player_stat.int_Hp);
         txt_State_Atk_Speed_Val.text = Player_stat.int_Atk_Speed.ToString();
         txt_State_Critical_Val.text = string.Format("{0}{1}", Player_stat.int_Critical_Damege, "%");
@@ -705,13 +780,13 @@ public class UiManager : MonoBehaviour
         foreach (var item in BackEndDataManager.instance.skill_csv_data)
         {
 
-            
+
             Skill_Panel skill_ = Instantiate(Skill_Panel, popup_Skill.transform
                 .Find("scroll_skill/Viewport/Content")).GetComponent<Skill_Panel>();
 
             skill_Panels.Add(skill_);
 
-            skill_.Set_Skill_Item(item);
+            skill_.Set_Skill_Item((int)item["stat_type"]);
 
         }
 
@@ -721,18 +796,27 @@ public class UiManager : MonoBehaviour
     public void Set_Txt_Soul_Stone()
     {
 
-        BigInteger big = BigInteger.Parse(BackEndDataManager.instance.Get_Item(Item_Type.soul_stone));
-        txt_Skill_Soul_Val.text = GetGoldString(big);
+        txt_Skill_Soul_Val.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.soul_stone));
 
     }
 
-    public void Set_Skill_Val(int up_lv)
+    public void Set_Skill_Val(Character_Lv up_lv)
     {
         foreach (var item in skill_Panels)
         {
             item.Set_Upgrade(up_lv);
         }
-        
+
+    }
+
+
+    public void Set_Skill_Buy()
+    {
+        foreach (var item in skill_Panels)
+        {
+            item.Set_Upgrade(skill_lv);
+        }
+
     }
 
     #endregion

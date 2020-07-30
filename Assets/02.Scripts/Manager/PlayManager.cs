@@ -26,7 +26,7 @@ public class PlayManager : MonoBehaviour
 
     public Player_State Player_State { get => player_State; set => player_State = value; }
 
-
+    
     public void Change_State(Player_State _State)
     {
         Player_State = _State;

@@ -1,11 +1,12 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using System.Numerics;
 
 public class Damege : MonoBehaviour
 {
   
-    public void Set_Txt(ulong damege)
+    public void Set_Txt(BigInteger damege)
     {
         GetComponent<Text>().text = UiManager.instance.GetGoldString(damege);
 
