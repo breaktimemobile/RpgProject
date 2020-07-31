@@ -62,10 +62,14 @@
   <ItemGroup>
     <Compile Include="Assets\02.Scripts\Configs.cs" />
     <Compile Include="Assets\02.Scripts\Game\BackGroundScrolling.cs" />
+    <Compile Include="Assets\02.Scripts\Game\Content_Panel.cs" />
     <Compile Include="Assets\02.Scripts\Game\Damege.cs" />
-    <Compile Include="Assets\02.Scripts\Game\Dungeon_Panel.cs" />
+    <Compile Include="Assets\02.Scripts\Game\Inventory_Panel.cs" />
     <Compile Include="Assets\02.Scripts\Game\Monster.cs" />
     <Compile Include="Assets\02.Scripts\Game\Player.cs" />
+    <Compile Include="Assets\02.Scripts\Game\Skill_Panel.cs" />
+    <Compile Include="Assets\02.Scripts\Game\Underground_Panel.cs" />
+    <Compile Include="Assets\02.Scripts\Game\Weapon_Panel.cs" />
     <Compile Include="Assets\02.Scripts\Manager\BackEndAuthManager.cs" />
     <Compile Include="Assets\02.Scripts\Manager\BackEndDataManager.cs" />
     <Compile Include="Assets\02.Scripts\Manager\IntroManager.cs" />
@@ -153,15 +157,13 @@
     <Compile Include="Assets\GooglePlayGames\Platforms\TokenClient.cs" />
     <Compile Include="Assets\GooglePlayGames\PluginVersion.cs" />
     <Compile Include="Assets\GPGSIds.cs" />
-    <Compile Include="Assets\Inventory_Panel.cs" />
-    <Compile Include="Assets\Skill_Panel.cs" />
+    <Compile Include="Assets\Underground_Dungeon.cs" />
     <Compile Include="Assets\Unity-Logs-Viewer\Reporter\MultiKeyDictionary.cs" />
     <Compile Include="Assets\Unity-Logs-Viewer\Reporter\Reporter.cs" />
     <Compile Include="Assets\Unity-Logs-Viewer\Reporter\ReporterGUI.cs" />
     <Compile Include="Assets\Unity-Logs-Viewer\Reporter\ReporterMessageReceiver.cs" />
     <Compile Include="Assets\Unity-Logs-Viewer\Reporter\Test\Rotate.cs" />
     <Compile Include="Assets\Unity-Logs-Viewer\Reporter\Test\TestReporter.cs" />
-    <Compile Include="Assets\Weapon_Panel.cs" />
     <None Include="Assets\Resources\skill_explan.txt" />
     <None Include="Assets\Firebase\m2repository\com\google\firebase\firebase-app-unity\maven-metadata.xml" />
     <None Include="Assets\GooglePlayGames\Plugins\Android\GooglePlayGamesManifest.plugin\AndroidManifest.xml" />

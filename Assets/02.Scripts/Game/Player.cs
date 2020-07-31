@@ -32,8 +32,9 @@ public class Player_stat
 
         float skill_atk = Use_skill ? Skill_s.Get_Skill_Val(Skill_Type.skill_atk) : 0;
 
-        int_Base_Atk = (100 + (100 / 20) * (int_Lv - 1));
-        int_Total_Atk = int_Base_Atk + (int)Skill_s.Get_Skill_Val(Skill_Type.add_atk) + (int_Base_Atk * (int)skill_atk) / 100;
+        int_Base_Atk = 100 + (100 / 20) * (int_Lv - 1);
+        BigInteger int_Upgrade = (int_Base_Atk * BackEndDataManager.instance.Character_Data.Int_Upgrade_Lv * 5) / 100;
+        int_Total_Atk = int_Base_Atk + int_Upgrade + (int)Skill_s.Get_Skill_Val(Skill_Type.add_atk) + (int_Base_Atk * (int)skill_atk) / 100;
 
         int_Hp = 2000 + (2000 / 20) * (int_Lv - 1);
 
@@ -91,8 +92,10 @@ public class Player_stat
 
                 float skill_atk = Use_skill ? Skill_s.Get_Skill_Val(Skill_Type.skill_atk) : 0;
 
-                int_Base_Atk = (100 + (100 / 20) * (int_Lv - 1));
-                int_Total_Atk = int_Base_Atk + (int)Skill_s.Get_Skill_Val(Skill_Type.add_atk) + (int_Base_Atk * (int)skill_atk) / 100;
+
+                int_Base_Atk = 100 + (100 / 20) * (int_Lv - 1);
+                BigInteger int_Upgrade = (int_Base_Atk * BackEndDataManager.instance.Character_Data.Int_Upgrade_Lv * 5) / 100;
+                int_Total_Atk = int_Base_Atk + int_Upgrade + (int)Skill_s.Get_Skill_Val(Skill_Type.add_atk) + (int_Base_Atk * (int)skill_atk) / 100;
 
                 int_Hp = 2000 + (2000 / 20) * ((BigInteger)int_Lv - 1);
                 UiManager.instance.Set_Character_Lv();
@@ -103,8 +106,10 @@ public class Player_stat
 
                 skill_atk = Use_skill ? Skill_s.Get_Skill_Val(Skill_Type.skill_atk) : 0;
 
-                int_Base_Atk = (100 + (100 / 20) * (int_Lv - 1));
-                int_Total_Atk = int_Base_Atk + (int)Skill_s.Get_Skill_Val(Skill_Type.add_atk) + (int_Base_Atk * (int)skill_atk) / 100;
+
+                int_Base_Atk = 100 + (100 / 20) * (int_Lv - 1);
+                int_Upgrade = (int_Base_Atk * BackEndDataManager.instance.Character_Data.Int_Upgrade_Lv * 5) / 100;
+                int_Total_Atk = int_Base_Atk + int_Upgrade + (int)Skill_s.Get_Skill_Val(Skill_Type.add_atk) + (int_Base_Atk * (int)skill_atk) / 100;
 
                 break;
 

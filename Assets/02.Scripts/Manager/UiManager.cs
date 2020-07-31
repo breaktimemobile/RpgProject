@@ -12,7 +12,7 @@ public class UiManager : MonoBehaviour
     public static UiManager instance;
 
     private GameObject NickNamePopup;
-    private GameObject DungeonPopup;
+    private GameObject UndergroundPopup;
     private GameObject InventoryPopup;
     private GameObject WeaponPopup;
 
@@ -140,8 +140,6 @@ public class UiManager : MonoBehaviour
     private Text txt_Upgrade_Next_Lv;
     private Text txt_Upgrade_Percent;
     private Text txt_Upgrade_Next_Percent;
-    private Text txt_Upgrade_Atk;
-    private Text txt_Upgrade_Next_Atk;
 
     private Button btn_Upgrade_1;
     private Button btn_Upgrade_10;
@@ -173,7 +171,7 @@ public class UiManager : MonoBehaviour
 
     #endregion
 
-    #region DungeonPopup
+    #region Underground_DungeonPopup
 
     //private InputField Input_NickName;
     //private Button btn_NickName_Ok;
@@ -212,6 +210,7 @@ public class UiManager : MonoBehaviour
     public GameObject weapon_Panel;
     public GameObject Inventory_Panel;
     public GameObject Skill_Panel;
+    public GameObject Content_Panel;
 
     #endregion
 
@@ -233,7 +232,7 @@ public class UiManager : MonoBehaviour
         Transform Popup = GameObject.Find("Popup").transform;
 
         NickNamePopup = Popup.Find("NickNamePopup").gameObject;
-        DungeonPopup = Popup.Find("DungeonPopup").gameObject;
+        UndergroundPopup = Popup.Find("UndergroundPopup").gameObject;
         InventoryPopup = Popup.Find("InventoryPopup").gameObject;
         WeaponPopup = Popup.Find("WeaponPopup").gameObject;
 
@@ -370,8 +369,6 @@ public class UiManager : MonoBehaviour
         txt_Upgrade_Next_Lv = popup_Upgrade.transform.Find("Upgrade_State/txt_Upgrade_Next_Lv").GetComponent<Text>();
         txt_Upgrade_Percent = popup_Upgrade.transform.Find("Upgrade_State/txt_Upgrade_Percent").GetComponent<Text>();
         txt_Upgrade_Next_Percent = popup_Upgrade.transform.Find("Upgrade_State/txt_Upgrade_Next_Percent").GetComponent<Text>();
-        txt_Upgrade_Atk = popup_Upgrade.transform.Find("Upgrade_State/txt_Upgrade_Atk").GetComponent<Text>();
-        txt_Upgrade_Next_Atk = popup_Upgrade.transform.Find("Upgrade_State/txt_Upgrade_Next_Atk").GetComponent<Text>();
 
         btn_Upgrade_1 = popup_Upgrade.transform.Find("Upgrade_Btn/btn_Upgrade_1").GetComponent<Button>();
         btn_Upgrade_10 = popup_Upgrade.transform.Find("Upgrade_Btn/btn_Upgrade_10").GetComponent<Button>();
@@ -459,6 +456,11 @@ public class UiManager : MonoBehaviour
         btn_Skill_Lv10.onClick.AddListener(() => Set_Skill_Val(Character_Lv.lv_10));
         btn_Skill_Lv100.onClick.AddListener(() => Set_Skill_Val(Character_Lv.lv_100));
 
+        btn_Upgrade_1.onClick.AddListener(() => Upgrade_Buy(Character_Lv.lv_1));
+        btn_Upgrade_10.onClick.AddListener(() => Upgrade_Buy(Character_Lv.lv_10));
+        btn_Upgrade_100.onClick.AddListener(() => Upgrade_Buy(Character_Lv.lv_100));
+
+        
         #region WeaponPopup
 
         btn_Weapon_Info.onClick.AddListener(() => Change_Weapon_Popup(Weapon_Popup.info));
@@ -474,7 +476,7 @@ public class UiManager : MonoBehaviour
     {
 
 
-        BackEndDataManager.instance.Set_Item(Item_Type.coin, 109999900, Calculate.plus);
+        BackEndDataManager.instance.Set_Item(Item_Type.soul_stone, 109999900, Calculate_Type.plus);
     }
 
     private void Start()
@@ -570,7 +572,9 @@ public class UiManager : MonoBehaviour
 
         Set_Inventory();
         Set_Weapon_Popup();
-        Set_Skill_Popup();
+        Set_Content_Panel();
+        Set_Skill_Panel();
+        Set_Upgrade_Stat();
     }
 
     #region PlayerUI 세팅
@@ -697,20 +701,17 @@ public class UiManager : MonoBehaviour
 
     public void Set_Buy_Lv()
     {
-        ulong lv = (ulong)BackEndDataManager.instance.Character_Data.int_character_Lv;
-        ulong lv_1 = 500 + (500 / 20) * (lv - 1);
+        int lv = BackEndDataManager.instance.Character_Data.int_character_Lv;
 
-
-        txt_Lv_1_Val.text = GetGoldString(lv_1);
-        txt_Lv_10_Val.text = GetGoldString(lv_1 * 10);
-        txt_Lv_100_Val.text = GetGoldString(lv_1 * 100);
+        txt_Lv_1_Val.text = GetGoldString(Calculate.Price(500, 5, lv, 1));
+        txt_Lv_10_Val.text = GetGoldString(Calculate.Price(500, 5, lv, 10));
+        txt_Lv_100_Val.text = GetGoldString(Calculate.Price(500, 5, lv, 100));
 
         BigInteger coin = BackEndDataManager.instance.Get_Item(Item_Type.coin);
 
-        btn_Lv_1.interactable = coin >= lv_1;
-        btn_Lv_10.interactable = coin >= lv_1 * 10;
-        btn_Lv_100.interactable = coin >= lv_1 * 100;
-
+        btn_Lv_1.interactable = coin >= Calculate.Price(500, 5, lv, 1);
+        btn_Lv_10.interactable = coin >= Calculate.Price(500, 5, lv, 10);
+        btn_Lv_100.interactable = coin >= Calculate.Price(500, 5, lv, 100);
 
     }
 
@@ -756,6 +757,29 @@ public class UiManager : MonoBehaviour
 
     }
 
+    private void Update()
+    {
+        if (Input.GetKey(KeyCode.Escape))
+        {
+            PopupManager.Close_Popup();
+        }
+    }
+    public void Change_Content_Popup(Popup_Type popup_Type)
+    {
+        switch (popup_Type)
+        {
+            case Popup_Type.underground_dungeon:
+                PopupManager.Open_Popup(UndergroundPopup);
+                break;
+            case Popup_Type.upgrade_dungeon:
+                break;
+            case Popup_Type.hell_dungeon:
+                break;
+            default:
+                break;
+        }
+    }
+
     #endregion
 
     #region Character
@@ -771,9 +795,29 @@ public class UiManager : MonoBehaviour
         txt_State_Speed_Val.text = string.Format("{0}{1}", Player_stat.int_Atk_Speed, "%");
     }
 
+    #region Content
+
+    public void Set_Content_Panel()
+    {
+        Debug.Log(BackEndDataManager.instance.content_csv_data.Count);
+
+        foreach (var item in BackEndDataManager.instance.content_csv_data)
+        {
+
+
+            Content_Panel content = Instantiate(Content_Panel, Content_Content.transform
+                .Find("scroll_content/Viewport/Content")).GetComponent<Content_Panel>();
+
+            content.Set_Content_Item(item);
+
+        }
+
+    }
+    #endregion
+
     #region Skill
 
-    public void Set_Skill_Popup()
+    public void Set_Skill_Panel()
     {
         Debug.Log(BackEndDataManager.instance.skill_csv_data.Count);
 
@@ -795,9 +839,8 @@ public class UiManager : MonoBehaviour
 
     public void Set_Txt_Soul_Stone()
     {
-
         txt_Skill_Soul_Val.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.soul_stone));
-
+        txt_Upgrade_Soul_Stone_Val.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.soul_stone));
     }
 
     public void Set_Skill_Val(Character_Lv up_lv)
@@ -816,6 +859,52 @@ public class UiManager : MonoBehaviour
         {
             item.Set_Upgrade(skill_lv);
         }
+
+    }
+
+    #endregion
+
+    #region Upgrade
+
+    public void Set_Upgrade_Stat()
+    {
+        int My_Lv = BackEndDataManager.instance.Character_Data.Int_Upgrade_Lv;
+        int Add_Lv = BackEndDataManager.instance.Character_Data.Int_Upgrade_Lv + 1;
+
+        txt_Upgrade_title.text = string.Format("{0} {1}%{2}", "기본 공격력", My_Lv * 5, "증가");
+        txt_Upgrade_Lv.text = string.Format("LV.{0}", My_Lv);
+        txt_Upgrade_Next_Lv.text = string.Format("LV.{0}", Add_Lv);
+        txt_Upgrade_Percent.text = string.Format("{0}%", 5 * My_Lv);
+        txt_Upgrade_Next_Percent.text = string.Format("{0}%", 5 * Add_Lv);
+
+        txt_Upgrade_1_Val.text = GetGoldString(Calculate.Price(500,5, My_Lv,1));
+        txt_Upgrade_10_Val.text = GetGoldString(Calculate.Price(500, 5, My_Lv, 10));
+        txt_Upgrade_100_Val.text = GetGoldString(Calculate.Price(500, 5, My_Lv, 100));
+
+        Check_Upgrade();
+    }
+
+    public void Check_Upgrade()
+    {
+        int My_Lv = BackEndDataManager.instance.Character_Data.Int_Upgrade_Lv;
+        BigInteger My_Coin = BackEndDataManager.instance.Get_Item(Item_Type.soul_stone);
+
+        btn_Upgrade_1.interactable = My_Coin >= Calculate.Price(500, 5, My_Lv, 1);
+        btn_Upgrade_10.interactable = My_Coin >= Calculate.Price(500, 5, My_Lv, 10);
+        btn_Upgrade_100.interactable = My_Coin >= Calculate.Price(500, 5, My_Lv, 100);
+    }
+
+    public void Upgrade_Buy(Character_Lv character_Lv)
+    {
+        int lv = BackEndDataManager.instance.Character_Data.Int_Upgrade_Lv;
+        BackEndDataManager.instance.Character_Data.Int_Upgrade_Lv += (int)character_Lv;
+        BackEndDataManager.instance.Save_Character_Data();
+
+        BackEndDataManager.instance.Minus_Item(Item_Type.soul_stone, Calculate.Price(500, 5, lv, (int)character_Lv));
+
+        Set_Upgrade_Stat();
+
+        Player_stat.Set_Player_Stat(Skill_Type.add_atk);
 
     }
 

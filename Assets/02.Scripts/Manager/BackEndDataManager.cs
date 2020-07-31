@@ -33,7 +33,8 @@ public class Character_Data
     public int int_character_Lv { get; set; }
     [DynamoDBProperty]
     public int Int_character_Num { get; set; }
-
+    [DynamoDBProperty]
+    public int Int_Upgrade_Lv { get; set; }
 }
 
 [DynamoDBTable("stage_info")]
@@ -126,11 +127,12 @@ public class BackEndDataManager : MonoBehaviour
 
     public BigInteger Int_exp { get => int_exp; }
 
-    public List<Dictionary<string, object>> dungeon_csv_data;         //던전 정보
+    public List<Dictionary<string, object>> underground_dungeon_csv_data;         //던전 정보
     public List<Dictionary<string, object>> weapon_csv_data;         //던전 정보
     public List<Dictionary<string, object>> monster_csv_data;         //던전 정보
     public List<Dictionary<string, object>> skill_Explan_csv_data;         //던전 정보
     public List<Dictionary<string, object>> skill_csv_data;         //던전 정보
+    public List<Dictionary<string, object>> content_csv_data;         //던전 정보
 
     private List<bool> Check_Data = new List<bool>();
 
@@ -170,15 +172,12 @@ public class BackEndDataManager : MonoBehaviour
     void Get_Csv_Data()
     {
 
-        dungeon_csv_data = CSVReader.Read("dungeon");
+        underground_dungeon_csv_data = CSVReader.Read("underground_dungeon");
         weapon_csv_data = CSVReader.Read("weapon");
         monster_csv_data = CSVReader.Read("monster");
         skill_Explan_csv_data = CSVReader.Read("skill_explan");
         skill_csv_data = CSVReader.Read("skill");
-
-
-        Debug.Log("monster_csv_data " + monster_csv_data.Count);
-        Debug.Log("monster_csv_data " + monster_csv_data[0]["reward_val_0"]);
+        content_csv_data = CSVReader.Read("content");
 
         foreach (var data in skill_csv_data)
         {
@@ -203,8 +202,7 @@ public class BackEndDataManager : MonoBehaviour
             Skill_s.skills.Add(skill);
         }
 
-       
-
+      
     }
 
     public void Set_NickName(string NickName)
@@ -576,6 +574,7 @@ public class BackEndDataManager : MonoBehaviour
             character_Data = result.Result;
 
             Sucess_Data(Data_Type.character_info);
+            Debug.Log("Int_Upgrade_Lv " + BackEndDataManager.instance.Character_Data.Int_Upgrade_Lv);
 
 
         }, null);
@@ -772,7 +771,7 @@ public class BackEndDataManager : MonoBehaviour
     public void Minus_Item(Item_Type item_Type, BigInteger coin)
     {
 
-        Set_Item(item_Type, coin, Calculate.mius);
+        Set_Item(item_Type, coin, Calculate_Type.mius);
 
     }
 
@@ -857,7 +856,7 @@ public class BackEndDataManager : MonoBehaviour
         Debug.Log(i + "  " + val);
 
         BigInteger a = (val * (boss ? 2 : 1));
-        Set_Item(i, a,Calculate.plus);
+        Set_Item(i, a,Calculate_Type.plus);
 
     }
 
@@ -872,7 +871,7 @@ public class BackEndDataManager : MonoBehaviour
 
     }
 
-    public void Set_Item(Item_Type type, BigInteger val , Calculate calculate)
+    public void Set_Item(Item_Type type, BigInteger val , Calculate_Type calculate)
     {
         Item_Info item_Info = item_Data.item_Info.Find(x => x.type.Equals((int)type));
 
@@ -893,10 +892,10 @@ public class BackEndDataManager : MonoBehaviour
             Debug.Log(val);
             switch (calculate)
             {
-                case Calculate.plus:
+                case Calculate_Type.plus:
                     total += val;
                     break;
-                case Calculate.mius:
+                case Calculate_Type.mius:
                     total -= val;
                     break;
                 default:
@@ -919,7 +918,7 @@ public class BackEndDataManager : MonoBehaviour
                 UiManager.instance.Set_Buy_Lv();
 
                 break;
-            case Item_Type.upgread_stone:
+            case Item_Type.upgrade_stone:
                 break;
             case Item_Type.limit_stone:
                 break;
@@ -929,6 +928,8 @@ public class BackEndDataManager : MonoBehaviour
                 break;
             case Item_Type.soul_stone:
                 UiManager.instance.Set_Txt_Soul_Stone();
+                UiManager.instance.Check_Upgrade();
+                UiManager.instance.Set_Skill_Buy();
                 break;
             case Item_Type.black_stone:
                 break;
@@ -964,23 +965,23 @@ public class BackEndDataManager : MonoBehaviour
                 break;
             case Item_Type.accessory_box_d_s:
                 break;
-            case Item_Type.upgread_stone_box_1_100:
+            case Item_Type.upgrade_stone_box_1_100:
                 break;
-            case Item_Type.upgread_stone_box_100_500:
+            case Item_Type.upgrade_stone_box_100_500:
                 break;
-            case Item_Type.upgread_stone_box_500_1000:
+            case Item_Type.upgrade_stone_box_500_1000:
                 break;
-            case Item_Type.upgread_stone_box_1000_3000:
+            case Item_Type.upgrade_stone_box_1000_3000:
                 break;
-            case Item_Type.upgread_stone_box_3000_5000:
+            case Item_Type.upgrade_stone_box_3000_5000:
                 break;
-            case Item_Type.upgread_stone_box_5000_10000:
+            case Item_Type.upgrade_stone_box_5000_10000:
                 break;
-            case Item_Type.upgread_stone_box_10000_20000:
+            case Item_Type.upgrade_stone_box_10000_20000:
                 break;
             case Item_Type.underground_ticket:
                 break;
-            case Item_Type.upgread_ticket:
+            case Item_Type.upgrade_ticket:
                 break;
             case Item_Type.hell_ticket:
                 break;
@@ -1055,8 +1056,8 @@ public class BackEndDataManager : MonoBehaviour
 
     public void Buy_Character_Lv(Character_Lv character_Lv)
     {
-        BigInteger lv = Character_Data.int_character_Lv;
-        BigInteger lv_1 = 500 + (500 / 20) * (lv - 1);
+        int lv = Character_Data.int_character_Lv;
+        BigInteger lv_1 = Calculate.Price(500, 5, lv, (int)character_Lv);
 
         Minus_Item(Item_Type.coin, lv_1);
         Player_stat.Add_Lv((int)character_Lv);

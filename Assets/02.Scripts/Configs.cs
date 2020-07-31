@@ -1,5 +1,6 @@
 ﻿
 using System.Collections.Generic;
+using System.Numerics;
 using UnityEngine;
 
 public enum Data_Type
@@ -67,7 +68,7 @@ public enum Item_Type
 {
     crystal,
     coin,
-    upgread_stone,
+    upgrade_stone,
     limit_stone,
     steel,
     soul_stone,
@@ -88,15 +89,15 @@ public enum Item_Type
     accessory_box_d_b,
     accessory_box_d_a,
     accessory_box_d_s,
-    upgread_stone_box_1_100,
-    upgread_stone_box_100_500,
-    upgread_stone_box_500_1000,
-    upgread_stone_box_1000_3000,
-    upgread_stone_box_3000_5000,
-    upgread_stone_box_5000_10000,
-    upgread_stone_box_10000_20000,
+    upgrade_stone_box_1_100,
+    upgrade_stone_box_100_500,
+    upgrade_stone_box_500_1000,
+    upgrade_stone_box_1000_3000,
+    upgrade_stone_box_3000_5000,
+    upgrade_stone_box_5000_10000,
+    upgrade_stone_box_10000_20000,
     underground_ticket,
-    upgread_ticket,
+    upgrade_ticket,
     hell_ticket,
     yellow_key,
     red_key,
@@ -161,10 +162,18 @@ public enum Skill_Type
 
 }
 
-public enum Calculate
+public enum Calculate_Type
 {
     plus,
     mius
+}
+
+public enum Popup_Type
+{
+    underground_dungeon,
+    upgrade_dungeon,
+    hell_dungeon
+
 }
 
 
@@ -197,6 +206,21 @@ public class Skill_s
         
     }
 
+}
+
+public class Calculate
+{
+    public static BigInteger Price(int base_price, int percent, int lv,int end_lv)
+    {
+        BigInteger total = 0;
+
+        for (int i = lv; i < lv + end_lv; i++)
+        {
+            total += base_price + ((base_price * percent / 100) * i);
+        }
+
+        return total;
+    }
 }
 
 public class Skill
