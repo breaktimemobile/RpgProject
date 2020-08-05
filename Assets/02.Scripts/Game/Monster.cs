@@ -41,11 +41,14 @@ public class Monster : MonoBehaviour
 
     public void Set_Monster(Monster_Type _Type, BigInteger m_hp)
     {
+        Debug.Log(m_hp);
+
         monster_Type = _Type;
 
         transform.localScale = _Type == Monster_Type.Basic ? Vector3.one : Vector3.one * 1.3f;
 
         total_Hp = hp = m_hp;
+
         slider_Hp.value = 1;
     }
 
@@ -70,12 +73,26 @@ public class Monster : MonoBehaviour
         BigInteger total_damege = 0;
         int Rd = UnityEngine.Random.Range(0, 100);
 
+        Transform pos = UiManager.instance.obj_Stage.transform;
+
+        switch (PlayManager.instance.Stage_State)
+        {
+            case Stage_State.stage:
+                pos = UiManager.instance.obj_Stage.transform;
+                break;
+            case Stage_State.underground:
+                pos = UiManager.instance.UndergroundDungeon.transform;
+                break;
+            default:
+                break;
+        }
+
         if (Player_stat.int_Critical_Percent >= Rd)
         {
 
             total_damege = damege + (damege * (ulong)Player_stat.int_Critical_Damege / 100);
 
-            Damege sc_damege = Instantiate(UiManager.instance.txt_Critical_Damege, UiManager.instance.obj_Stage.transform).GetComponent<Damege>();
+            Damege sc_damege = Instantiate(UiManager.instance.txt_Critical_Damege, pos).GetComponent<Damege>();
             sc_damege.transform.position = this.transform.position;
             sc_damege.Set_Txt(total_damege);
         }
@@ -83,7 +100,7 @@ public class Monster : MonoBehaviour
         {
             total_damege = damege;
 
-            Damege sc_damege = Instantiate(UiManager.instance.txt_Damege, UiManager.instance.obj_Stage.transform).GetComponent<Damege>();
+            Damege sc_damege = Instantiate(UiManager.instance.txt_Damege, pos).GetComponent<Damege>();
             sc_damege.transform.position = this.transform.position;
             sc_damege.Set_Txt(total_damege);
         }

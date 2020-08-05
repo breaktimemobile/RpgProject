@@ -9,11 +9,18 @@ public enum Player_State
     Fight
 }
 
+public enum Stage_State
+{
+    stage,
+    underground
+}
+
 public class PlayManager : MonoBehaviour
 {
     public static PlayManager instance;
 
     Player_State player_State = Player_State.None;
+    Stage_State stage_State = Stage_State.stage;
 
     public List<GameObject> Characters;
     public List<GameObject> Monsters;
@@ -25,8 +32,8 @@ public class PlayManager : MonoBehaviour
     public Monster sc_Monster;
 
     public Player_State Player_State { get => player_State; set => player_State = value; }
+    public Stage_State Stage_State { get => stage_State; set => stage_State = value; }
 
-    
     public void Change_State(Player_State _State)
     {
         Player_State = _State;
@@ -47,6 +54,7 @@ public class PlayManager : MonoBehaviour
                     Start_Boss_Timer();
 
                 break;
+
             default:
                 break;
         }
@@ -73,21 +81,98 @@ public class PlayManager : MonoBehaviour
 
     public void Set_Character()
     {
-        GameObject obj_Player = Instantiate(Characters[0], UiManager.instance.obj_Stage.transform);
+        GameObject obj_Player = Instantiate(Characters[0]);
         obj_Player.transform.position = pos_Character.position;
 
         sc_Player = obj_Player.GetComponent<Player>();
         sc_Player.Init();
+
+        Set_Change_Stage(Stage_State.stage);
+
+
+    }
+
+    private void Set_Change_Stage(Stage_State stage)
+    {
+        stage_State = stage;
+
+        Transform pos = UiManager.instance.obj_Stage.transform;
+
+        switch (stage_State)
+        {
+            case Stage_State.stage:
+                pos = UiManager.instance.obj_Stage.transform;
+                break;
+            case Stage_State.underground:
+                pos = UiManager.instance.UndergroundDungeon.transform;
+                break;
+            default:
+                break;
+        }
+
+        sc_Player.transform.SetParent(pos);
+        sc_Player.transform.localScale = Vector3.one;
+    }
+
+    public void Start_Game(Stage_State stage)
+    {
+        Set_Change_Stage(stage);
+
+        Destroy(sc_Monster.gameObject);
+
+        Set_Monster();
+
+        Change_State(Player_State.Run);
+    }
+
+    public void Check_Stage()
+    {
+
+       PopupManager.Close_Popup();
+
+        Start_Game(Stage_State.stage);
+
+    }
+
+    public void Check_Underground()
+    {
+
+        //if (BackEndDataManager.instance.Get_Item(Item_Type.underground_ticket) >= 1)
+        //{
+            BackEndDataManager.instance.Set_Item(Item_Type.underground_ticket, 1, Calculate_Type.mius);
+
+            UiManager.instance.Open_Underground();
+
+            Start_Game(Stage_State.underground);
+
+        //}
+
+
     }
 
     public void Set_Monster()
     {
 
-        GameObject obj_Monster = Instantiate(Monsters[0], UiManager.instance.obj_Stage.transform);
+        Transform pos = UiManager.instance.obj_Stage.transform;
+
+        switch (stage_State)
+        {
+            case Stage_State.stage:
+                pos = UiManager.instance.obj_Stage.transform;
+                break;
+            case Stage_State.underground:
+                pos = UiManager.instance.UndergroundDungeon.transform;
+                break;
+            default:
+                break;
+        }
+
+
+        GameObject obj_Monster = Instantiate(Monsters[0], pos);
         obj_Monster.transform.position = pos_Monster.position;
 
         sc_Monster = obj_Monster.GetComponent<Monster>();
-
+        sc_Monster.transform.localScale = Vector3.one;
 
         if (BackEndDataManager.instance.Stage_Data.int_step > 10)
         {

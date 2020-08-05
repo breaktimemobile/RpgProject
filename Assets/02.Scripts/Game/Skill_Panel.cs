@@ -72,7 +72,7 @@ public class Skill_Panel : MonoBehaviour
     public void Check_Btn()
     {
 
-        skill_info skill_Info = BackEndDataManager.instance.Skill_Data.skill_Info.Find(x => x.int_num.Equals(skill.num));
+        Skill_info skill_Info = BackEndDataManager.instance.Skill_Data.skill_Info.Find(x => x.int_num.Equals(skill.num));
 
         total = 0;
 
@@ -92,7 +92,7 @@ public class Skill_Panel : MonoBehaviour
 
     public void Set_Sub_Txt()
     {
-        skill_info skill_Info = BackEndDataManager.instance.Skill_Data.skill_Info.Find(x => x.int_num.Equals(skill.num));
+        Skill_info skill_Info = BackEndDataManager.instance.Skill_Data.skill_Info.Find(x => x.int_num.Equals(skill.num));
 
         int lv = skill_Info == null ? 0 : skill_Info.int_lv;
 
@@ -117,11 +117,11 @@ public class Skill_Panel : MonoBehaviour
         if (BackEndDataManager.instance.Get_Item((Item_Type)skill.price_type) >= total)
         {
 
-            skill_info skill_Info = BackEndDataManager.instance.Skill_Data.skill_Info.Find(x => x.int_num.Equals(skill.num));
+            Skill_info skill_Info = BackEndDataManager.instance.Skill_Data.skill_Info.Find(x => x.int_num.Equals(skill.num));
 
             if (skill_Info == null)
             {
-                skill_Info = new skill_info
+                skill_Info = new Skill_info
                 {
                     int_num = skill.num,
                     int_lv = (int)UiManager.instance.skill_lv

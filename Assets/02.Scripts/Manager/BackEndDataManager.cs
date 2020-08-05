@@ -78,7 +78,17 @@ public class Skill_Data
     [DynamoDBHashKey] // Hash key.
     public string id { get; set; }
     [DynamoDBProperty("skill_info")]
-    public List<skill_info> skill_Info { get; set; }
+    public List<Skill_info> skill_Info { get; set; }
+
+}
+
+[DynamoDBTable("content_info")]
+public class Content_Data
+{
+    [DynamoDBHashKey] // Hash key.
+    public string id { get; set; }
+    [DynamoDBProperty("underground_info")]
+    public List<Underground_info> underground_info { get; set; }
 
 }
 
@@ -96,11 +106,18 @@ public class Weapon_info
     public int int_limit { get; set; }
 }
 
-public class skill_info
+public class Skill_info
 {
     public int int_num { get; set; }
     public int int_lv { get; set; }
 
+}
+
+public class Underground_info
+{
+    public int int_num { get; set; }
+    public int int_Max_Monster { get; set; }
+    public int int_Max_Boss { get; set; }
 }
 
 public class BackEndDataManager : MonoBehaviour
@@ -113,6 +130,7 @@ public class BackEndDataManager : MonoBehaviour
     Item_Data item_Data = new Item_Data();
     Weapon_Data weapon_Data = new Weapon_Data();
     Skill_Data skill_Data = new Skill_Data();
+    Content_Data content_Data = new Content_Data();
 
     DynamoDBContext context;
     AmazonDynamoDBClient DBclient;
@@ -124,6 +142,7 @@ public class BackEndDataManager : MonoBehaviour
     public Item_Data Item_Data { get => item_Data; }
     public Weapon_Data Weapon_Data { get => weapon_Data; }
     public Skill_Data Skill_Data { get => skill_Data; }
+    public Content_Data Content_Data { get => content_Data; }
 
     public BigInteger Int_exp { get => int_exp; }
 
@@ -294,6 +313,7 @@ public class BackEndDataManager : MonoBehaviour
         Check_Item_Data();
         Check_Weapon_Data();
         Check_Skill_Data();
+        Check_Content_Data();
     }
 
     #region Check_Data
@@ -510,9 +530,9 @@ public class BackEndDataManager : MonoBehaviour
                 skill_Data = new Skill_Data
                 {
                     id = BackEndAuthManager.Get_UserId(),
-                    skill_Info = new List<skill_info>
+                    skill_Info = new List<Skill_info>
                     {
-                        new skill_info
+                        new Skill_info
                         {
                             int_num = 0,
                             int_lv =0
@@ -526,6 +546,48 @@ public class BackEndDataManager : MonoBehaviour
             else
             {
                 Get_Skill_Data();
+            }
+
+        });
+    }
+
+    public void Check_Content_Data()
+    {
+        ScanRequest request = new ScanRequest()
+        {
+            TableName = "content_info"
+        };
+
+        DBclient.ScanAsync(request, (result) =>
+        {
+
+            Dictionary<string, AttributeValue> t =
+              result.Response.Items.Find(x => x["id"].S.Equals(BackEndAuthManager.Get_UserId()));
+
+            Debug.Log(t == null ? "Content 없음" : "Content 있음");
+
+            if (t == null)
+            {
+                content_Data = new Content_Data
+                {
+                    id = BackEndAuthManager.Get_UserId(),
+                    underground_info = new List<Underground_info>
+                    {
+                        new Underground_info
+                        {
+                            int_num = 0,
+                            int_Max_Monster =0,
+                            int_Max_Boss =0
+
+                        }
+                    }
+                };
+
+                Save_Content_Data();
+            }
+            else
+            {
+                Get_Content_Data();
             }
 
         });
@@ -672,6 +734,29 @@ public class BackEndDataManager : MonoBehaviour
         }, null);
     }
 
+    public void Get_Content_Data() //DB에서 캐릭터 정보 받기
+    {
+
+
+        Debug.Log("Get_Content_Data");
+
+        context.LoadAsync(BackEndAuthManager.Get_UserId(), (AmazonDynamoDBResult<Content_Data> result) =>
+        {
+            // id가 abcd인 캐릭터 정보를 DB에서 받아옴
+            if (result.Exception != null)
+            {
+                Debug.Log(result.Exception);
+                return;
+            }
+
+            content_Data = result.Result;
+
+            Sucess_Data(Data_Type.content_info);
+
+
+        }, null);
+    }
+
     #endregion
 
     #region Save_Data
@@ -765,6 +850,21 @@ public class BackEndDataManager : MonoBehaviour
         });
     }
 
+    public void Save_Content_Data() //DB에서 캐릭터 정보 받기
+    {
+        context.SaveAsync(content_Data, (result) =>
+        {
+            if (result.Exception == null)
+            {
+                Debug.Log("content_Data Save");
+                Sucess_Data(Data_Type.content_info);
+
+            }
+            else
+                Debug.Log(result.Exception);
+        });
+    }
+
     #endregion
 
 
@@ -825,13 +925,32 @@ public class BackEndDataManager : MonoBehaviour
     /// <returns></returns>
     public BigInteger Monster_Hp(bool boss)
     {
+        BigInteger total_hp = 0;
 
-        BigInteger total_hp = (int)monster_csv_data[0]["Base_Hp"] * (boss ? 10 : 1);
-
-        for (int i = 0; i < stage_Data.int_stage - 1; i++)
+        switch (PlayManager.instance.Stage_State)
         {
-            total_hp = total_hp + BigInteger.Divide(total_hp, 2);
+            case Stage_State.stage:
+
+                total_hp = (int)monster_csv_data[0]["Base_Hp"] * (boss ? 10 : 1);
+                for (int i = 0; i < stage_Data.int_stage - 1; i++)
+                {
+                    total_hp = total_hp + BigInteger.Divide(total_hp, 2);
+                }
+
+                break;
+            case Stage_State.underground:
+
+                if (boss)
+                    total_hp = BigInteger.Parse(underground_dungeon_csv_data[UiManager.instance.Underground_Lv]["boss_hp"].ToString());
+                else
+                    total_hp = BigInteger.Parse(underground_dungeon_csv_data[UiManager.instance.Underground_Lv]["hp"].ToString());
+
+                break;
+            default:
+                break;
         }
+
+
         Debug.Log(total_hp);
         return total_hp;
     }

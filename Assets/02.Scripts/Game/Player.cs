@@ -197,7 +197,7 @@ public class Player : MonoBehaviour
         if (is_skill)
             return;
 
-        skill_info skill_Info = BackEndDataManager.instance.Skill_Data.skill_Info.Find(x => x.int_num.Equals((int)Skill_Type.skill_atk));
+        Skill_info skill_Info = BackEndDataManager.instance.Skill_Data.skill_Info.Find(x => x.int_num.Equals((int)Skill_Type.skill_atk));
 
         if (skill_Info.int_lv >= 1)
         {

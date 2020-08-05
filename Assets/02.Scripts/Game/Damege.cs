@@ -10,7 +10,7 @@ public class Damege : MonoBehaviour
     {
         GetComponent<Text>().text = UiManager.instance.GetGoldString(damege);
 
-        transform.DOLocalMoveY(10, 1.0f);
+        transform.DOLocalMoveY(10, 5.0f);
         GetComponent<Text>().DOFade(0, 1.0f).OnComplete(() =>{
             Destroy(gameObject);
         });

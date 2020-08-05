@@ -10,7 +10,8 @@ public enum Data_Type
     character_info,
     stage_info,
     weapon_info,
-    skill_info
+    skill_info,
+    content_info
 }
 
 public enum Character_Lv

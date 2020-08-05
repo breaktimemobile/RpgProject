@@ -15,6 +15,7 @@ public class UiManager : MonoBehaviour
     private GameObject UndergroundPopup;
     private GameObject InventoryPopup;
     private GameObject WeaponPopup;
+    public GameObject UndergroundDungeon;
 
     private GameObject obj_Top;
     public GameObject obj_Stage;
@@ -58,6 +59,10 @@ public class UiManager : MonoBehaviour
     private Image img_Skill_0;
     private Image img_Skill_0_bg;
     private Text txt_Skill_0;
+
+    #endregion
+
+    #region Content_Content
 
     #endregion
 
@@ -171,11 +176,25 @@ public class UiManager : MonoBehaviour
 
     #endregion
 
-    #region Underground_DungeonPopup
+    #region UndergroundPopup
 
-    //private InputField Input_NickName;
-    //private Button btn_NickName_Ok;
-    //private GameObject txt_NickName_Fail;
+    Text txt_Underground_Steel_Val;
+    Text txt_Underground_Upgread_Stone_Val;
+    Text txt_Underground_Ticket_Val;
+
+    Button btn_Underground_In;
+    Button btn_Underground_Sweep_10;
+    Button btn_Underground_Sweep_1;
+    Button btn_Underground_Dungeon_Close;
+
+    Text txt_Max_Monster_Val;
+    Text txt_Max_Boss_Val;
+    Text txt_Boss_Percent_Val;
+    Text txt_Dungeon_Time_Val;
+    Image img_Dungeon_Reward_0;
+    Text txt_Dungeon_Reward_0;
+    Image img_Dungeon_Reward_1;
+    Text txt_Dungeon_Reward_1;
 
     #endregion
 
@@ -211,6 +230,17 @@ public class UiManager : MonoBehaviour
     public GameObject Inventory_Panel;
     public GameObject Skill_Panel;
     public GameObject Content_Panel;
+    public GameObject Underground_Panel;
+
+    #endregion
+
+
+    #region UndergroundDungeon
+
+    Text txt_Underground_Time;
+    Transform pos_Underground_Character;
+    Transform pos_Underground_Monster;
+    List<GameObject> Undergrounds = new List<GameObject>();
 
     #endregion
 
@@ -235,6 +265,7 @@ public class UiManager : MonoBehaviour
         UndergroundPopup = Popup.Find("UndergroundPopup").gameObject;
         InventoryPopup = Popup.Find("InventoryPopup").gameObject;
         WeaponPopup = Popup.Find("WeaponPopup").gameObject;
+        UndergroundDungeon = Popup.Find("UndergroundDungeon").gameObject;
 
         obj_Top = Game.Find("obj_Top").gameObject;
         obj_Stage = Game.Find("obj_Stage").gameObject;
@@ -379,6 +410,7 @@ public class UiManager : MonoBehaviour
         txt_Upgrade_100_Val = btn_Upgrade_100.transform.Find("txt_Upgrade_100_Val").GetComponent<Text>();
 
         #endregion
+
         #region NickNamePopup
 
         Input_NickName = NickNamePopup.transform.Find("Input_NickName").GetComponent<InputField>();
@@ -410,6 +442,43 @@ public class UiManager : MonoBehaviour
         content_Weapon_Decom = WeaponPopup.transform.Find("contents/content_Weapon_Decom").gameObject;
 
         #endregion
+
+        #region UndergroundPopup
+
+        txt_Underground_Steel_Val = UndergroundPopup.transform.Find("Underground_Goods/Underground_Steel/txt_Underground_Steel_Val").GetComponent<Text>();
+        txt_Underground_Upgread_Stone_Val = UndergroundPopup.transform.Find("Underground_Goods/Underground_Upgread_Stone/txt_Underground_Upgread_Stone_Val").GetComponent<Text>();
+        txt_Underground_Ticket_Val = UndergroundPopup.transform.Find("Underground_Goods/Underground_Ticket/txt_Underground_Ticket_Val").GetComponent<Text>();
+
+        Transform Underground_Stat = UndergroundPopup.transform.Find("Underground_Stat");
+
+        btn_Underground_In = Underground_Stat.Find("btn_Underground_In").GetComponent<Button>();
+        btn_Underground_Sweep_10 = Underground_Stat.Find("btn_Underground_Sweep_10").GetComponent<Button>();
+        btn_Underground_Sweep_1 = Underground_Stat.Find("btn_Underground_Sweep_1").GetComponent<Button>();
+
+        Transform img_stat_bg = Underground_Stat.Find("img_stat_bg");
+
+        txt_Max_Monster_Val = img_stat_bg.Find("txt_Max_Monster_Val").GetComponent<Text>();
+        txt_Max_Boss_Val = img_stat_bg.Find("txt_Max_Boss_Val").GetComponent<Text>();
+        txt_Boss_Percent_Val = img_stat_bg.Find("txt_Boss_Percent_Val").GetComponent<Text>();
+        txt_Dungeon_Time_Val = img_stat_bg.Find("txt_Dungeon_Time_Val").GetComponent<Text>();
+        img_Dungeon_Reward_0 = img_stat_bg.Find("img_Dungeon_Reward_0").GetComponent<Image>();
+        txt_Dungeon_Reward_0 = img_stat_bg.Find("txt_Dungeon_Reward_0").GetComponent<Text>();
+        img_Dungeon_Reward_1 = img_stat_bg.Find("img_Dungeon_Reward_1").GetComponent<Image>();
+        txt_Dungeon_Reward_1 = img_stat_bg.Find("txt_Dungeon_Reward_1").GetComponent<Text>();
+
+
+        btn_Underground_Dungeon_Close = UndergroundPopup.transform.Find("btn_Underground_Dungeon_Close").GetComponent<Button>();
+
+        #endregion
+
+        #region UndergroundDungeon
+
+        txt_Underground_Time = UndergroundDungeon.transform.Find("txt_Underground_Time").GetComponent<Text>();
+        Transform pos_Underground_Character = UndergroundDungeon.transform.Find("pos_Underground_Character");
+        Transform pos_Underground_Monster = UndergroundDungeon.transform.Find("pos_Underground_Monster");
+
+        #endregion
+
     }
 
     private void AddListener()
@@ -470,13 +539,17 @@ public class UiManager : MonoBehaviour
         btn_Weapon_Decom.onClick.AddListener(() => Change_Weapon_Popup(Weapon_Popup.decom));
 
         #endregion
-    }
 
-    public void add()
-    {
+        #region UndergroundPopup
+
+        btn_Underground_In.onClick.AddListener(() => PlayManager.instance.Check_Underground());
+        //btn_Underground_Sweep_10 = Underground_Stat.Find("btn_Underground_Sweep_10").GetComponent<Button>();
+        //btn_Underground_Sweep_1 = Underground_Stat.Find("btn_Underground_Sweep_1").GetComponent<Button>();
 
 
-        BackEndDataManager.instance.Set_Item(Item_Type.soul_stone, 109999900, Calculate_Type.plus);
+        btn_Underground_Dungeon_Close.onClick.AddListener(() => PopupManager.Close_Popup());
+
+        #endregion
     }
 
     private void Start()
@@ -563,6 +636,8 @@ public class UiManager : MonoBehaviour
         Set_Txt_Chapter();
         Set_Txt_Stage();
         Set_Txt_Soul_Stone();
+        Set_Txt_Upgread_Stone();
+        Set_Txt_Underground_Ticket();
 
         Set_Character_Name();
         Set_Character_Lv();
@@ -573,6 +648,7 @@ public class UiManager : MonoBehaviour
         Set_Inventory();
         Set_Weapon_Popup();
         Set_Content_Panel();
+        Set_Underground_Panel();
         Set_Skill_Panel();
         Set_Upgrade_Stat();
     }
@@ -613,6 +689,8 @@ public class UiManager : MonoBehaviour
     public void Set_Txt_Steel()
     {
         txt_Steel_Val.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.steel));
+        txt_Underground_Steel_Val.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.steel));
+
     }
 
     public void Set_Txt_Coin()
@@ -623,6 +701,16 @@ public class UiManager : MonoBehaviour
     public void Set_Txt_Crystal()
     {
         txt_Dia_Val.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.crystal));
+    }
+
+    public void Set_Txt_Upgread_Stone()
+    {
+        txt_Underground_Upgread_Stone_Val.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.upgrade_stone));
+    }
+
+    public void Set_Txt_Underground_Ticket()
+    {
+        txt_Underground_Ticket_Val.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.underground_ticket));
     }
 
     #endregion
@@ -782,6 +870,89 @@ public class UiManager : MonoBehaviour
 
     #endregion
 
+    #region Content
+
+    public void Set_Content_Panel()
+    {
+        Debug.Log(BackEndDataManager.instance.content_csv_data.Count);
+
+        foreach (var item in BackEndDataManager.instance.content_csv_data)
+        {
+
+            Content_Panel content = Instantiate(Content_Panel, Content_Content.transform
+                .Find("scroll_content/Viewport/Content")).GetComponent<Content_Panel>();
+
+            content.Set_Content_Item(item);
+        }
+
+    }
+
+    #region Underground_Dungeon
+
+
+    public void Set_Underground_Panel ()
+    {
+        for (int i = 0; i < BackEndDataManager.instance.underground_dungeon_csv_data.Count; i++)
+        {
+            GameObject under = Instantiate(Underground_Panel, UndergroundPopup.transform
+        .Find("Scroll_Underground/Viewport/Content"));
+
+            int lv = i;
+         
+            under.GetComponentInChildren<Text>().text = string.Format("{0}.{1}","Lv", lv + 1);
+            under.GetComponent<Button>().onClick.AddListener(() => Set_Underground_Txt(lv));
+            Undergrounds.Add(under);
+
+        }
+
+        Set_Underground_Txt(BackEndDataManager.instance.Content_Data.underground_info.Count - 1);
+        Checj_Underground_Unlock();
+    }
+
+    public void Checj_Underground_Unlock()
+    {
+        for (int i = 0; i < BackEndDataManager.instance.underground_dungeon_csv_data.Count; i++)
+        {
+            int Lv = (int)BackEndDataManager.instance.underground_dungeon_csv_data[i]["unlock_lv"];
+
+            Undergrounds[i].GetComponent<Button>().interactable = Lv <= BackEndDataManager.instance.Stage_Data.int_stage;
+
+        }
+    }
+
+    public int Underground_Lv = 0;
+
+    public void Set_Underground_Txt(int lv)
+    {
+        Underground_Lv = lv;
+
+        Underground_info underground_Info = BackEndDataManager.instance.Content_Data.underground_info
+            .Find(x => x.int_num.Equals(lv));
+
+        txt_Max_Monster_Val.text = underground_Info == null ? "0": underground_Info.int_Max_Monster.ToString();
+        txt_Max_Boss_Val.text = underground_Info == null ? "0" : underground_Info.int_Max_Boss.ToString();
+        txt_Boss_Percent_Val.text = "5%";
+        txt_Dungeon_Time_Val.text = BackEndDataManager.instance.underground_dungeon_csv_data[lv]["time"].ToString();
+        BigInteger reward_0 = BigInteger.Parse(BackEndDataManager.instance.underground_dungeon_csv_data[lv]["reward_val_0"].ToString());
+        BigInteger reward_1 = BigInteger.Parse(BackEndDataManager.instance.underground_dungeon_csv_data[lv]["reward_val_1"].ToString());
+        txt_Dungeon_Reward_0.text = GetGoldString(reward_0);
+        txt_Dungeon_Reward_1.text = GetGoldString(reward_1);
+
+        img_Dungeon_Reward_0.sprite =Resources.Load<Sprite>("Item/icon_" + (Item_Type)(int)BackEndDataManager.instance.underground_dungeon_csv_data[lv]["reward_0"]);
+        img_Dungeon_Reward_1.sprite = Resources.Load<Sprite>("Item/icon_" + (Item_Type)(int)BackEndDataManager.instance.underground_dungeon_csv_data[lv]["reward_1"]);
+        Debug.Log("lv " + lv);
+    }
+
+    public void Open_Underground()
+    {
+        PopupManager.Close_Popup();
+        PopupManager.Open_Popup(UndergroundDungeon);
+    }
+
+    #endregion
+
+    #endregion
+
     #region Character
 
     public void Set_Character_Stat()
@@ -794,26 +965,6 @@ public class UiManager : MonoBehaviour
         txt_State_Critical_Percent_Val.text = string.Format("{0}{1}", Player_stat.int_Critical_Percent, "%");
         txt_State_Speed_Val.text = string.Format("{0}{1}", Player_stat.int_Atk_Speed, "%");
     }
-
-    #region Content
-
-    public void Set_Content_Panel()
-    {
-        Debug.Log(BackEndDataManager.instance.content_csv_data.Count);
-
-        foreach (var item in BackEndDataManager.instance.content_csv_data)
-        {
-
-
-            Content_Panel content = Instantiate(Content_Panel, Content_Content.transform
-                .Find("scroll_content/Viewport/Content")).GetComponent<Content_Panel>();
-
-            content.Set_Content_Item(item);
-
-        }
-
-    }
-    #endregion
 
     #region Skill
 
