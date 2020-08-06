@@ -152,12 +152,11 @@ public class Player : MonoBehaviour
     public void Init()
     {
         anim_Player = GetComponent<Animator>();
-        Start_Skill();
+        PlayManager.instance.Start_Skill();
     }
 
     public void Start_Run()
     {
-        Debug.Log("int_Btm_Scroll_Speed" + Player_stat.int_Speed);
         anim_Player.SetFloat("speed", Player_stat.int_Speed / 100);
         anim_Player.Play("run");
     }
@@ -191,75 +190,5 @@ public class Player : MonoBehaviour
     }
 
 
-    public void Start_Skill()
-    {
-
-        if (is_skill)
-            return;
-
-        Skill_info skill_Info = BackEndDataManager.instance.Skill_Data.skill_Info.Find(x => x.int_num.Equals((int)Skill_Type.skill_atk));
-
-        if (skill_Info.int_lv >= 1)
-        {
-            StartCoroutine("Co_Start_Skill");
-
-        }
-    }
-
-    bool is_skill = false;
-
-    IEnumerator Co_Start_Skill()
-    {
-
-        is_skill = true;
-
-        Skill skill = Skill_s.Get_Skill(Skill_Type.skill_atk);
-
-        float skill_time = skill.skill_time;
-
-        Player_stat.Use_skill = true;
-        Player_stat.Set_Skill_Stat();
-        UiManager.instance.Set_Skill_0_Bg();
-
-        while (skill_time >= 0)
-        {
-
-            skill_time -= 0.1f;
-            UiManager.instance.Set_Skill_0_txt(0, (int)skill_time);
-
-            yield return new WaitForSeconds(0.1f);
-
-        }
-
-
-        Player_stat.Use_skill = false;
-        Player_stat.Set_Skill_Stat();
-
-        StartCoroutine("Co_Cool_Skill");
-    }
-
-    IEnumerator Co_Cool_Skill()
-    {
-       
-        Skill skill = Skill_s.Get_Skill(Skill_Type.skill_atk);
-
-        float skill_time = skill.cool_time;
-        UiManager.instance.Set_Skill_0_Bg();
-
-        while (skill_time >= 0)
-        {
-
-            skill_time -= 0.1f;
-            UiManager.instance.Set_Skill_0_txt(skill_time / skill.cool_time, (int)skill_time);
-
-            yield return new WaitForSeconds(0.1f);
-
-        }
-
-        is_skill = false;
-        Start_Skill();
-
-
-    }
-
+   
 }

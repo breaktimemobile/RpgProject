@@ -9,7 +9,8 @@ using Vector3 = UnityEngine.Vector3;
 public enum Monster_Type
 {
     Basic,
-    Boss
+    Boss,
+    underground_Boss
 }
 
 public enum Monster_State
@@ -41,8 +42,6 @@ public class Monster : MonoBehaviour
 
     public void Set_Monster(Monster_Type _Type, BigInteger m_hp)
     {
-        Debug.Log(m_hp);
-
         monster_Type = _Type;
 
         transform.localScale = _Type == Monster_Type.Basic ? Vector3.one : Vector3.one * 1.3f;
@@ -62,6 +61,9 @@ public class Monster : MonoBehaviour
             if (this.transform.localPosition.x <= stop_pos && monster_State != Monster_State.Die)
             {
                 PlayManager.instance.Change_State(Player_State.Fight);
+
+                this.transform.localPosition = new Vector3(stop_pos,transform.localPosition.y,transform.localPosition.z);
+
             }
         }
     }
@@ -119,6 +121,24 @@ public class Monster : MonoBehaviour
 
     IEnumerator Co_Die()
     {
+        switch (PlayManager.instance.Stage_State)
+        {
+            case Stage_State.stage:
+                
+                break;
+            case Stage_State.underground:
+
+                if(monster_Type.Equals(Monster_Type.underground_Boss))
+                    Underground_.underground_Info.int_Max_Boss += 1;
+                else
+                    Underground_.underground_Info.int_Max_Monster += 1;
+
+                UiManager.instance.Set_Underground_Info();
+
+                break;
+            default:
+                break;
+        }
 
         monster_State = Monster_State.Die;
 

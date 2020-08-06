@@ -37,4 +37,24 @@ public class PopupManager
         Debug.Log("open "+obj.name);
 
     }
+
+
+    public static void All_Close_Popup()
+    {
+        Debug.Log(objects.Count);
+        int cnt = objects.Count;
+        for (int i = 0; i < cnt; i++)
+        {
+            Debug.Log("ss " + i);
+
+
+            GameObject obj = objects.Pop();
+            Debug.Log("close " + obj.name);
+
+            obj.gameObject.SetActive(false);
+
+
+        }
+
+    }
 }

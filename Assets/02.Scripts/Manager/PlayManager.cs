@@ -6,7 +6,8 @@ public enum Player_State
 {
     None,
     Run,
-    Fight
+    Fight,
+    Reward
 }
 
 public enum Stage_State
@@ -54,7 +55,12 @@ public class PlayManager : MonoBehaviour
                     Start_Boss_Timer();
 
                 break;
+            case Player_State.Reward:
 
+                sc_Player.Stop_Atk();
+
+
+                break;
             default:
                 break;
         }
@@ -125,27 +131,26 @@ public class PlayManager : MonoBehaviour
         Change_State(Player_State.Run);
     }
 
-    public void Check_Stage()
-    {
-
-       PopupManager.Close_Popup();
-
-        Start_Game(Stage_State.stage);
-
-    }
-
     public void Check_Underground()
     {
 
-        //if (BackEndDataManager.instance.Get_Item(Item_Type.underground_ticket) >= 1)
-        //{
-            BackEndDataManager.instance.Set_Item(Item_Type.underground_ticket, 1, Calculate_Type.mius);
+        BackEndDataManager.instance.Set_Item(Item_Type.underground_ticket, 1, Calculate_Type.mius);
 
-            UiManager.instance.Open_Underground();
+        Underground_.underground_Info = new Underground_info
+        {
+            int_num = Underground_.Underground_Lv,
+            int_Max_Monster = 0,
+            int_Max_Boss = 0
+        };
 
-            Start_Game(Stage_State.underground);
+        UiManager.instance.Set_Underground_Info();
 
-        //}
+
+        UiManager.instance.Open_Underground();
+
+        Start_Game(Stage_State.underground);
+
+        StartCoroutine("Co_Underground_Timer");
 
 
     }
@@ -153,45 +158,67 @@ public class PlayManager : MonoBehaviour
     public void Set_Monster()
     {
 
-        Transform pos = UiManager.instance.obj_Stage.transform;
-
         switch (stage_State)
         {
             case Stage_State.stage:
-                pos = UiManager.instance.obj_Stage.transform;
+                Transform pos = UiManager.instance.obj_Stage.transform;
+
+                GameObject obj_Monster = Instantiate(Monsters[0], pos);
+                obj_Monster.transform.position = pos_Monster.position;
+
+                sc_Monster = obj_Monster.GetComponent<Monster>();
+                sc_Monster.transform.localScale = Vector3.one;
+
+                if (BackEndDataManager.instance.Stage_Data.int_step > 10)
+                {
+                    if (!BackEndDataManager.instance.Stage_Data.is_boss)
+                    {
+                        sc_Monster.Set_Monster(Monster_Type.Boss, BackEndDataManager.instance.Monster_Hp(true));
+                    }
+                    else
+                    {
+                        sc_Monster.Set_Monster(Monster_Type.Basic, BackEndDataManager.instance.Monster_Hp(false));
+
+                    }
+                }
+                else
+                {
+                    sc_Monster.Set_Monster(Monster_Type.Basic, BackEndDataManager.instance.Monster_Hp(false));
+
+                }
+
                 break;
             case Stage_State.underground:
+
                 pos = UiManager.instance.UndergroundDungeon.transform;
+
+                obj_Monster = Instantiate(Monsters[0], pos);
+                obj_Monster.transform.position = pos_Monster.position;
+
+                sc_Monster = obj_Monster.GetComponent<Monster>();
+                sc_Monster.transform.localScale = Vector3.one;
+
+                if (Random.Range(0, 100) <= Underground_.Boss_Percent)
+                {
+                    sc_Monster.Set_Monster(Monster_Type.underground_Boss, BackEndDataManager.instance.Monster_Hp(true));
+                }
+                else
+                {
+                    sc_Monster.Set_Monster(Monster_Type.Basic, BackEndDataManager.instance.Monster_Hp(false));
+
+                }
+
+
+
                 break;
             default:
                 break;
         }
 
 
-        GameObject obj_Monster = Instantiate(Monsters[0], pos);
-        obj_Monster.transform.position = pos_Monster.position;
 
-        sc_Monster = obj_Monster.GetComponent<Monster>();
-        sc_Monster.transform.localScale = Vector3.one;
 
-        if (BackEndDataManager.instance.Stage_Data.int_step > 10)
-        {
-            if (!BackEndDataManager.instance.Stage_Data.is_boss)
-            {
-                sc_Monster.Set_Monster(Monster_Type.Boss, BackEndDataManager.instance.Monster_Hp(true));
 
-            }
-            else
-            {
-                sc_Monster.Set_Monster(Monster_Type.Basic, BackEndDataManager.instance.Monster_Hp(false));
-
-            }
-        }
-        else
-        {
-            sc_Monster.Set_Monster(Monster_Type.Basic, BackEndDataManager.instance.Monster_Hp(false));
-
-        }
     }
 
     public void Start_Boss_Timer()
@@ -261,4 +288,99 @@ public class PlayManager : MonoBehaviour
 
         UiManager.instance.Set_Txt_Stage();
     }
+
+
+    IEnumerator Co_Underground_Timer()
+    {
+        float timer = float.Parse(BackEndDataManager.instance.underground_dungeon_csv_data[Underground_.Underground_Lv]["time"].ToString());
+
+        UiManager.instance.Set_Underground_timer(timer);
+
+        while (timer > 0)
+        {
+
+            yield return new WaitForSeconds(0.1f);
+
+            timer -= 0.1f;
+
+            UiManager.instance.Set_Underground_timer(timer);
+
+        }
+
+        Change_State(Player_State.Reward);
+        UiManager.instance.Set_Underground_Reward();
+
+    }
+
+    public void Start_Skill()
+    {
+
+        if (is_skill)
+            return;
+
+        Skill_info skill_Info = BackEndDataManager.instance.Skill_Data.skill_Info.Find(x => x.int_num.Equals((int)Skill_Type.skill_atk));
+
+        if (skill_Info.int_lv >= 1)
+        {
+            StartCoroutine("Co_Start_Skill");
+
+        }
+    }
+
+    bool is_skill = false;
+
+    IEnumerator Co_Start_Skill()
+    {
+
+        is_skill = true;
+
+        Skill skill = Skill_s.Get_Skill(Skill_Type.skill_atk);
+
+        float skill_time = skill.skill_time;
+
+        Player_stat.Use_skill = true;
+        Player_stat.Set_Skill_Stat();
+        UiManager.instance.Set_Skill_0_Bg();
+
+        while (skill_time >= 0)
+        {
+
+            skill_time -= 0.1f;
+            UiManager.instance.Set_Skill_0_txt(0, (int)skill_time);
+
+            yield return new WaitForSeconds(0.1f);
+
+        }
+
+
+        Player_stat.Use_skill = false;
+        Player_stat.Set_Skill_Stat();
+
+        StartCoroutine("Co_Cool_Skill");
+    }
+
+    IEnumerator Co_Cool_Skill()
+    {
+
+        Skill skill = Skill_s.Get_Skill(Skill_Type.skill_atk);
+
+        float skill_time = skill.cool_time;
+        UiManager.instance.Set_Skill_0_Bg();
+
+        while (skill_time >= 0)
+        {
+
+            skill_time -= 0.1f;
+            UiManager.instance.Set_Skill_0_txt(skill_time / skill.cool_time, (int)skill_time);
+
+            yield return new WaitForSeconds(0.1f);
+
+        }
+
+        is_skill = false;
+        Start_Skill();
+
+
+    }
+
 }

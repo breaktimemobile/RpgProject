@@ -40,7 +40,7 @@ public class Skill_Panel : MonoBehaviour
         btn_Skill_Upgrade.onClick.AddListener(() => Buy());
         skill = Skill_s.Get_Skill((Skill_Type)num);
 
-        img_Skill_Upgrade.sprite = Resources.Load<Sprite>("Item/icon_" + ((Item_Type)skill.price_type).ToString());
+        img_Skill_Upgrade.sprite = Utill.Get_Item_Sp((Item_Type)skill.price_type);
 
         img_Skill.sprite = Resources.Load<Sprite>("Skill/S_skill_" + skill.stat_type);
         txt_Skill_Name.text = skill.name;

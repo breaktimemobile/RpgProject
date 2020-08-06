@@ -242,3 +242,73 @@ public class Skill
     public float f_total;
 
 }
+
+public class Underground_
+{
+
+    public static int Underground_Lv = 0;
+
+    public static int Boss_Percent = 0;
+
+    public static Underground_info underground_Info = new Underground_info();
+
+    public static BigInteger Get_Reward_0()
+    {
+        BigInteger big = BigInteger.Parse(BackEndDataManager.instance.underground_dungeon_csv_data[Underground_Lv]["reward_val_0"].ToString());
+
+        return big * underground_Info.int_Max_Monster;
+    }
+
+    public static BigInteger Get_Reward_1()
+    {
+
+        BigInteger big = BigInteger.Parse(BackEndDataManager.instance.underground_dungeon_csv_data[Underground_Lv]["reward_val_1"].ToString());
+       
+        return big * underground_Info.int_Max_Monster;
+    }
+
+    public static Item_Type Get_Reward_0_Type()
+    {
+        return (Item_Type)(int)BackEndDataManager.instance.underground_dungeon_csv_data[Underground_Lv]["reward_0"];
+    }
+
+    public static Item_Type Get_Reward_1_Type()
+    {
+        return (Item_Type)(int)BackEndDataManager.instance.underground_dungeon_csv_data[Underground_Lv]["reward_1"];
+    }
+
+    public static Sprite Get_Img_Reward_0()
+    {
+        return Utill.Get_Item_Sp((Item_Type)(int)BackEndDataManager.instance.underground_dungeon_csv_data[Underground_Lv]["reward_0"]);
+    }
+
+    public static Sprite Get_Img_Reward_1()
+    {
+        return Utill.Get_Item_Sp((Item_Type)(int)BackEndDataManager.instance.underground_dungeon_csv_data[Underground_Lv]["reward_1"]);
+    }
+
+    public static void Get_Sweep(int val)
+    {
+        BigInteger big_0 = BigInteger.Parse(BackEndDataManager.instance.underground_dungeon_csv_data[Underground_Lv]["reward_val_0"].ToString());
+
+        BigInteger big_1 = BigInteger.Parse(BackEndDataManager.instance.underground_dungeon_csv_data[Underground_Lv]["reward_val_1"].ToString());
+
+        Underground_info underground_Info = BackEndDataManager.instance.Content_Data.underground_info
+       .Find(x => x.int_num.Equals(Underground_Lv));
+
+        Debug.Log(big_0 * underground_Info.int_Max_Monster * val);
+        BackEndDataManager.instance.Set_Item(Item_Type.underground_ticket, val, Calculate_Type.mius);
+        BackEndDataManager.instance.Set_Item(Get_Reward_0_Type(), big_0 * underground_Info.int_Max_Monster * val, Calculate_Type.plus);
+        BackEndDataManager.instance.Set_Item(Get_Reward_1_Type(), big_1 * underground_Info.int_Max_Boss * val, Calculate_Type.plus);
+
+    }
+
+}
+
+public class Utill
+{
+    public static Sprite Get_Item_Sp(Item_Type item_Type)
+    {
+        return Resources.Load<Sprite>("Item/icon_" + item_Type.ToString());
+    }
+}

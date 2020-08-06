@@ -880,8 +880,6 @@ public class BackEndDataManager : MonoBehaviour
         int_exp += exp;
         BigInteger Total_ = Total_exp();
 
-        Debug.Log(int_exp + "  " + Total_);
-
         if (int_exp >= Total_)
         {
 
@@ -938,12 +936,15 @@ public class BackEndDataManager : MonoBehaviour
                 }
 
                 break;
+
             case Stage_State.underground:
 
+                BigInteger pow = (BigInteger)Math.Pow(1000, Underground_.Underground_Lv);
+
                 if (boss)
-                    total_hp = BigInteger.Parse(underground_dungeon_csv_data[UiManager.instance.Underground_Lv]["boss_hp"].ToString());
+                    total_hp = BigInteger.Parse(underground_dungeon_csv_data[0]["boss_hp"].ToString()) * pow;
                 else
-                    total_hp = BigInteger.Parse(underground_dungeon_csv_data[UiManager.instance.Underground_Lv]["hp"].ToString());
+                    total_hp = BigInteger.Parse(underground_dungeon_csv_data[0]["hp"].ToString()) * pow;
 
                 break;
             default:
@@ -951,8 +952,9 @@ public class BackEndDataManager : MonoBehaviour
         }
 
 
-        Debug.Log(total_hp);
+        Debug.Log("TOTAL "+total_hp);
         return total_hp;
+
     }
 
     public BigInteger Monster_Exp(bool boss)
@@ -1038,6 +1040,8 @@ public class BackEndDataManager : MonoBehaviour
 
                 break;
             case Item_Type.upgrade_stone:
+                UiManager.instance.Set_Txt_Upgread_Stone();
+
                 break;
             case Item_Type.limit_stone:
                 break;
@@ -1099,6 +1103,8 @@ public class BackEndDataManager : MonoBehaviour
             case Item_Type.upgrade_stone_box_10000_20000:
                 break;
             case Item_Type.underground_ticket:
+                UiManager.instance.Check_Underground_Ticket();
+                UiManager.instance.Set_Txt_Underground_Ticket();
                 break;
             case Item_Type.upgrade_ticket:
                 break;
@@ -1181,5 +1187,35 @@ public class BackEndDataManager : MonoBehaviour
         Minus_Item(Item_Type.coin, lv_1);
         Player_stat.Add_Lv((int)character_Lv);
 
+    }
+
+    public void Check_Underground_Info()
+    {
+       Underground_info _Info = content_Data.underground_info.Find(x => x.int_num.Equals(Underground_.Underground_Lv));
+
+        Debug.Log(Underground_.underground_Info.int_Max_Boss);
+
+        if (_Info == null)
+        {
+            Debug.Log(Underground_.underground_Info.int_Max_Boss);
+            Debug.Log(Underground_.underground_Info.int_Max_Monster);
+
+            Underground_info info = Underground_.underground_Info;
+            content_Data.underground_info.Add(info);
+        }
+        else
+        {
+            Debug.Log(Underground_.underground_Info.int_Max_Boss);
+            Debug.Log(Underground_.underground_Info.int_Max_Monster);
+
+            if (Underground_.underground_Info.int_Max_Boss >= _Info.int_Max_Boss)
+                _Info.int_Max_Boss = Underground_.underground_Info.int_Max_Boss;
+
+            if (Underground_.underground_Info.int_Max_Monster >= _Info.int_Max_Monster)
+                _Info.int_Max_Monster = Underground_.underground_Info.int_Max_Monster;
+
+        }
+
+        Save_Content_Data();
     }
 }
