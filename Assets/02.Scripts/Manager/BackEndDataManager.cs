@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Random = UnityEngine.Random;
 
 [DynamoDBTable("player_info")]
 public class Player_Data
@@ -152,6 +153,10 @@ public class BackEndDataManager : MonoBehaviour
     public List<Dictionary<string, object>> skill_Explan_csv_data;         //던전 정보
     public List<Dictionary<string, object>> skill_csv_data;         //던전 정보
     public List<Dictionary<string, object>> content_csv_data;         //던전 정보
+    public List<Dictionary<string, object>> underground_item_csv_data;         //던전 정보
+
+    public Item_s underground_item_ = new Item_s();         //던전 정보
+
 
     private List<bool> Check_Data = new List<bool>();
 
@@ -174,7 +179,7 @@ public class BackEndDataManager : MonoBehaviour
         credentials = new CognitoAWSCredentials("ap-northeast-2:f497c006-2a2e-4336-b2da-7d8bb5c45f24", RegionEndpoint.APNortheast2);
         DBclient = new AmazonDynamoDBClient(credentials, RegionEndpoint.APNortheast2);
         context = new DynamoDBContext(DBclient);
-        
+
 
         for (int i = 0; i < Enum.GetValues(typeof(Data_Type)).Length; i++)
         {
@@ -197,6 +202,7 @@ public class BackEndDataManager : MonoBehaviour
         skill_Explan_csv_data = CSVReader.Read("skill_explan");
         skill_csv_data = CSVReader.Read("skill");
         content_csv_data = CSVReader.Read("content");
+        underground_item_csv_data = CSVReader.Read("underground_item");
 
         foreach (var data in skill_csv_data)
         {
@@ -221,7 +227,20 @@ public class BackEndDataManager : MonoBehaviour
             Skill_s.skills.Add(skill);
         }
 
-      
+        foreach (var data in underground_item_csv_data)
+        {
+            Item item_ = new Item
+            {
+                num = int.Parse(data["num"].ToString()),
+                name = data["name"].ToString(),
+                item_num = int.Parse(data["item_num"].ToString()),
+                percent = float.Parse(data["percent"].ToString())
+            };
+
+            Item_s.items.Add(item_);
+            Item_s.total += item_.percent;
+        }
+
     }
 
     public void Set_NickName(string NickName)
@@ -283,7 +302,7 @@ public class BackEndDataManager : MonoBehaviour
 
 
     }
-    
+
     public void Sucess_Data(Data_Type type)
     {
         if (SceneManager.GetActiveScene().name.Equals("Intro"))
@@ -363,7 +382,7 @@ public class BackEndDataManager : MonoBehaviour
 
         DBclient.ScanAsync(request, (result) =>
         {
-            
+
             Dictionary<string, AttributeValue> t =
               result.Response.Items.Find(x => x["id"].S.Equals(BackEndAuthManager.Get_UserId()));
 
@@ -708,7 +727,7 @@ public class BackEndDataManager : MonoBehaviour
 
     public void Get_Skill_Data() //DB에서 캐릭터 정보 받기
     {
-      
+
 
         Debug.Log("Get_Skill_Data");
 
@@ -725,9 +744,9 @@ public class BackEndDataManager : MonoBehaviour
 
             foreach (var item in skill_Data.skill_Info)
             {
-                Skill_s.Set_Skill_Val(item.int_num,item.int_lv);
+                Skill_s.Set_Skill_Val(item.int_num, item.int_lv);
             }
-            
+
             Sucess_Data(Data_Type.skill_info);
 
 
@@ -952,7 +971,7 @@ public class BackEndDataManager : MonoBehaviour
         }
 
 
-        Debug.Log("TOTAL "+total_hp);
+        Debug.Log("TOTAL " + total_hp);
         return total_hp;
 
     }
@@ -977,7 +996,7 @@ public class BackEndDataManager : MonoBehaviour
         Debug.Log(i + "  " + val);
 
         BigInteger a = (val * (boss ? 2 : 1));
-        Set_Item(i, a,Calculate_Type.plus);
+        Set_Item(i, a, Calculate_Type.plus);
 
     }
 
@@ -992,7 +1011,7 @@ public class BackEndDataManager : MonoBehaviour
 
     }
 
-    public void Set_Item(Item_Type type, BigInteger val , Calculate_Type calculate)
+    public void Set_Item(Item_Type type, BigInteger val, Calculate_Type calculate)
     {
         Item_Info item_Info = item_Data.item_Info.Find(x => x.type.Equals((int)type));
 
@@ -1191,9 +1210,7 @@ public class BackEndDataManager : MonoBehaviour
 
     public void Check_Underground_Info()
     {
-       Underground_info _Info = content_Data.underground_info.Find(x => x.int_num.Equals(Underground_.Underground_Lv));
-
-        Debug.Log(Underground_.underground_Info.int_Max_Boss);
+        Underground_info _Info = content_Data.underground_info.Find(x => x.int_num.Equals(Underground_.Underground_Lv));
 
         if (_Info == null)
         {
@@ -1201,12 +1218,13 @@ public class BackEndDataManager : MonoBehaviour
             Debug.Log(Underground_.underground_Info.int_Max_Monster);
 
             Underground_info info = Underground_.underground_Info;
+
             content_Data.underground_info.Add(info);
         }
         else
         {
-            Debug.Log(Underground_.underground_Info.int_Max_Boss);
-            Debug.Log(Underground_.underground_Info.int_Max_Monster);
+            Debug.Log(_Info.int_Max_Boss);
+            Debug.Log(_Info.int_Max_Monster);
 
             if (Underground_.underground_Info.int_Max_Boss >= _Info.int_Max_Boss)
                 _Info.int_Max_Boss = Underground_.underground_Info.int_Max_Boss;

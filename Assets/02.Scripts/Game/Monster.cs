@@ -92,7 +92,7 @@ public class Monster : MonoBehaviour
         if (Player_stat.int_Critical_Percent >= Rd)
         {
 
-            total_damege = damege + (damege * (ulong)Player_stat.int_Critical_Damege / 100);
+            total_damege = damege + (damege * (BigInteger)Player_stat.int_Critical_Damege  / 100);
 
             Damege sc_damege = Instantiate(UiManager.instance.txt_Critical_Damege, pos).GetComponent<Damege>();
             sc_damege.transform.position = this.transform.position;
@@ -134,6 +134,7 @@ public class Monster : MonoBehaviour
                     Underground_.underground_Info.int_Max_Monster += 1;
 
                 UiManager.instance.Set_Underground_Info();
+                Underground_.Get_Underground_Random_Item();
 
                 break;
             default:

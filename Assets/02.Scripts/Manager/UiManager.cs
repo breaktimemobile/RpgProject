@@ -179,7 +179,7 @@ public class UiManager : MonoBehaviour
 
     #region UndergroundPopup
 
-    Text txt_Underground_Steel_Val;
+    Text txt_Underground_Soul_Stone_Val;
     Text txt_Underground_Upgread_Stone_Val;
     Text txt_Underground_Ticket_Val;
 
@@ -476,7 +476,7 @@ public class UiManager : MonoBehaviour
 
         #region UndergroundPopup
 
-        txt_Underground_Steel_Val = UndergroundPopup.transform.Find("Underground_Goods/Underground_Steel/txt_Underground_Steel_Val").GetComponent<Text>();
+        txt_Underground_Soul_Stone_Val = UndergroundPopup.transform.Find("Underground_Goods/Underground_Soul_Stone/txt_Underground_Soul_Stone_Val").GetComponent<Text>();
         txt_Underground_Upgread_Stone_Val = UndergroundPopup.transform.Find("Underground_Goods/Underground_Upgread_Stone/txt_Underground_Upgread_Stone_Val").GetComponent<Text>();
         txt_Underground_Ticket_Val = UndergroundPopup.transform.Find("Underground_Goods/Underground_Ticket/txt_Underground_Ticket_Val").GetComponent<Text>();
 
@@ -749,7 +749,6 @@ public class UiManager : MonoBehaviour
     public void Set_Txt_Steel()
     {
         txt_Steel_Val.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.steel));
-        txt_Underground_Steel_Val.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.steel));
 
     }
 
@@ -771,6 +770,14 @@ public class UiManager : MonoBehaviour
     public void Set_Txt_Underground_Ticket()
     {
         txt_Underground_Ticket_Val.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.underground_ticket));
+    }
+
+
+    public void Set_Txt_Soul_Stone()
+    {
+        txt_Skill_Soul_Val.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.soul_stone));
+        txt_Upgrade_Soul_Stone_Val.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.soul_stone));
+        txt_Underground_Soul_Stone_Val.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.soul_stone));
     }
 
     #endregion
@@ -959,23 +966,26 @@ public class UiManager : MonoBehaviour
 
             int lv = i;
 
-            under.GetComponentInChildren<Text>().text = string.Format("{0}.{1}", "Lv", lv + 1);
+            under.transform.Find("txt_Underground_Lv").GetComponent<Text>().text = string.Format("{0}.{1}", "Lv", lv + 1);
+            under.transform.Find("txt_Underground_Lock").GetComponent<Text>().text = string.Format("{0} {1} {2}", "스테이지 ", BackEndDataManager.instance.underground_dungeon_csv_data[i]["unlock_lv"].ToString(),"도달");
+
             under.GetComponent<Button>().onClick.AddListener(() => Set_Underground_Txt(lv));
             Undergrounds.Add(under);
 
         }
 
         Set_Underground_Txt(BackEndDataManager.instance.Content_Data.underground_info.Count - 1);
-        Checj_Underground_Unlock();
+        Check_Underground_Unlock();
     }
 
-    public void Checj_Underground_Unlock()
+    public void Check_Underground_Unlock()
     {
         for (int i = 0; i < BackEndDataManager.instance.underground_dungeon_csv_data.Count; i++)
         {
             int Lv = (int)BackEndDataManager.instance.underground_dungeon_csv_data[i]["unlock_lv"];
 
             Undergrounds[i].GetComponent<Button>().interactable = Lv <= BackEndDataManager.instance.Stage_Data.int_stage;
+            Undergrounds[i].transform.Find("txt_Underground_Lock").gameObject.SetActive(Lv > BackEndDataManager.instance.Stage_Data.int_stage);
 
         }
     }
@@ -983,6 +993,13 @@ public class UiManager : MonoBehaviour
 
     public void Set_Underground_Txt(int lv)
     {
+        for (int i = 0; i < Undergrounds.Count; i++)
+        {
+            Undergrounds[i].GetComponent<Image>().color =  i == lv ? Color.yellow : Color.white;
+
+        }
+
+
         Underground_.Underground_Lv = lv;
 
         Underground_info underground_Info = BackEndDataManager.instance.Content_Data.underground_info
@@ -1033,19 +1050,37 @@ public class UiManager : MonoBehaviour
 
     public void Set_Underground_Reward()
     {
-        img_UndergroundReward_Reward_0.sprite = Underground_.Get_Img_Reward_0();
-        img_UndergroundReward_Reward_1.sprite = Underground_.Get_Img_Reward_1();
-
+        Debug.Log("Lb v " + Underground_.Underground_Lv );
 
         BackEndDataManager.instance.Set_Item(Underground_.Get_Reward_0_Type(), Underground_.Get_Reward_0(), Calculate_Type.plus);
         BackEndDataManager.instance.Set_Item(Underground_.Get_Reward_1_Type(), Underground_.Get_Reward_1(), Calculate_Type.plus);
 
         BackEndDataManager.instance.Check_Underground_Info();
 
-        txt_UndergroundReward_Kill_Monster.text = string.Format("x{0}", Underground_.underground_Info.int_Max_Monster);
-        txt_UndergroundReward_Kill_Boss.text = string.Format("x{0}", Underground_.underground_Info.int_Max_Boss);
-        txt_UndergroundReward_Reward_0.text = string.Format("x{0}", GetGoldString(Underground_.Get_Reward_0()));
-        txt_UndergroundReward_Reward_1.text = string.Format("x{0}", GetGoldString(Underground_.Get_Reward_1()));
+        Set_Underground_Reward_Txt(1);
+
+    }
+
+    public void Set_Underground_Reward_Txt(int val)
+    {
+        foreach (var item in under_list)
+        {
+            item.gameObject.SetActive(false);
+        }
+
+
+        foreach (var item in Underground_.Underground_Item)
+        {
+            Set_Underground_Val((Item_Type)Item_s.items.Find(x => x.num.Equals(item.num)).item_num,item.val);
+        }
+        
+        img_UndergroundReward_Reward_0.sprite = Underground_.Get_Img_Reward_0();
+        img_UndergroundReward_Reward_1.sprite = Underground_.Get_Img_Reward_1();
+
+        txt_UndergroundReward_Kill_Monster.text = string.Format("x{0}", Underground_.underground_Info.int_Max_Monster * val);
+        txt_UndergroundReward_Kill_Boss.text = string.Format("x{0}", Underground_.underground_Info.int_Max_Boss * val);
+        txt_UndergroundReward_Reward_0.text = string.Format("x{0}", GetGoldString(Underground_.Get_Reward_0() * val));
+        txt_UndergroundReward_Reward_1.text = string.Format("x{0}", GetGoldString(Underground_.Get_Reward_1()* val));
 
         PopupManager.Open_Popup(UndergroundRewardPopup);
 
@@ -1054,7 +1089,22 @@ public class UiManager : MonoBehaviour
     public void Set_Underground_Reward_Close()
     {
 
-        PopupManager.All_Close_Popup();
+        switch (PlayManager.instance.Stage_State)
+        {
+            case Stage_State.stage:
+                PopupManager.Close_Popup();
+
+                break;
+            case Stage_State.underground:
+
+                Set_Underground_Txt(Underground_.Underground_Lv);
+
+                PopupManager.All_Close_Popup();
+
+                break;
+            default:
+                break;
+        }
 
         PlayManager.instance.Start_Game(Stage_State.stage);
 
@@ -1067,6 +1117,29 @@ public class UiManager : MonoBehaviour
         btn_Underground_Sweep_10.interactable = BackEndDataManager.instance.Get_Item(Item_Type.underground_ticket) >= 10;
     }
 
+    List<Inventory_Panel> under_list = new List<Inventory_Panel>();
+
+    public void Set_Underground_Val(Item_Type i,int val)
+    {
+
+        Inventory_Panel inven = under_list.Find(x => x.Item_Type.Equals(i));
+
+        if (inven == null)
+        {
+            GameObject obj = Instantiate(Inventory_Panel, UndergroundRewardPopup.transform
+        .Find("Underground_Item"));
+            Inventory_Panel Inventory = obj.GetComponent<Inventory_Panel>();
+            under_list.Add(Inventory);
+
+            obj.GetComponent<Inventory_Panel>().Set_Inventory_Item(i,
+                val);
+        }
+        else
+        {
+            inven.Set_Inventory_Val(val);
+            inven.gameObject.SetActive(true);
+        }
+    }
     #endregion
 
     #endregion
@@ -1104,12 +1177,6 @@ public class UiManager : MonoBehaviour
 
     }
 
-
-    public void Set_Txt_Soul_Stone()
-    {
-        txt_Skill_Soul_Val.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.soul_stone));
-        txt_Upgrade_Soul_Stone_Val.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.soul_stone));
-    }
 
     public void Set_Skill_Val(Character_Lv up_lv)
     {

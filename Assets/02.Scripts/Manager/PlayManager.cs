@@ -134,25 +134,28 @@ public class PlayManager : MonoBehaviour
     public void Check_Underground()
     {
 
-        BackEndDataManager.instance.Set_Item(Item_Type.underground_ticket, 1, Calculate_Type.mius);
-
-        Underground_.underground_Info = new Underground_info
+        if (BackEndDataManager.instance.Get_Item(Item_Type.underground_ticket) >= 1)
         {
-            int_num = Underground_.Underground_Lv,
-            int_Max_Monster = 0,
-            int_Max_Boss = 0
-        };
+            BackEndDataManager.instance.Set_Item(Item_Type.underground_ticket, 1, Calculate_Type.mius);
 
-        UiManager.instance.Set_Underground_Info();
+            Underground_.underground_Info = new Underground_info
+            {
+                int_num = Underground_.Underground_Lv,
+                int_Max_Monster = 0,
+                int_Max_Boss = 0
+            };
 
+            Underground_.Underground_Item.Clear();
 
-        UiManager.instance.Open_Underground();
+            UiManager.instance.Set_Underground_Info();
 
-        Start_Game(Stage_State.underground);
+            UiManager.instance.Open_Underground();
 
-        StartCoroutine("Co_Underground_Timer");
+            Start_Game(Stage_State.underground);
 
-
+            StartCoroutine("Co_Underground_Timer");
+        }
+       
     }
 
     public void Set_Monster()
@@ -288,7 +291,6 @@ public class PlayManager : MonoBehaviour
 
         UiManager.instance.Set_Txt_Stage();
     }
-
 
     IEnumerator Co_Underground_Timer()
     {

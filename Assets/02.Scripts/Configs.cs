@@ -204,14 +204,14 @@ public class Skill_s
         int per = skill.type.Equals(0) ? 100 : 1;
 
         skill.f_total = (skill.base_stat * per) + (skill.stat_add * per) * (lv - 1);
-        
+
     }
 
 }
 
 public class Calculate
 {
-    public static BigInteger Price(int base_price, int percent, int lv,int end_lv)
+    public static BigInteger Price(int base_price, int percent, int lv, int end_lv)
     {
         BigInteger total = 0;
 
@@ -243,6 +243,49 @@ public class Skill
 
 }
 
+public class Index
+{
+    public int num;
+    public int val;
+
+}
+
+public class Item_s
+{
+    public static float total;
+
+    public static List<Item> items = new List<Item>();
+
+    public static int Get_Random_Item()
+    {
+        float selet = 0;
+        float weight = 0;
+
+        selet = total * Random.Range(0.0f, 1.0f);
+
+        for (int i = 0; i < items.Count; i++)
+        {
+            weight += items[i].percent;
+
+            if (selet <= weight)
+            {
+                Debug.Log("이거다 " + items[i].name);
+                return items[i].num;
+            }
+        }
+
+        return 0;
+    }
+}
+
+public class Item
+{
+    public int num;
+    public string name;
+    public int item_num;
+    public float percent;
+}
+
 public class Underground_
 {
 
@@ -252,19 +295,21 @@ public class Underground_
 
     public static Underground_info underground_Info = new Underground_info();
 
+    public static List<Index> Underground_Item = new List<Index>();
+
     public static BigInteger Get_Reward_0()
     {
         BigInteger big = BigInteger.Parse(BackEndDataManager.instance.underground_dungeon_csv_data[Underground_Lv]["reward_val_0"].ToString());
 
-        return big * underground_Info.int_Max_Monster;
+        return big * underground_Info.int_Max_Monster + (big * underground_Info.int_Max_Boss) * 2;
     }
 
     public static BigInteger Get_Reward_1()
     {
 
         BigInteger big = BigInteger.Parse(BackEndDataManager.instance.underground_dungeon_csv_data[Underground_Lv]["reward_val_1"].ToString());
-       
-        return big * underground_Info.int_Max_Monster;
+
+        return big * underground_Info.int_Max_Monster + (big * underground_Info.int_Max_Boss) * 2;
     }
 
     public static Item_Type Get_Reward_0_Type()
@@ -289,18 +334,78 @@ public class Underground_
 
     public static void Get_Sweep(int val)
     {
-        BigInteger big_0 = BigInteger.Parse(BackEndDataManager.instance.underground_dungeon_csv_data[Underground_Lv]["reward_val_0"].ToString());
-
-        BigInteger big_1 = BigInteger.Parse(BackEndDataManager.instance.underground_dungeon_csv_data[Underground_Lv]["reward_val_1"].ToString());
-
-        Underground_info underground_Info = BackEndDataManager.instance.Content_Data.underground_info
+        Underground_info Db_Info = BackEndDataManager.instance.Content_Data.underground_info
        .Find(x => x.int_num.Equals(Underground_Lv));
 
-        Debug.Log(big_0 * underground_Info.int_Max_Monster * val);
-        BackEndDataManager.instance.Set_Item(Item_Type.underground_ticket, val, Calculate_Type.mius);
-        BackEndDataManager.instance.Set_Item(Get_Reward_0_Type(), big_0 * underground_Info.int_Max_Monster * val, Calculate_Type.plus);
-        BackEndDataManager.instance.Set_Item(Get_Reward_1_Type(), big_1 * underground_Info.int_Max_Boss * val, Calculate_Type.plus);
 
+        underground_Info = Db_Info;
+
+        BackEndDataManager.instance.Set_Item(Item_Type.underground_ticket, val, Calculate_Type.mius);
+        BackEndDataManager.instance.Set_Item(Get_Reward_0_Type(), Get_Reward_0() * val, Calculate_Type.plus);
+        BackEndDataManager.instance.Set_Item(Get_Reward_1_Type(), Get_Reward_1() * val, Calculate_Type.plus);
+
+        Underground_Item.Clear();
+
+        Get_Underground_Random_Item();
+
+        Set_Underground_Random_Item();
+
+        UiManager.instance.Set_Underground_Reward_Txt(val);
+
+
+    }
+
+    public static void Get_Underground_Random_Item()
+    {
+        int total_ = 1;
+
+        switch (PlayManager.instance.Stage_State)
+        {
+            case Stage_State.stage:
+                total_ = underground_Info.int_Max_Monster + underground_Info.int_Max_Boss;
+
+                break;
+            default:
+                break;
+        }
+
+        for (int i = 0; i < total_; i++)
+        {
+
+            if (Random.Range(0, 1000) <= 50)
+            {
+                int item = Item_s.Get_Random_Item();
+
+                Index index = Underground_Item.Find(x => x.num.Equals(item));
+
+                if (index == null)
+                {
+                    index = new Index { num = item, val = 1 };
+
+                    Underground_Item.Add(index);
+
+                }
+                else
+                    index.val += 1;
+
+            }
+
+        }
+
+    }
+
+    public static void Set_Underground_Random_Item()
+    {
+        Debug.Log(Underground_Item.Count);
+
+        foreach (var item in Underground_Item)
+        {
+            Debug.Log(item.num);
+
+            BackEndDataManager.instance.Set_Item((Item_Type)Item_s.items.Find(x => x.num.Equals(item.num)).item_num
+                , item.val , Calculate_Type.plus);
+        }
+        
     }
 
 }
