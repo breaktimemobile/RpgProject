@@ -13,7 +13,8 @@ public enum Player_State
 public enum Stage_State
 {
     stage,
-    underground
+    underground,
+    upgrade
 }
 
 public class PlayManager : MonoBehaviour
@@ -77,6 +78,9 @@ public class PlayManager : MonoBehaviour
     public void Play_Game()
     {
         Debug.Log("플레이 게임");
+
+        BackEndDataManager.instance.Check_Time_Item();
+
         UiManager.instance.Set_Ui();
         Set_Character();
         Set_Monster();
@@ -111,6 +115,9 @@ public class PlayManager : MonoBehaviour
                 break;
             case Stage_State.underground:
                 pos = UiManager.instance.UndergroundDungeon.transform;
+                break;
+            case Stage_State.upgrade:
+                pos = UiManager.instance.UpgradeDungeon.transform;
                 break;
             default:
                 break;
@@ -156,6 +163,22 @@ public class PlayManager : MonoBehaviour
             StartCoroutine("Co_Underground_Timer");
         }
        
+    }
+
+    public void Check_Upgrade(int lv)
+    {
+        if (BackEndDataManager.instance.Get_Item(Item_Type.upgrade_ticket) >= 1)
+        {
+            BackEndDataManager.instance.Set_Item(Item_Type.upgrade_ticket, 1, Calculate_Type.mius);
+
+            Upgrade_.Upgrade_Lv = lv;
+
+            UiManager.instance.Open_Upgrade();
+
+            Start_Game(Stage_State.upgrade);
+
+            StartCoroutine("Co_Upgrade_Timer");
+        }
     }
 
     public void Set_Monster()
@@ -212,6 +235,20 @@ public class PlayManager : MonoBehaviour
                 }
 
 
+
+                break;
+
+            case Stage_State.upgrade:
+
+                pos = UiManager.instance.UpgradeDungeon.transform;
+
+                obj_Monster = Instantiate(Monsters[0], pos);
+                obj_Monster.transform.position = pos_Monster.position;
+
+                sc_Monster = obj_Monster.GetComponent<Monster>();
+                sc_Monster.transform.localScale = Vector3.one;
+
+                sc_Monster.Set_Monster(Monster_Type.upgrade_Boss, BackEndDataManager.instance.Monster_Hp(true));
 
                 break;
             default:
@@ -311,6 +348,33 @@ public class PlayManager : MonoBehaviour
 
         Change_State(Player_State.Reward);
         UiManager.instance.Set_Underground_Reward();
+
+    }
+
+    public void End_Upgrade()
+    {
+        StopCoroutine("Co_Upgrade_Timer");
+    }
+
+    IEnumerator Co_Upgrade_Timer()
+    {
+        float timer = float.Parse(BackEndDataManager.instance.upgrade_item_csv_data[Underground_.Underground_Lv]["time"].ToString());
+
+        UiManager.instance.Set_Upgrade_timer(timer);
+
+        while (timer > 0)
+        {
+
+            yield return new WaitForSeconds(0.1f);
+
+            timer -= 0.1f;
+
+            UiManager.instance.Set_Upgrade_timer(timer);
+
+        }
+
+        Change_State(Player_State.Reward);
+        UiManager.instance.Set_Upgrade_Reward(false);
 
     }
 

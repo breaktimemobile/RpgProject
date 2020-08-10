@@ -10,7 +10,8 @@ public enum Monster_Type
 {
     Basic,
     Boss,
-    underground_Boss
+    underground_Boss,
+    upgrade_Boss
 }
 
 public enum Monster_State
@@ -85,6 +86,9 @@ public class Monster : MonoBehaviour
             case Stage_State.underground:
                 pos = UiManager.instance.UndergroundDungeon.transform;
                 break;
+            case Stage_State.upgrade:
+                pos = UiManager.instance.UpgradeDungeon.transform;
+                break;
             default:
                 break;
         }
@@ -137,6 +141,13 @@ public class Monster : MonoBehaviour
                 Underground_.Get_Underground_Random_Item();
 
                 break;
+            case Stage_State.upgrade:
+
+                PlayManager.instance.Change_State(Player_State.Reward);
+                UiManager.instance.Set_Upgrade_Reward(true);
+                PlayManager.instance.End_Upgrade();
+                break;
+
             default:
                 break;
         }

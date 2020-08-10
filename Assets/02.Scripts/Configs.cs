@@ -1,4 +1,5 @@
 ﻿
+using System.Collections;
 using System.Collections.Generic;
 using System.Numerics;
 using UnityEngine;
@@ -222,11 +223,28 @@ public class Calculate
 
         return total;
     }
+
+    public static BigInteger Reward(int base_price, int percent, int lv)
+    {
+        BigInteger total = base_price;
+        BigInteger pow = 1;
+
+        for (int i = 0; i < lv; i++)
+        {
+            pow =  pow * 100;
+
+            total = (total * percent);
+        }
+
+        total /= pow;
+
+        return total;
+    }
 }
 
 public class Skill
 {
-    public int num;
+    public int num; 
     public int type;
     public string name;
     public int start_lv;
@@ -384,9 +402,13 @@ public class Underground_
 
                     Underground_Item.Add(index);
 
+
                 }
                 else
                     index.val += 1;
+
+
+                UiManager.instance.Set_Underground_Val((Item_Type)Item_s.items.Find(x => x.num.Equals(index.num)).item_num, index.val);
 
             }
 
@@ -410,10 +432,55 @@ public class Underground_
 
 }
 
+public class Upgrade_
+{
+
+    public static int Upgrade_Lv = 0;
+
+    public static BigInteger Get_Reward_0()
+    {
+        BigInteger big = Calculate.Reward((int)BackEndDataManager.instance.upgrade_item_csv_data[0]["reward_val_0"], 120, Upgrade_Lv);
+
+        return big;
+    }
+
+    public static BigInteger Get_Reward_1()
+    {
+
+        BigInteger big = Calculate.Reward((int)BackEndDataManager.instance.upgrade_item_csv_data[0]["reward_val_1"], 120, Upgrade_Lv);
+
+        return big;
+    }
+
+    public static Item_Type Get_Reward_0_Type()
+    {
+        return (Item_Type)(int)BackEndDataManager.instance.upgrade_item_csv_data[Upgrade_Lv]["reward_0"];
+    }
+
+    public static Item_Type Get_Reward_1_Type()
+    {
+        return (Item_Type)(int)BackEndDataManager.instance.upgrade_item_csv_data[Upgrade_Lv]["reward_1"];
+    }
+
+    public static Sprite Get_Img_Reward_0()
+    {
+        return Utill.Get_Item_Sp((Item_Type)(int)BackEndDataManager.instance.upgrade_item_csv_data[Upgrade_Lv]["reward_0"]);
+    }
+
+    public static Sprite Get_Img_Reward_1()
+    {
+        return Utill.Get_Item_Sp((Item_Type)(int)BackEndDataManager.instance.upgrade_item_csv_data[Upgrade_Lv]["reward_1"]);
+    }
+    
+}
+
 public class Utill
 {
     public static Sprite Get_Item_Sp(Item_Type item_Type)
     {
         return Resources.Load<Sprite>("Item/icon_" + item_Type.ToString());
     }
+
+
 }
+

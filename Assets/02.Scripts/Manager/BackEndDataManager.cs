@@ -9,6 +9,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Numerics;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
@@ -23,6 +24,8 @@ public class Player_Data
     public string int_exp { get; set; }
     [DynamoDBProperty]
     public string str_nick { get; set; }
+    [DynamoDBProperty]
+    public string str_Time_Check { get; set; }
 }
 
 [DynamoDBTable("character_info")]
@@ -90,7 +93,8 @@ public class Content_Data
     public string id { get; set; }
     [DynamoDBProperty("underground_info")]
     public List<Underground_info> underground_info { get; set; }
-
+    [DynamoDBProperty("upgrade_info")]
+    public List<Upgrade_info> upgrade_info { get; set; }
 }
 
 public class Item_Info
@@ -119,6 +123,11 @@ public class Underground_info
     public int int_num { get; set; }
     public int int_Max_Monster { get; set; }
     public int int_Max_Boss { get; set; }
+}
+
+public class Upgrade_info
+{
+    public int int_num { get; set; }
 }
 
 public class BackEndDataManager : MonoBehaviour
@@ -154,6 +163,7 @@ public class BackEndDataManager : MonoBehaviour
     public List<Dictionary<string, object>> skill_csv_data;         //던전 정보
     public List<Dictionary<string, object>> content_csv_data;         //던전 정보
     public List<Dictionary<string, object>> underground_item_csv_data;         //던전 정보
+    public List<Dictionary<string, object>> upgrade_item_csv_data;         //던전 정보
 
     public Item_s underground_item_ = new Item_s();         //던전 정보
 
@@ -188,6 +198,8 @@ public class BackEndDataManager : MonoBehaviour
         }
 
         Get_Csv_Data();
+        
+        StartCoroutine("WebCheck");
     }
 
     /// <summary>
@@ -203,6 +215,7 @@ public class BackEndDataManager : MonoBehaviour
         skill_csv_data = CSVReader.Read("skill");
         content_csv_data = CSVReader.Read("content");
         underground_item_csv_data = CSVReader.Read("underground_item");
+        upgrade_item_csv_data = CSVReader.Read("upgrade_dungeon");
 
         foreach (var data in skill_csv_data)
         {
@@ -309,6 +322,7 @@ public class BackEndDataManager : MonoBehaviour
         {
             Check_Data[(int)type] = true;
             Check_All_Data();
+
         }
     }
 
@@ -321,7 +335,10 @@ public class BackEndDataManager : MonoBehaviour
                 return;
         }
 
+        Debug.Log("이건데?????");
+
         IntroManager.instance.Check_Next();
+
     }
 
     public void Get_First_Data()
@@ -359,7 +376,8 @@ public class BackEndDataManager : MonoBehaviour
                     id = BackEndAuthManager.Get_UserId(),
                     int_lv = 1,
                     int_exp = "0",
-                    str_nick = "null"
+                    str_nick = "null",
+                    str_Time_Check = "null"
 
                 };
 
@@ -655,8 +673,6 @@ public class BackEndDataManager : MonoBehaviour
             character_Data = result.Result;
 
             Sucess_Data(Data_Type.character_info);
-            Debug.Log("Int_Upgrade_Lv " + BackEndDataManager.instance.Character_Data.Int_Upgrade_Lv);
-
 
         }, null);
     }
@@ -911,6 +927,8 @@ public class BackEndDataManager : MonoBehaviour
 
             UiManager.instance.Set_Txt_Lv();
 
+            UiManager.instance.Check_Underground_Unlock();
+            UiManager.instance.Check_Upgrade_Unlock();
         }
 
         UiManager.instance.Set_Txt_Exp();
@@ -920,10 +938,6 @@ public class BackEndDataManager : MonoBehaviour
 
     }
 
-    /// <summary>
-    /// 총합 경험치
-    /// </summary>
-    /// <returns></returns>
     public BigInteger Total_exp()
     {
         BigInteger total_exp = 30;
@@ -936,10 +950,6 @@ public class BackEndDataManager : MonoBehaviour
         return total_exp;
     }
 
-    /// <summary>
-    /// 총합 경험치
-    /// </summary>
-    /// <returns></returns>
     public BigInteger Monster_Hp(bool boss)
     {
         BigInteger total_hp = 0;
@@ -964,6 +974,14 @@ public class BackEndDataManager : MonoBehaviour
                     total_hp = BigInteger.Parse(underground_dungeon_csv_data[0]["boss_hp"].ToString()) * pow;
                 else
                     total_hp = BigInteger.Parse(underground_dungeon_csv_data[0]["hp"].ToString()) * pow;
+
+                break;
+
+            case Stage_State.upgrade:
+
+                pow = (BigInteger)Math.Pow(10, Underground_.Underground_Lv);
+
+                total_hp = BigInteger.Parse(upgrade_item_csv_data[0]["hp"].ToString()) * pow;
 
                 break;
             default:
@@ -1126,6 +1144,7 @@ public class BackEndDataManager : MonoBehaviour
                 UiManager.instance.Set_Txt_Underground_Ticket();
                 break;
             case Item_Type.upgrade_ticket:
+                UiManager.instance.Set_Txt_Upgrade_Ticket();
                 break;
             case Item_Type.hell_ticket:
                 break;
@@ -1236,4 +1255,79 @@ public class BackEndDataManager : MonoBehaviour
 
         Save_Content_Data();
     }
+
+    #region Network
+
+    public DateTime WebCheck()
+    {
+
+        DateTime dateTime = DateTime.MinValue;
+
+        UnityWebRequest request = new UnityWebRequest();
+        try
+        {
+
+            using (request = UnityWebRequest.Get("www.google.net"))
+            {
+                if (request.isNetworkError)
+                {
+                    Debug.Log(request.error);
+                }
+                else
+                {
+                    string date = request.GetResponseHeader("date");
+                    dateTime = DateTime.Parse(date);
+                    Debug.Log(dateTime.ToString());
+
+                }
+            }
+        }
+        catch
+        {
+            dateTime = DateTime.Now;
+        }
+
+        return dateTime;
+    }
+
+    public void Check_Time_Item()
+    {
+        Debug.Log("player_Data.str_Time_Check " + player_Data.str_Time_Check);
+
+        if (player_Data.str_Time_Check.Equals("null"))
+        {
+            Debug.Log("널이다");
+            Set_Item(Item_Type.hell_ticket, 2, Calculate_Type.plus);
+            Set_Item(Item_Type.underground_ticket, 2, Calculate_Type.plus);
+            Set_Item(Item_Type.upgrade_ticket, 2, Calculate_Type.plus);
+
+            player_Data.str_Time_Check = WebCheck().ToString();
+            Save_Player_Data();
+        }
+        else
+        {
+
+            DateTime date = DateTime.Parse(player_Data.str_Time_Check);
+            DateTime Web = WebCheck();
+
+            Debug.Log(date.Day + " 체크 " + Web.Day);
+
+            if (date.Day != Web.Day)
+            {
+                Debug.Log("줘야댐");
+
+                Set_Item(Item_Type.hell_ticket, 2, Calculate_Type.plus);
+                Set_Item(Item_Type.underground_ticket, 2, Calculate_Type.plus);
+                Set_Item(Item_Type.upgrade_ticket, 2, Calculate_Type.plus);
+
+                player_Data.str_Time_Check = WebCheck().ToString();
+                Save_Player_Data();
+            }
+        }
+
+    }
+
+    #endregion
+
+
 }

@@ -34,7 +34,6 @@ public class Player_stat
 
         int_Base_Atk = 100 + (100 / 20) * (int_Lv - 1);
         BigInteger int_Upgrade = int_Base_Atk * (BackEndDataManager.instance.Character_Data.Int_Upgrade_Lv * 5) / 100;
-        Debug.Log(int_Base_Atk + "  int_Upgrade   " + int_Upgrade);
         int_Total_Atk = int_Base_Atk + int_Upgrade + (int)Skill_s.Get_Skill_Val(Skill_Type.add_atk) + (int_Base_Atk * (int)skill_atk) / 100;
 
         int_Hp = 2000 + (2000 / 20) * (int_Lv - 1);
@@ -51,9 +50,6 @@ public class Player_stat
 
         int_Top_Scroll_Speed = -int_Speed / 90.0f;
         int_Btm_Scroll_Speed = -int_Speed / 60.0f;
-
-        Debug.Log("top " + int_Top_Scroll_Speed);
-        Debug.Log("btm " + int_Btm_Scroll_Speed);
 
         UiManager.instance.Set_Character_Stat();
     }

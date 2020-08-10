@@ -82,8 +82,10 @@
     <Compile Include="Assets\02.Scripts\Utill\JsonHelper.cs" />
     <Compile Include="Assets\02.Scripts\Utill\Language\Language.cs" />
     <Compile Include="Assets\02.Scripts\Utill\Language\LanguageComponent.cs" />
+    <Compile Include="Assets\02.Scripts\Utill\Network.cs" />
     <Compile Include="Assets\02.Scripts\Utill\ObjectPool\ObjectPool.cs" />
     <Compile Include="Assets\02.Scripts\Utill\ObjectRecycle.cs" />
+    <Compile Include="Assets\Content_Upgrade_Panel.cs" />
     <Compile Include="Assets\Demigiant\DOTween\Modules\DOTweenModuleAudio.cs" />
     <Compile Include="Assets\Demigiant\DOTween\Modules\DOTweenModulePhysics.cs" />
     <Compile Include="Assets\Demigiant\DOTween\Modules\DOTweenModulePhysics2D.cs" />

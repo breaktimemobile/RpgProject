@@ -12,11 +12,14 @@ public class UiManager : MonoBehaviour
     public static UiManager instance;
 
     private GameObject NickNamePopup;
-    private GameObject UndergroundPopup;
+    private GameObject Content_UndergroundPopup;
+    private GameObject Content_UpgradePopup;
     private GameObject InventoryPopup;
     private GameObject WeaponPopup;
     public GameObject UndergroundDungeon;
     public GameObject UndergroundRewardPopup;
+    public GameObject UpgradeDungeon;
+    public GameObject UpgradeRewardPopup;
 
     private GameObject obj_Top;
     public GameObject obj_Stage;
@@ -177,7 +180,7 @@ public class UiManager : MonoBehaviour
 
     #endregion
 
-    #region UndergroundPopup
+    #region Content_UndergroundPopup
 
     Text txt_Underground_Soul_Stone_Val;
     Text txt_Underground_Upgread_Stone_Val;
@@ -241,7 +244,6 @@ public class UiManager : MonoBehaviour
 
     #endregion
 
-
     #region UndergroundRewardPopup
 
     Text txt_UndergroundReward_Kill_Monster;
@@ -259,6 +261,47 @@ public class UiManager : MonoBehaviour
 
     #endregion
 
+    #region Content_UpgradePopup
+
+    Transform Scroll_Content_Upgrade;
+
+    Text txt_Content_Upgrade_Steel_Val;
+    Text txt_Content_Upgrade_Upgread_Stone_Val;
+    Text txt_Content_Upgrade_Ticket_Val;
+
+    Button btn_Content_Upgrade_Close;
+
+    #endregion
+
+    #region UpgradeDungeon
+
+    List<Content_Upgrade_Panel> content_Upgrade_s = new List<Content_Upgrade_Panel>();
+
+    Image img_Upgrade_Reward_0;
+    Text txt_Upgrade_Reward_0;
+    Image img_Upgrade_Reward_1;
+    Text txt_Upgrade_Reward_1;
+
+    Text txt_Upgrade_Time;
+    Transform pos_Upgrade_Character;
+    Transform pos_Upgrade_Monster;
+
+    #endregion
+
+    #region UpgradeRewardPopup
+
+    Text txt_UpgradeReward_Succese;
+    Text txt_UpgradeReward_Fail;
+    Text txt_UpgradeReward_Reward_0;
+    Image img_UpgradeReward_Reward_0;
+    Text txt_UpgradeReward_Reward_1;
+    Image img_UpgradeReward_Reward_1;
+    Button Btn_UpgradeReward_Ok;
+
+    #endregion
+
+
+
     #region Prefabs
 
     public GameObject txt_Damege;
@@ -268,6 +311,7 @@ public class UiManager : MonoBehaviour
     public GameObject Skill_Panel;
     public GameObject Content_Panel;
     public GameObject Underground_Panel;
+    public GameObject Content_Upgrade_Panel;
 
     #endregion
 
@@ -292,11 +336,14 @@ public class UiManager : MonoBehaviour
         Transform Popup = GameObject.Find("Popup").transform;
 
         NickNamePopup = Popup.Find("NickNamePopup").gameObject;
-        UndergroundPopup = Popup.Find("UndergroundPopup").gameObject;
+        Content_UndergroundPopup = Popup.Find("Content_UndergroundPopup").gameObject;
+        Content_UpgradePopup = Popup.Find("Content_UpgradePopup").gameObject;
         InventoryPopup = Popup.Find("InventoryPopup").gameObject;
         WeaponPopup = Popup.Find("WeaponPopup").gameObject;
         UndergroundDungeon = Popup.Find("UndergroundDungeon").gameObject;
         UndergroundRewardPopup = Popup.Find("UndergroundRewardPopup").gameObject;
+        UpgradeDungeon = Popup.Find("UpgradeDungeon").gameObject;
+        UpgradeRewardPopup = Popup.Find("UpgradeRewardPopup").gameObject;
 
         obj_Top = Game.Find("obj_Top").gameObject;
         obj_Stage = Game.Find("obj_Stage").gameObject;
@@ -476,11 +523,11 @@ public class UiManager : MonoBehaviour
 
         #region UndergroundPopup
 
-        txt_Underground_Soul_Stone_Val = UndergroundPopup.transform.Find("Underground_Goods/Underground_Soul_Stone/txt_Underground_Soul_Stone_Val").GetComponent<Text>();
-        txt_Underground_Upgread_Stone_Val = UndergroundPopup.transform.Find("Underground_Goods/Underground_Upgread_Stone/txt_Underground_Upgread_Stone_Val").GetComponent<Text>();
-        txt_Underground_Ticket_Val = UndergroundPopup.transform.Find("Underground_Goods/Underground_Ticket/txt_Underground_Ticket_Val").GetComponent<Text>();
+        txt_Underground_Soul_Stone_Val = Content_UndergroundPopup.transform.Find("Underground_Goods/Underground_Soul_Stone/txt_Underground_Soul_Stone_Val").GetComponent<Text>();
+        txt_Underground_Upgread_Stone_Val = Content_UndergroundPopup.transform.Find("Underground_Goods/Underground_Upgread_Stone/txt_Underground_Upgread_Stone_Val").GetComponent<Text>();
+        txt_Underground_Ticket_Val = Content_UndergroundPopup.transform.Find("Underground_Goods/Underground_Ticket/txt_Underground_Ticket_Val").GetComponent<Text>();
 
-        Transform Underground_Stat = UndergroundPopup.transform.Find("Underground_Stat");
+        Transform Underground_Stat = Content_UndergroundPopup.transform.Find("Underground_Stat");
 
         btn_Underground_In = Underground_Stat.Find("btn_Underground_In").GetComponent<Button>();
         btn_Underground_Sweep_10 = Underground_Stat.Find("btn_Underground_Sweep_10").GetComponent<Button>();
@@ -498,7 +545,7 @@ public class UiManager : MonoBehaviour
         txt_Dungeon_Reward_1 = img_stat_bg.Find("txt_Dungeon_Reward_1").GetComponent<Text>();
 
 
-        btn_Underground_Dungeon_Close = UndergroundPopup.transform.Find("btn_Underground_Dungeon_Close").GetComponent<Button>();
+        btn_Underground_Dungeon_Close = Content_UndergroundPopup.transform.Find("btn_Underground_Dungeon_Close").GetComponent<Button>();
 
         #endregion
 
@@ -536,6 +583,44 @@ public class UiManager : MonoBehaviour
         Btn_UndergroundReward_Ok = UndergroundRewardPopup.transform.Find("Btn_UndergroundReward_Ok").GetComponent<Button>();
 
         #endregion
+
+        #region Content_UpgradePopup
+
+        Scroll_Content_Upgrade = Content_UpgradePopup.transform.Find("Scroll_Content_Upgrade");
+
+        txt_Content_Upgrade_Steel_Val = Content_UpgradePopup.transform.Find("Content_Upgrade_Goods/Content_Upgrade_Steel/txt_Content_Upgrade_Steel_Val").GetComponent<Text>();
+        txt_Content_Upgrade_Upgread_Stone_Val = Content_UpgradePopup.transform.Find("Content_Upgrade_Goods/Content_Upgrade_Upgread_Stone/txt_Content_Upgrade_Upgread_Stone_Val").GetComponent<Text>();
+        txt_Content_Upgrade_Ticket_Val = Content_UpgradePopup.transform.Find("Content_Upgrade_Goods/Content_Upgrade_Ticket/txt_Content_Upgrade_Ticket_Val").GetComponent<Text>();
+
+        btn_Content_Upgrade_Close = Content_UpgradePopup.transform.Find("btn_Content_Upgrade_Close").GetComponent<Button>();
+
+        #endregion
+
+        #region UpgradeDungeon
+
+        img_Upgrade_Reward_0 = UpgradeDungeon.transform.Find("obj_Upgrade/img_Upgrade_Reward_0").GetComponent<Image>();
+        txt_Upgrade_Reward_0 = UpgradeDungeon.transform.Find("obj_Upgrade/txt_Upgrade_Reward_0").GetComponent<Text>();
+        img_Upgrade_Reward_1 = UpgradeDungeon.transform.Find("obj_Upgrade/img_Upgrade_Reward_1").GetComponent<Image>();
+        txt_Upgrade_Reward_1 = UpgradeDungeon.transform.Find("obj_Upgrade/txt_Upgrade_Reward_1").GetComponent<Text>();
+
+        txt_Upgrade_Time = UpgradeDungeon.transform.Find("txt_Upgrade_Time").GetComponent<Text>();
+        pos_Upgrade_Character = UpgradeDungeon.transform.Find("pos_Upgrade_Character");
+        pos_Upgrade_Monster = UpgradeDungeon.transform.Find("pos_Upgrade_Monster");
+
+        #endregion
+
+        #region UpgradeRewardPopup
+
+        txt_UpgradeReward_Succese = UpgradeRewardPopup.transform.Find("img_Title_Bg/txt_UpgradeReward_Succese").GetComponent<Text>();
+        txt_UpgradeReward_Fail = UpgradeRewardPopup.transform.Find("img_Title_Bg/txt_UpgradeReward_Fail").GetComponent<Text>();
+        txt_UpgradeReward_Reward_0 = UpgradeRewardPopup.transform.Find("txt_UpgradeReward_Reward_0").GetComponent<Text>();
+        img_UpgradeReward_Reward_0 = UpgradeRewardPopup.transform.Find("img_UpgradeReward_Reward_0").GetComponent<Image>();
+        txt_UpgradeReward_Reward_1 = UpgradeRewardPopup.transform.Find("txt_UpgradeReward_Reward_1").GetComponent<Text>();
+        img_UpgradeReward_Reward_1 = UpgradeRewardPopup.transform.Find("img_UpgradeReward_Reward_1").GetComponent<Image>();
+
+        Btn_UpgradeReward_Ok = UpgradeRewardPopup.transform.Find("Btn_UpgradeReward_Ok").GetComponent<Button>();
+
+        #endregion
     }
 
     private void AddListener()
@@ -569,6 +654,9 @@ public class UiManager : MonoBehaviour
         btn_Lv_100.onClick.AddListener(() => BackEndDataManager.instance.Buy_Character_Lv(Character_Lv.lv_100));
 
         btn_Icon_Content.onClick.AddListener(() => Change_Icon_Content(Icon_Content.Content));
+        btn_Icon_Content.onClick.AddListener(() => BackEndDataManager.instance.Check_Time_Item());
+
+
         btn_Icon_Character.onClick.AddListener(() => Change_Icon_Content(Icon_Content.Character));
         btn_Icon_Pet.onClick.AddListener(() => Change_Icon_Content(Icon_Content.Pet));
         btn_Icon_Weapon.onClick.AddListener(() => Change_Icon_Content(Icon_Content.Weapon));
@@ -603,17 +691,31 @@ public class UiManager : MonoBehaviour
         btn_Underground_Sweep_10.onClick.AddListener(() => Underground_.Get_Sweep(10));
         btn_Underground_Sweep_1.onClick.AddListener(() => Underground_.Get_Sweep(1));
 
-        
+
         btn_Underground_Dungeon_Close.onClick.AddListener(() => PopupManager.Close_Popup());
 
         #endregion
 
+
+        #region Content_UpgradePopup
+
+        btn_Content_Upgrade_Close.onClick.AddListener(() => PopupManager.Close_Popup());
+
+        #endregion
+
         Btn_UndergroundReward_Ok.onClick.AddListener(() => Set_Underground_Reward_Close());
+
+        #region UpgradeRewardPopup
+
+        Btn_UpgradeReward_Ok.onClick.AddListener(() => Set_Underground_Reward_Close());
+
+        #endregion
     }
 
     private void Start()
     {
         Check_Nick_Popup();
+        Change_Icon_Content(Icon_Content.Character);
     }
 
     #region 닉네임 체크
@@ -698,6 +800,7 @@ public class UiManager : MonoBehaviour
         Set_Txt_Upgread_Stone();
         Set_Txt_Underground_Ticket();
         Check_Underground_Ticket();
+        Set_Txt_Upgrade_Ticket();
 
         Set_Character_Name();
         Set_Character_Lv();
@@ -709,6 +812,7 @@ public class UiManager : MonoBehaviour
         Set_Weapon_Popup();
         Set_Content_Panel();
         Set_Underground_Panel();
+        Set_Upgrade_Panel();
         Set_Skill_Panel();
         Set_Upgrade_Stat();
     }
@@ -749,6 +853,7 @@ public class UiManager : MonoBehaviour
     public void Set_Txt_Steel()
     {
         txt_Steel_Val.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.steel));
+        txt_Content_Upgrade_Steel_Val.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.steel));
 
     }
 
@@ -765,6 +870,7 @@ public class UiManager : MonoBehaviour
     public void Set_Txt_Upgread_Stone()
     {
         txt_Underground_Upgread_Stone_Val.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.upgrade_stone));
+        txt_Content_Upgrade_Upgread_Stone_Val.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.upgrade_stone));
     }
 
     public void Set_Txt_Underground_Ticket()
@@ -772,12 +878,18 @@ public class UiManager : MonoBehaviour
         txt_Underground_Ticket_Val.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.underground_ticket));
     }
 
+    public void Set_Txt_Upgrade_Ticket()
+    {
+        txt_Content_Upgrade_Ticket_Val.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.upgrade_ticket));
+        Debug.Log(BackEndDataManager.instance.Get_Item(Item_Type.upgrade_ticket));
+    }
 
     public void Set_Txt_Soul_Stone()
     {
         txt_Skill_Soul_Val.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.soul_stone));
         txt_Upgrade_Soul_Stone_Val.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.soul_stone));
         txt_Underground_Soul_Stone_Val.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.soul_stone));
+
     }
 
     #endregion
@@ -924,9 +1036,11 @@ public class UiManager : MonoBehaviour
         switch (popup_Type)
         {
             case Popup_Type.underground_dungeon:
-                PopupManager.Open_Popup(UndergroundPopup);
+                PopupManager.Open_Popup(Content_UndergroundPopup);
                 break;
             case Popup_Type.upgrade_dungeon:
+                PopupManager.Open_Popup(Content_UpgradePopup);
+
                 break;
             case Popup_Type.hell_dungeon:
                 break;
@@ -961,13 +1075,13 @@ public class UiManager : MonoBehaviour
     {
         for (int i = 0; i < BackEndDataManager.instance.underground_dungeon_csv_data.Count; i++)
         {
-            GameObject under = Instantiate(Underground_Panel, UndergroundPopup.transform
+            GameObject under = Instantiate(Underground_Panel, Content_UndergroundPopup.transform
         .Find("Scroll_Underground/Viewport/Content"));
 
             int lv = i;
 
             under.transform.Find("txt_Underground_Lv").GetComponent<Text>().text = string.Format("{0}.{1}", "Lv", lv + 1);
-            under.transform.Find("txt_Underground_Lock").GetComponent<Text>().text = string.Format("{0} {1} {2}", "스테이지 ", BackEndDataManager.instance.underground_dungeon_csv_data[i]["unlock_lv"].ToString(),"도달");
+            under.transform.Find("txt_Underground_Lock").GetComponent<Text>().text = string.Format("{0} {1} {2}", "스테이지 ", BackEndDataManager.instance.underground_dungeon_csv_data[i]["unlock_lv"].ToString(), "도달");
 
             under.GetComponent<Button>().onClick.AddListener(() => Set_Underground_Txt(lv));
             Undergrounds.Add(under);
@@ -995,10 +1109,9 @@ public class UiManager : MonoBehaviour
     {
         for (int i = 0; i < Undergrounds.Count; i++)
         {
-            Undergrounds[i].GetComponent<Image>().color =  i == lv ? Color.yellow : Color.white;
+            Undergrounds[i].GetComponent<Image>().color = i == lv ? Color.yellow : Color.white;
 
         }
-
 
         Underground_.Underground_Lv = lv;
 
@@ -1050,7 +1163,7 @@ public class UiManager : MonoBehaviour
 
     public void Set_Underground_Reward()
     {
-        Debug.Log("Lb v " + Underground_.Underground_Lv );
+        Debug.Log("Lb v " + Underground_.Underground_Lv);
 
         BackEndDataManager.instance.Set_Item(Underground_.Get_Reward_0_Type(), Underground_.Get_Reward_0(), Calculate_Type.plus);
         BackEndDataManager.instance.Set_Item(Underground_.Get_Reward_1_Type(), Underground_.Get_Reward_1(), Calculate_Type.plus);
@@ -1063,24 +1176,25 @@ public class UiManager : MonoBehaviour
 
     public void Set_Underground_Reward_Txt(int val)
     {
-        foreach (var item in under_list)
+        foreach (var item in under_list_0)
+        {
+            item.gameObject.SetActive(false);
+        }
+
+        foreach (var item in under_list_1)
         {
             item.gameObject.SetActive(false);
         }
 
 
-        foreach (var item in Underground_.Underground_Item)
-        {
-            Set_Underground_Val((Item_Type)Item_s.items.Find(x => x.num.Equals(item.num)).item_num,item.val);
-        }
-        
+
         img_UndergroundReward_Reward_0.sprite = Underground_.Get_Img_Reward_0();
         img_UndergroundReward_Reward_1.sprite = Underground_.Get_Img_Reward_1();
 
         txt_UndergroundReward_Kill_Monster.text = string.Format("x{0}", Underground_.underground_Info.int_Max_Monster * val);
         txt_UndergroundReward_Kill_Boss.text = string.Format("x{0}", Underground_.underground_Info.int_Max_Boss * val);
         txt_UndergroundReward_Reward_0.text = string.Format("x{0}", GetGoldString(Underground_.Get_Reward_0() * val));
-        txt_UndergroundReward_Reward_1.text = string.Format("x{0}", GetGoldString(Underground_.Get_Reward_1()* val));
+        txt_UndergroundReward_Reward_1.text = string.Format("x{0}", GetGoldString(Underground_.Get_Reward_1() * val));
 
         PopupManager.Open_Popup(UndergroundRewardPopup);
 
@@ -1102,6 +1216,11 @@ public class UiManager : MonoBehaviour
                 PopupManager.All_Close_Popup();
 
                 break;
+            case Stage_State.upgrade:
+
+                PopupManager.All_Close_Popup();
+
+                break;
             default:
                 break;
         }
@@ -1117,29 +1236,137 @@ public class UiManager : MonoBehaviour
         btn_Underground_Sweep_10.interactable = BackEndDataManager.instance.Get_Item(Item_Type.underground_ticket) >= 10;
     }
 
-    List<Inventory_Panel> under_list = new List<Inventory_Panel>();
+    List<Inventory_Panel> under_list_0 = new List<Inventory_Panel>();
+    List<Inventory_Panel> under_list_1 = new List<Inventory_Panel>();
 
-    public void Set_Underground_Val(Item_Type i,int val)
+    public void Set_Underground_Val(Item_Type i, int val)
     {
 
-        Inventory_Panel inven = under_list.Find(x => x.Item_Type.Equals(i));
+        Inventory_Panel inven_0 = under_list_0.Find(x => x.Item_Type.Equals(i));
+        Inventory_Panel inven_1 = under_list_0.Find(x => x.Item_Type.Equals(i));
 
-        if (inven == null)
+        if (inven_0 == null)
         {
-            GameObject obj = Instantiate(Inventory_Panel, UndergroundRewardPopup.transform
-        .Find("Underground_Item"));
-            Inventory_Panel Inventory = obj.GetComponent<Inventory_Panel>();
-            under_list.Add(Inventory);
+            GameObject obj_0 = Instantiate(Inventory_Panel, UndergroundDungeon.transform
+            .Find("Underground_Item"));
 
-            obj.GetComponent<Inventory_Panel>().Set_Inventory_Item(i,
-                val);
+            GameObject obj_1 = Instantiate(Inventory_Panel, UndergroundRewardPopup.transform
+            .Find("Underground_Item"));
+
+
+            Inventory_Panel Inventory_0 = obj_0.GetComponent<Inventory_Panel>();
+            Inventory_Panel Inventory_1 = obj_1.GetComponent<Inventory_Panel>();
+
+            under_list_0.Add(Inventory_0);
+            under_list_0.Add(Inventory_1);
+
+            obj_0.GetComponent<Inventory_Panel>().Set_Inventory_Item(i, val);
+            obj_1.GetComponent<Inventory_Panel>().Set_Inventory_Item(i, val);
+
         }
         else
         {
-            inven.Set_Inventory_Val(val);
-            inven.gameObject.SetActive(true);
+            inven_0.Set_Inventory_Val(val);
+            inven_0.gameObject.SetActive(true);
+
+            inven_1.Set_Inventory_Val(val);
+            inven_1.gameObject.SetActive(true);
+        }
+
+
+    }
+
+
+
+    #endregion
+
+    #region Upgrade_Dungeon
+
+
+    public void Set_Upgrade_Panel()
+    {
+        for (int i = 0; i < BackEndDataManager.instance.upgrade_item_csv_data.Count; i++)
+        {
+            GameObject under = Instantiate(Content_Upgrade_Panel, Scroll_Content_Upgrade.transform
+        .Find("Viewport/Content"));
+
+            under.GetComponent<Content_Upgrade_Panel>().Set_Item(i);
+            content_Upgrade_s.Add(under.GetComponent<Content_Upgrade_Panel>());
+        }
+
+    }
+
+    public void Check_Upgrade_Unlock()
+    {
+        foreach (var item in content_Upgrade_s)
+        {
+            item.UnLock();
         }
     }
+
+    public void Open_Upgrade()
+    {
+        img_Upgrade_Reward_0.sprite = Upgrade_.Get_Img_Reward_0();
+        img_Upgrade_Reward_1.sprite = Upgrade_.Get_Img_Reward_1();
+        txt_Upgrade_Reward_0.text = GetGoldString(Upgrade_.Get_Reward_0());
+        txt_Upgrade_Reward_1.text = GetGoldString(Upgrade_.Get_Reward_1());
+
+        PopupManager.Close_Popup();
+        PopupManager.Open_Popup(UpgradeDungeon);
+    }
+
+    public void Set_Upgrade_timer(float timer)
+    {
+        txt_Upgrade_Time.text = string.Format("{0:00}:{1:00}", 0, timer);
+
+    }
+
+    public void Set_Upgrade_Reward(bool isSuccess)
+    {
+        Debug.Log("Lb v " + Underground_.Underground_Lv);
+
+        txt_UpgradeReward_Succese.gameObject.SetActive(isSuccess);
+        txt_UpgradeReward_Fail.gameObject.SetActive(!isSuccess);
+
+        if (isSuccess)
+        {
+            BackEndDataManager.instance.Set_Item(Upgrade_.Get_Reward_0_Type(), Upgrade_.Get_Reward_0(), Calculate_Type.plus);
+            BackEndDataManager.instance.Set_Item(Upgrade_.Get_Reward_1_Type(), Upgrade_.Get_Reward_1(), Calculate_Type.plus);
+
+          Upgrade_info upgrade_Info = BackEndDataManager.instance.Content_Data.upgrade_info.Find(x => x.int_num.Equals(Upgrade_.Upgrade_Lv));
+
+            if (upgrade_Info == null)
+            {
+                Upgrade_info upgrade_ = new Upgrade_info
+                {
+                    int_num = Upgrade_.Upgrade_Lv
+                };
+
+                BackEndDataManager.instance.Content_Data.upgrade_info.Add(upgrade_);
+
+                BackEndDataManager.instance.Save_Content_Data();
+
+            }
+            
+        }
+
+        Set_Upgrade_Reward_Txt(isSuccess);
+
+    }
+
+    public void Set_Upgrade_Reward_Txt(bool isSuccess)
+    {
+
+        img_UpgradeReward_Reward_0.sprite = Upgrade_.Get_Img_Reward_0();
+        img_UpgradeReward_Reward_1.sprite = Upgrade_.Get_Img_Reward_1();
+
+        txt_UpgradeReward_Reward_0.text = string.Format("x{0}", isSuccess ? GetGoldString(Upgrade_.Get_Reward_0()) : "0");
+        txt_UpgradeReward_Reward_1.text = string.Format("x{0}", isSuccess ? GetGoldString(Upgrade_.Get_Reward_0()) : "0");
+
+        PopupManager.Open_Popup(UpgradeRewardPopup);
+
+    }
+
     #endregion
 
     #endregion
