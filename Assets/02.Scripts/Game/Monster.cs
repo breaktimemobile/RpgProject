@@ -11,7 +11,9 @@ public enum Monster_Type
     Basic,
     Boss,
     underground_Boss,
-    upgrade_Boss
+    upgrade_Boss,
+    hell_Boss
+
 }
 
 public enum Monster_State
@@ -89,6 +91,9 @@ public class Monster : MonoBehaviour
             case Stage_State.upgrade:
                 pos = UiManager.instance.UpgradeDungeon.transform;
                 break;
+            case Stage_State.hell:
+                pos = UiManager.instance.HellDungeon.transform;
+                break;
             default:
                 break;
         }
@@ -119,7 +124,6 @@ public class Monster : MonoBehaviour
         if (hp <= 0)
         {
             StartCoroutine("Co_Die");
-            PlayManager.instance.Change_State(Player_State.Run);
         }
     }
 
@@ -128,11 +132,14 @@ public class Monster : MonoBehaviour
         switch (PlayManager.instance.Stage_State)
         {
             case Stage_State.stage:
-                
+                PlayManager.instance.Change_State(Player_State.Run);
+                Add_Stage_Data();
+
                 break;
             case Stage_State.underground:
+                PlayManager.instance.Change_State(Player_State.Run);
 
-                if(monster_Type.Equals(Monster_Type.underground_Boss))
+                if (monster_Type.Equals(Monster_Type.underground_Boss))
                     Underground_.underground_Info.int_Max_Boss += 1;
                 else
                     Underground_.underground_Info.int_Max_Monster += 1;
@@ -147,7 +154,15 @@ public class Monster : MonoBehaviour
                 UiManager.instance.Set_Upgrade_Reward(true);
                 PlayManager.instance.End_Upgrade();
                 break;
+            case Stage_State.hell:
 
+                PlayManager.instance.Change_State(Player_State.Run);
+
+                Hell_.int_Max_Monster += 1;
+
+                UiManager.instance.Set_Hell_Info();
+
+                break;
             default:
                 break;
         }
@@ -156,16 +171,31 @@ public class Monster : MonoBehaviour
 
         anim_Monster.Play("die");
 
-        Add_Stage_Data();
-
-        if (monster_Type.Equals(Monster_Type.Boss))
+        switch (monster_Type)
         {
-            PlayManager.instance.Stop_Boss_Timer(false);
-        }
-        else
-        {
-            PlayManager.instance.Set_Monster();
+            case Monster_Type.Basic:
 
+                PlayManager.instance.Set_Monster();
+
+                break;
+            case Monster_Type.Boss:
+
+                PlayManager.instance.Stop_Boss_Timer(false);
+
+                break;
+            case Monster_Type.underground_Boss:
+                PlayManager.instance.Set_Monster();
+
+                break;
+            case Monster_Type.upgrade_Boss:
+
+                break;
+            case Monster_Type.hell_Boss:
+                PlayManager.instance.Set_Monster();
+
+                break;
+            default:
+                break;
         }
 
 

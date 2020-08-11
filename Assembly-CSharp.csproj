@@ -63,11 +63,13 @@
     <Compile Include="Assets\02.Scripts\Configs.cs" />
     <Compile Include="Assets\02.Scripts\Game\BackGroundScrolling.cs" />
     <Compile Include="Assets\02.Scripts\Game\Content_Panel.cs" />
+    <Compile Include="Assets\02.Scripts\Game\Content_Upgrade_Panel.cs" />
     <Compile Include="Assets\02.Scripts\Game\Damege.cs" />
     <Compile Include="Assets\02.Scripts\Game\Inventory_Panel.cs" />
     <Compile Include="Assets\02.Scripts\Game\Monster.cs" />
     <Compile Include="Assets\02.Scripts\Game\Player.cs" />
     <Compile Include="Assets\02.Scripts\Game\Skill_Panel.cs" />
+    <Compile Include="Assets\02.Scripts\Game\Underground_Dungeon.cs" />
     <Compile Include="Assets\02.Scripts\Game\Underground_Panel.cs" />
     <Compile Include="Assets\02.Scripts\Game\Weapon_Panel.cs" />
     <Compile Include="Assets\02.Scripts\Manager\BackEndAuthManager.cs" />
@@ -85,7 +87,7 @@
     <Compile Include="Assets\02.Scripts\Utill\Network.cs" />
     <Compile Include="Assets\02.Scripts\Utill\ObjectPool\ObjectPool.cs" />
     <Compile Include="Assets\02.Scripts\Utill\ObjectRecycle.cs" />
-    <Compile Include="Assets\Content_Upgrade_Panel.cs" />
+    <Compile Include="Assets\Content_Hell_Panel.cs" />
     <Compile Include="Assets\Demigiant\DOTween\Modules\DOTweenModuleAudio.cs" />
     <Compile Include="Assets\Demigiant\DOTween\Modules\DOTweenModulePhysics.cs" />
     <Compile Include="Assets\Demigiant\DOTween\Modules\DOTweenModulePhysics2D.cs" />
@@ -159,7 +161,6 @@
     <Compile Include="Assets\GooglePlayGames\Platforms\TokenClient.cs" />
     <Compile Include="Assets\GooglePlayGames\PluginVersion.cs" />
     <Compile Include="Assets\GPGSIds.cs" />
-    <Compile Include="Assets\Underground_Dungeon.cs" />
     <Compile Include="Assets\Unity-Logs-Viewer\Reporter\MultiKeyDictionary.cs" />
     <Compile Include="Assets\Unity-Logs-Viewer\Reporter\Reporter.cs" />
     <Compile Include="Assets\Unity-Logs-Viewer\Reporter\ReporterGUI.cs" />

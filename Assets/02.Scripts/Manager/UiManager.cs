@@ -14,12 +14,15 @@ public class UiManager : MonoBehaviour
     private GameObject NickNamePopup;
     private GameObject Content_UndergroundPopup;
     private GameObject Content_UpgradePopup;
+    private GameObject Content_HellPopup;
     private GameObject InventoryPopup;
     private GameObject WeaponPopup;
     public GameObject UndergroundDungeon;
     public GameObject UndergroundRewardPopup;
     public GameObject UpgradeDungeon;
     public GameObject UpgradeRewardPopup;
+    public GameObject HellDungeon;
+    public GameObject HellRewardPopup;
 
     private GameObject obj_Top;
     public GameObject obj_Stage;
@@ -301,6 +304,48 @@ public class UiManager : MonoBehaviour
     #endregion
 
 
+    #region Content_HellPopup
+
+    Transform Scroll_Content_Hell;
+
+    Text txt_Content_Hell_Black_Stone_Val;
+    Text txt_Content_Hell_Upgread_Stone_Val;
+    Text txt_Content_Hell_Ticket_Val;
+
+    Button btn_Content_Hell_Close;
+
+    #endregion
+
+    #region HellDungeon
+
+    List<Content_Hell_Panel> content_Hell_s = new List<Content_Hell_Panel>();
+
+    Image img_Hell_Kill_Monster;
+    Text txt_Hell_Kill_Monster;
+
+    Image img_Hell_Reward_0;
+    Text txt_Hell_Reward_0;
+    Image img_Hell_Reward_1;
+    Text txt_Hell_Reward_1;
+
+    Text txt_Hell_Time;
+    Transform pos_Hell_Character;
+    Transform pos_Hell_Monster;
+
+    #endregion
+
+    #region HellRewardPopup
+
+    Image img_HellReward_Kill_Monster;
+    Text txt_HellReward_Kill_Monster;
+    Image img_HellReward_Reward_0;
+    Text txt_HellReward_Reward_0;
+    Image img_HellReward_Reward_1;
+    Text txt_HellReward_Reward_1;
+
+    Button Btn_HellReward_Ok;
+
+    #endregion
 
     #region Prefabs
 
@@ -312,6 +357,7 @@ public class UiManager : MonoBehaviour
     public GameObject Content_Panel;
     public GameObject Underground_Panel;
     public GameObject Content_Upgrade_Panel;
+    public GameObject Content_Hell_Panel;
 
     #endregion
 
@@ -344,6 +390,10 @@ public class UiManager : MonoBehaviour
         UndergroundRewardPopup = Popup.Find("UndergroundRewardPopup").gameObject;
         UpgradeDungeon = Popup.Find("UpgradeDungeon").gameObject;
         UpgradeRewardPopup = Popup.Find("UpgradeRewardPopup").gameObject;
+        Content_HellPopup = Popup.Find("Content_HellPopup").gameObject;
+        HellDungeon = Popup.Find("HellDungeon").gameObject;
+        HellRewardPopup = Popup.Find("HellRewardPopup").gameObject;
+
 
         obj_Top = Game.Find("obj_Top").gameObject;
         obj_Stage = Game.Find("obj_Stage").gameObject;
@@ -621,6 +671,48 @@ public class UiManager : MonoBehaviour
         Btn_UpgradeReward_Ok = UpgradeRewardPopup.transform.Find("Btn_UpgradeReward_Ok").GetComponent<Button>();
 
         #endregion
+
+        #region Content_HellPopup
+
+        Scroll_Content_Hell = Content_HellPopup.transform.Find("Scroll_Content_Hell");
+
+        txt_Content_Hell_Black_Stone_Val = Content_HellPopup.transform.Find("Content_Hell_Goods/Content_Hell_Black_Stone/txt_Content_Hell_Black_Stone_Val").GetComponent<Text>();
+        txt_Content_Hell_Upgread_Stone_Val = Content_HellPopup.transform.Find("Content_Hell_Goods/Content_Hell_Upgread_Stone/txt_Content_Hell_Upgread_Stone_Val").GetComponent<Text>();
+        txt_Content_Hell_Ticket_Val = Content_HellPopup.transform.Find("Content_Hell_Goods/Content_Hell_Ticket/txt_Content_Hell_Ticket_Val").GetComponent<Text>();
+
+        btn_Content_Hell_Close = Content_HellPopup.transform.Find("btn_Content_Hell_Close").GetComponent<Button>();
+
+        #endregion
+
+        #region HellDungeon
+
+        img_Hell_Kill_Monster = HellDungeon.transform.Find("obj_Hell/img_Hell_Kill_Monster").GetComponent<Image>();
+        txt_Hell_Kill_Monster = HellDungeon.transform.Find("obj_Hell/txt_Hell_Kill_Monster").GetComponent<Text>();
+
+        img_Hell_Reward_0 = HellDungeon.transform.Find("obj_Hell/img_Hell_Reward_0").GetComponent<Image>();
+        txt_Hell_Reward_0 = HellDungeon.transform.Find("obj_Hell/txt_Hell_Reward_0").GetComponent<Text>();
+        img_Hell_Reward_1 = HellDungeon.transform.Find("obj_Hell/img_Hell_Reward_1").GetComponent<Image>();
+        txt_Hell_Reward_1 = HellDungeon.transform.Find("obj_Hell/txt_Hell_Reward_1").GetComponent<Text>();
+
+        txt_Hell_Time = HellDungeon.transform.Find("txt_Hell_Time").GetComponent<Text>();
+        pos_Hell_Character = HellDungeon.transform.Find("pos_Hell_Character");
+        pos_Hell_Monster = HellDungeon.transform.Find("pos_Hell_Monster");
+
+        #endregion
+
+
+        #region HellRewardPopup
+
+        img_HellReward_Kill_Monster = HellRewardPopup.transform.Find("img_HellReward_Kill_Monster").GetComponent<Image>();
+        txt_HellReward_Kill_Monster = HellRewardPopup.transform.Find("txt_HellReward_Kill_Monster").GetComponent<Text>();
+        img_HellReward_Reward_0 = HellRewardPopup.transform.Find("img_HellReward_Reward_0").GetComponent<Image>();
+        txt_HellReward_Reward_0 = HellRewardPopup.transform.Find("txt_HellReward_Reward_0").GetComponent<Text>();
+        img_HellReward_Reward_1 = HellRewardPopup.transform.Find("img_HellReward_Reward_1").GetComponent<Image>();
+        txt_HellReward_Reward_1 = HellRewardPopup.transform.Find("txt_HellReward_Reward_1").GetComponent<Text>();
+
+        Btn_HellReward_Ok = HellRewardPopup.transform.Find("Btn_HellReward_Ok").GetComponent<Button>();
+
+        #endregion
     }
 
     private void AddListener()
@@ -703,13 +795,26 @@ public class UiManager : MonoBehaviour
 
         #endregion
 
-        Btn_UndergroundReward_Ok.onClick.AddListener(() => Set_Underground_Reward_Close());
+        Btn_UndergroundReward_Ok.onClick.AddListener(() => Set_Reward_Close());
 
         #region UpgradeRewardPopup
 
-        Btn_UpgradeReward_Ok.onClick.AddListener(() => Set_Underground_Reward_Close());
+        Btn_UpgradeReward_Ok.onClick.AddListener(() => Set_Reward_Close());
 
         #endregion
+
+        #region Content_HellPopup
+
+        btn_Content_Hell_Close.onClick.AddListener(() => PopupManager.Close_Popup());
+
+        #endregion
+
+        #region HellRewardPopup
+
+        Btn_HellReward_Ok.onClick.AddListener(() => Set_Reward_Close());
+
+        #endregion
+
     }
 
     private void Start()
@@ -801,6 +906,8 @@ public class UiManager : MonoBehaviour
         Set_Txt_Underground_Ticket();
         Check_Underground_Ticket();
         Set_Txt_Upgrade_Ticket();
+        Set_Txt_Black_Stone();
+        Set_Txt_Hell_Ticket();
 
         Set_Character_Name();
         Set_Character_Lv();
@@ -815,6 +922,8 @@ public class UiManager : MonoBehaviour
         Set_Upgrade_Panel();
         Set_Skill_Panel();
         Set_Upgrade_Stat();
+        Set_Hell_Panel();
+
     }
 
     #region PlayerUI 세팅
@@ -871,6 +980,8 @@ public class UiManager : MonoBehaviour
     {
         txt_Underground_Upgread_Stone_Val.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.upgrade_stone));
         txt_Content_Upgrade_Upgread_Stone_Val.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.upgrade_stone));
+        txt_Content_Hell_Upgread_Stone_Val.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.upgrade_stone));
+
     }
 
     public void Set_Txt_Underground_Ticket()
@@ -890,6 +1001,16 @@ public class UiManager : MonoBehaviour
         txt_Upgrade_Soul_Stone_Val.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.soul_stone));
         txt_Underground_Soul_Stone_Val.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.soul_stone));
 
+    }
+
+    public void Set_Txt_Black_Stone()
+    {
+        txt_Content_Hell_Black_Stone_Val.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.black_stone));
+    }
+
+    public void Set_Txt_Hell_Ticket()
+    {
+        txt_Content_Hell_Ticket_Val.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.hell_ticket));
     }
 
     #endregion
@@ -1043,6 +1164,8 @@ public class UiManager : MonoBehaviour
 
                 break;
             case Popup_Type.hell_dungeon:
+                PopupManager.Open_Popup(Content_HellPopup);
+
                 break;
             default:
                 break;
@@ -1137,6 +1260,8 @@ public class UiManager : MonoBehaviour
 
     public void Open_Underground()
     {
+        Reset_Underground_Item();
+
         img_Underground_Reward_0.sprite = Underground_.Get_Img_Reward_0();
         img_Underground_Reward_1.sprite = Underground_.Get_Img_Reward_1();
 
@@ -1156,9 +1281,6 @@ public class UiManager : MonoBehaviour
         txt_Underground_Kill_Boss.text = string.Format("x{0}", Underground_.underground_Info.int_Max_Boss);
         txt_Underground_Reward_0.text = string.Format("x{0}", GetGoldString(Underground_.Get_Reward_0()));
         txt_Underground_Reward_1.text = string.Format("x{0}", GetGoldString(Underground_.Get_Reward_1()));
-
-        img_Dungeon_Reward_0.sprite = Underground_.Get_Img_Reward_0();
-        img_Dungeon_Reward_1.sprite = Underground_.Get_Img_Reward_1();
     }
 
     public void Set_Underground_Reward()
@@ -1174,7 +1296,7 @@ public class UiManager : MonoBehaviour
 
     }
 
-    public void Set_Underground_Reward_Txt(int val)
+    public void Reset_Underground_Item()
     {
         foreach (var item in under_list_0)
         {
@@ -1186,6 +1308,10 @@ public class UiManager : MonoBehaviour
             item.gameObject.SetActive(false);
         }
 
+
+    }
+    public void Set_Underground_Reward_Txt(int val)
+    {
 
 
         img_UndergroundReward_Reward_0.sprite = Underground_.Get_Img_Reward_0();
@@ -1200,7 +1326,7 @@ public class UiManager : MonoBehaviour
 
     }
 
-    public void Set_Underground_Reward_Close()
+    public void Set_Reward_Close()
     {
 
         switch (PlayManager.instance.Stage_State)
@@ -1221,6 +1347,12 @@ public class UiManager : MonoBehaviour
                 PopupManager.All_Close_Popup();
 
                 break;
+            case Stage_State.hell:
+
+                PopupManager.All_Close_Popup();
+
+                break;
+
             default:
                 break;
         }
@@ -1241,12 +1373,15 @@ public class UiManager : MonoBehaviour
 
     public void Set_Underground_Val(Item_Type i, int val)
     {
+        Debug.Log("Underground 아이템 세팅");
 
         Inventory_Panel inven_0 = under_list_0.Find(x => x.Item_Type.Equals(i));
-        Inventory_Panel inven_1 = under_list_0.Find(x => x.Item_Type.Equals(i));
+        Inventory_Panel inven_1 = under_list_1.Find(x => x.Item_Type.Equals(i));
 
         if (inven_0 == null)
         {
+            Debug.Log("Underground 아이템 없다");
+
             GameObject obj_0 = Instantiate(Inventory_Panel, UndergroundDungeon.transform
             .Find("Underground_Item"));
 
@@ -1258,7 +1393,7 @@ public class UiManager : MonoBehaviour
             Inventory_Panel Inventory_1 = obj_1.GetComponent<Inventory_Panel>();
 
             under_list_0.Add(Inventory_0);
-            under_list_0.Add(Inventory_1);
+            under_list_1.Add(Inventory_1);
 
             obj_0.GetComponent<Inventory_Panel>().Set_Inventory_Item(i, val);
             obj_1.GetComponent<Inventory_Panel>().Set_Inventory_Item(i, val);
@@ -1266,6 +1401,8 @@ public class UiManager : MonoBehaviour
         }
         else
         {
+            Debug.Log("Underground 아이템 있다");
+
             inven_0.Set_Inventory_Val(val);
             inven_0.gameObject.SetActive(true);
 
@@ -1285,7 +1422,7 @@ public class UiManager : MonoBehaviour
 
     public void Set_Upgrade_Panel()
     {
-        for (int i = 0; i < BackEndDataManager.instance.upgrade_item_csv_data.Count; i++)
+        for (int i = 0; i < BackEndDataManager.instance.upgrade_dungeon_csv_data.Count; i++)
         {
             GameObject under = Instantiate(Content_Upgrade_Panel, Scroll_Content_Upgrade.transform
         .Find("Viewport/Content"));
@@ -1333,7 +1470,7 @@ public class UiManager : MonoBehaviour
             BackEndDataManager.instance.Set_Item(Upgrade_.Get_Reward_0_Type(), Upgrade_.Get_Reward_0(), Calculate_Type.plus);
             BackEndDataManager.instance.Set_Item(Upgrade_.Get_Reward_1_Type(), Upgrade_.Get_Reward_1(), Calculate_Type.plus);
 
-          Upgrade_info upgrade_Info = BackEndDataManager.instance.Content_Data.upgrade_info.Find(x => x.int_num.Equals(Upgrade_.Upgrade_Lv));
+            Upgrade_info upgrade_Info = BackEndDataManager.instance.Content_Data.upgrade_info.Find(x => x.int_num.Equals(Upgrade_.Upgrade_Lv));
 
             if (upgrade_Info == null)
             {
@@ -1347,7 +1484,8 @@ public class UiManager : MonoBehaviour
                 BackEndDataManager.instance.Save_Content_Data();
 
             }
-            
+
+            Check_Upgrade_Unlock();
         }
 
         Set_Upgrade_Reward_Txt(isSuccess);
@@ -1366,6 +1504,98 @@ public class UiManager : MonoBehaviour
         PopupManager.Open_Popup(UpgradeRewardPopup);
 
     }
+
+    #endregion
+
+
+    #region Hell_Dungeon
+
+
+    public void Set_Hell_Panel()
+    {
+        for (int i = 0; i < BackEndDataManager.instance.hell_dungeon_csv_data.Count; i++)
+        {
+            GameObject under = Instantiate(Content_Hell_Panel, Scroll_Content_Hell.transform
+        .Find("Viewport/Content"));
+
+            under.GetComponent<Content_Hell_Panel>().Set_Item(i);
+            content_Hell_s.Add(under.GetComponent<Content_Hell_Panel>());
+        }
+
+    }
+
+
+    public void Check_Hell_Unlock()
+    {
+        foreach (var item in content_Hell_s)
+        {
+            item.UnLock();
+        }
+    }
+
+    public void Open_Hell()
+    {
+        img_Hell_Reward_0.sprite = Hell_.Get_Img_Reward_0();
+        img_Hell_Reward_1.sprite = Hell_.Get_Img_Reward_1();
+
+        PopupManager.Close_Popup();
+        PopupManager.Open_Popup(HellDungeon);
+    }
+
+    public void Set_Hell_timer(float timer)
+    {
+        txt_Hell_Time.text = string.Format("{0:00}:{1:00}", 0, timer);
+
+    }
+
+    public void Set_Hell_Info()
+    {
+        txt_Hell_Kill_Monster.text = string.Format("x{0}", Hell_.int_Max_Monster);
+        txt_Hell_Reward_0.text = string.Format("x{0}", GetGoldString(Hell_.Get_Reward_0()));
+        txt_Hell_Reward_1.text = string.Format("x{0}", GetGoldString(Hell_.Get_Reward_1()));
+    }
+
+    public void Set_Hell_Reward()
+    {
+        Debug.Log("Lb v " + Underground_.Underground_Lv);
+
+        BackEndDataManager.instance.Set_Item(Hell_.Get_Reward_0_Type(), Hell_.Get_Reward_0(), Calculate_Type.plus);
+        BackEndDataManager.instance.Set_Item(Hell_.Get_Reward_1_Type(), Hell_.Get_Reward_1(), Calculate_Type.plus);
+
+        Hell_info hell_info = BackEndDataManager.instance.Content_Data.hell_info.Find(x => x.int_num.Equals(Hell_.Hell_Lv));
+
+        if (hell_info == null)
+        {
+            Hell_info hell_ = new Hell_info
+            {
+                int_num = Hell_.Hell_Lv
+            };
+
+            BackEndDataManager.instance.Content_Data.hell_info.Add(hell_);
+
+            BackEndDataManager.instance.Save_Content_Data();
+
+            Check_Hell_Unlock();
+
+        }
+
+        Set_Hell_Reward_Txt();
+
+    }
+    public void Set_Hell_Reward_Txt()
+    {
+
+        txt_HellReward_Kill_Monster.text = string.Format("x{0}", Hell_.int_Max_Monster);
+        img_HellReward_Reward_0.sprite = Hell_.Get_Img_Reward_0();
+        img_HellReward_Reward_1.sprite = Hell_.Get_Img_Reward_1();
+
+        txt_HellReward_Reward_0.text = string.Format("x{0}", GetGoldString(Hell_.Get_Reward_0()));
+        txt_HellReward_Reward_1.text = string.Format("x{0}", GetGoldString(Hell_.Get_Reward_0()));
+
+        PopupManager.Open_Popup(HellRewardPopup);
+
+    }
+
 
     #endregion
 

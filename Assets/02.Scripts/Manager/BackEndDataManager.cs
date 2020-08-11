@@ -95,6 +95,8 @@ public class Content_Data
     public List<Underground_info> underground_info { get; set; }
     [DynamoDBProperty("upgrade_info")]
     public List<Upgrade_info> upgrade_info { get; set; }
+    [DynamoDBProperty("hell_info")]
+    public List<Hell_info> hell_info { get; set; }
 }
 
 public class Item_Info
@@ -130,6 +132,12 @@ public class Upgrade_info
     public int int_num { get; set; }
 }
 
+public class Hell_info
+{
+    public int int_num { get; set; }
+}
+
+
 public class BackEndDataManager : MonoBehaviour
 {
     public static BackEndDataManager instance = null;
@@ -163,7 +171,8 @@ public class BackEndDataManager : MonoBehaviour
     public List<Dictionary<string, object>> skill_csv_data;         //던전 정보
     public List<Dictionary<string, object>> content_csv_data;         //던전 정보
     public List<Dictionary<string, object>> underground_item_csv_data;         //던전 정보
-    public List<Dictionary<string, object>> upgrade_item_csv_data;         //던전 정보
+    public List<Dictionary<string, object>> upgrade_dungeon_csv_data;         //던전 정보
+    public List<Dictionary<string, object>> hell_dungeon_csv_data;         //던전 정보
 
     public Item_s underground_item_ = new Item_s();         //던전 정보
 
@@ -215,7 +224,8 @@ public class BackEndDataManager : MonoBehaviour
         skill_csv_data = CSVReader.Read("skill");
         content_csv_data = CSVReader.Read("content");
         underground_item_csv_data = CSVReader.Read("underground_item");
-        upgrade_item_csv_data = CSVReader.Read("upgrade_dungeon");
+        upgrade_dungeon_csv_data = CSVReader.Read("upgrade_dungeon");
+        hell_dungeon_csv_data = CSVReader.Read("hell_dungeon");
 
         foreach (var data in skill_csv_data)
         {
@@ -730,6 +740,7 @@ public class BackEndDataManager : MonoBehaviour
             if (result.Exception != null)
             {
                 Debug.Log(result.Exception);
+                Get_Weapon_Data();
                 return;
             }
 
@@ -753,6 +764,7 @@ public class BackEndDataManager : MonoBehaviour
             if (result.Exception != null)
             {
                 Debug.Log(result.Exception);
+                Get_Skill_Data();
                 return;
             }
 
@@ -979,9 +991,9 @@ public class BackEndDataManager : MonoBehaviour
 
             case Stage_State.upgrade:
 
-                pow = (BigInteger)Math.Pow(10, Underground_.Underground_Lv);
+                pow = (BigInteger)Math.Pow(10, Upgrade_.Upgrade_Lv);
 
-                total_hp = BigInteger.Parse(upgrade_item_csv_data[0]["hp"].ToString()) * pow;
+                total_hp = BigInteger.Parse(upgrade_dungeon_csv_data[0]["hp"].ToString()) * pow;
 
                 break;
             default:
@@ -1092,6 +1104,7 @@ public class BackEndDataManager : MonoBehaviour
                 UiManager.instance.Set_Skill_Buy();
                 break;
             case Item_Type.black_stone:
+                UiManager.instance.Set_Txt_Black_Stone();
                 break;
             case Item_Type.topaz:
                 break;
@@ -1147,6 +1160,7 @@ public class BackEndDataManager : MonoBehaviour
                 UiManager.instance.Set_Txt_Upgrade_Ticket();
                 break;
             case Item_Type.hell_ticket:
+                UiManager.instance.Set_Txt_Hell_Ticket();
                 break;
             case Item_Type.yellow_key:
                 break;

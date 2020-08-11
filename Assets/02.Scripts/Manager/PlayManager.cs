@@ -14,7 +14,8 @@ public enum Stage_State
 {
     stage,
     underground,
-    upgrade
+    upgrade,
+    hell
 }
 
 public class PlayManager : MonoBehaviour
@@ -119,6 +120,9 @@ public class PlayManager : MonoBehaviour
             case Stage_State.upgrade:
                 pos = UiManager.instance.UpgradeDungeon.transform;
                 break;
+            case Stage_State.hell:
+                pos = UiManager.instance.HellDungeon.transform;
+                break;
             default:
                 break;
         }
@@ -131,6 +135,7 @@ public class PlayManager : MonoBehaviour
     {
         Set_Change_Stage(stage);
 
+        if(sc_Monster != null)
         Destroy(sc_Monster.gameObject);
 
         Set_Monster();
@@ -178,6 +183,26 @@ public class PlayManager : MonoBehaviour
             Start_Game(Stage_State.upgrade);
 
             StartCoroutine("Co_Upgrade_Timer");
+        }
+    }
+
+    public void Check_Hell(int lv)
+    {
+        if (BackEndDataManager.instance.Get_Item(Item_Type.hell_ticket) >= 1)
+        {
+            BackEndDataManager.instance.Set_Item(Item_Type.hell_ticket, 1, Calculate_Type.mius);
+
+            Hell_.Hell_Lv = lv;
+
+            Hell_.int_Max_Monster = 0;
+
+            UiManager.instance.Set_Hell_Info();
+
+            UiManager.instance.Open_Hell();
+
+            Start_Game(Stage_State.hell);
+
+            StartCoroutine("Co_Hell_Timer");
         }
     }
 
@@ -249,6 +274,23 @@ public class PlayManager : MonoBehaviour
                 sc_Monster.transform.localScale = Vector3.one;
 
                 sc_Monster.Set_Monster(Monster_Type.upgrade_Boss, BackEndDataManager.instance.Monster_Hp(true));
+
+                break;
+
+            case Stage_State.hell:
+
+                pos = UiManager.instance.HellDungeon.transform;
+
+                obj_Monster = Instantiate(Monsters[0], pos);
+                obj_Monster.transform.position = pos_Monster.position;
+
+                sc_Monster = obj_Monster.GetComponent<Monster>();
+                sc_Monster.transform.localScale = Vector3.one;
+
+
+                sc_Monster.Set_Monster(Monster_Type.hell_Boss, BackEndDataManager.instance.Monster_Hp(true));
+
+
 
                 break;
             default:
@@ -358,7 +400,7 @@ public class PlayManager : MonoBehaviour
 
     IEnumerator Co_Upgrade_Timer()
     {
-        float timer = float.Parse(BackEndDataManager.instance.upgrade_item_csv_data[Underground_.Underground_Lv]["time"].ToString());
+        float timer = float.Parse(BackEndDataManager.instance.upgrade_dungeon_csv_data[Underground_.Underground_Lv]["time"].ToString());
 
         UiManager.instance.Set_Upgrade_timer(timer);
 
@@ -375,6 +417,28 @@ public class PlayManager : MonoBehaviour
 
         Change_State(Player_State.Reward);
         UiManager.instance.Set_Upgrade_Reward(false);
+
+    }
+
+    IEnumerator Co_Hell_Timer()
+    {
+        float timer = float.Parse(BackEndDataManager.instance.hell_dungeon_csv_data[Hell_.Hell_Lv]["time"].ToString());
+
+        UiManager.instance.Set_Hell_timer(timer);
+
+        while (timer > 0)
+        {
+
+            yield return new WaitForSeconds(0.1f);
+
+            timer -= 0.1f;
+
+            UiManager.instance.Set_Hell_timer(timer);
+
+        }
+
+        Change_State(Player_State.Reward);
+        UiManager.instance.Set_Hell_Reward();
 
     }
 

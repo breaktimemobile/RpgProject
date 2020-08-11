@@ -131,7 +131,57 @@ public enum Item_Type
     weapon_accessory_stone_b,
     weapon_accessory_stone_a,
     weapon_accessory_stone_s,
-    weapon_accessory_stone_ss
+    weapon_accessory_stone_ss,
+    item_gacha_ticket_1,
+    transform_gacha_ticket_1,
+    pet_gacha_ticket_1,
+    item_gacha_ticket_5,
+    transform_gacha_ticket_5,
+    pet_gacha_ticket_5,
+    item_gacha_ticket_10,
+    transform_gacha_ticket_10,
+    pet_gacha_ticket_10,
+    roulette_gacha_ticket_1,
+    guild_coin_box_1_100,
+    guild_coin_box_100_500,
+    guild_coin_box_500_1000,
+    guild_coin_box_1000_3000,
+    guild_coin_box_3000_5000,
+    weapon_limit_stone_d_box_1_100,
+    weapon_limit_stone_c_box_1_100,
+    weapon_limit_stone_b_box_1_100,
+    weapon_limit_stone_a_box_1_100,
+    weapon_limit_stone_s_box_1_100,
+    weapon_limit_stone_ss_box_1_100,
+    weapon_shield_stone_d_box_1_100,
+    weapon_shield_stone_c_box_1_100,
+    weapon_shield_stone_b_box_1_100,
+    weapon_shield_stone_a_box_1_100,
+    weapon_shield_stone_s_box_1_100,
+    weapon_shield_stone_ss_box_1_100,
+    weapon_accessory_stone_d_box_1_100,
+    weapon_accessory_stone_c_box_1_100,
+    weapon_accessory_stone_b_box_1_100,
+    weapon_accessory_stone_a_box_1_100,
+    weapon_accessory_stone_s_box_1_100,
+    weapon_accessory_stone_ss_box_1_100,
+    jewelry_box_1,
+    jewelry_box_1_5,
+    jewelry_box_5_10,
+    jewelry_box_10_15,
+    jewelry_box_10_20,
+    jewelry_box_10_50,
+    relic,
+    weapon_all_box_ss,
+    weapon_box_ss,
+    weapon_shield_box_ss,
+    weapon_accessory_box_ss,
+    weapon_all_box_s_ss,
+    weapon_box_s_ss,
+    weapon_shield_box_s_ss,
+    weapon_accessory_box_s_ss,
+    mileage
+
 
 }
 
@@ -231,7 +281,7 @@ public class Calculate
 
         for (int i = 0; i < lv; i++)
         {
-            pow =  pow * 100;
+            pow = pow * 100;
 
             total = (total * percent);
         }
@@ -244,7 +294,7 @@ public class Calculate
 
 public class Skill
 {
-    public int num; 
+    public int num;
     public int type;
     public string name;
     public int start_lv;
@@ -362,6 +412,7 @@ public class Underground_
         BackEndDataManager.instance.Set_Item(Get_Reward_0_Type(), Get_Reward_0() * val, Calculate_Type.plus);
         BackEndDataManager.instance.Set_Item(Get_Reward_1_Type(), Get_Reward_1() * val, Calculate_Type.plus);
 
+
         Underground_Item.Clear();
 
         Get_Underground_Random_Item();
@@ -381,6 +432,7 @@ public class Underground_
         {
             case Stage_State.stage:
                 total_ = underground_Info.int_Max_Monster + underground_Info.int_Max_Boss;
+                UiManager.instance.Reset_Underground_Item();
 
                 break;
             default:
@@ -392,6 +444,7 @@ public class Underground_
 
             if (Random.Range(0, 1000) <= 50)
             {
+                Debug.Log("아이템 획득");
                 int item = Item_s.Get_Random_Item();
 
                 Index index = Underground_Item.Find(x => x.num.Equals(item));
@@ -425,9 +478,9 @@ public class Underground_
             Debug.Log(item.num);
 
             BackEndDataManager.instance.Set_Item((Item_Type)Item_s.items.Find(x => x.num.Equals(item.num)).item_num
-                , item.val , Calculate_Type.plus);
+                , item.val, Calculate_Type.plus);
         }
-        
+
     }
 
 }
@@ -439,7 +492,7 @@ public class Upgrade_
 
     public static BigInteger Get_Reward_0()
     {
-        BigInteger big = Calculate.Reward((int)BackEndDataManager.instance.upgrade_item_csv_data[0]["reward_val_0"], 120, Upgrade_Lv);
+        BigInteger big = Calculate.Reward((int)BackEndDataManager.instance.upgrade_dungeon_csv_data[0]["reward_val_0"], 120, Upgrade_Lv);
 
         return big;
     }
@@ -447,31 +500,77 @@ public class Upgrade_
     public static BigInteger Get_Reward_1()
     {
 
-        BigInteger big = Calculate.Reward((int)BackEndDataManager.instance.upgrade_item_csv_data[0]["reward_val_1"], 120, Upgrade_Lv);
+        BigInteger big = Calculate.Reward((int)BackEndDataManager.instance.upgrade_dungeon_csv_data[0]["reward_val_1"], 240, Upgrade_Lv);
 
         return big;
     }
 
     public static Item_Type Get_Reward_0_Type()
     {
-        return (Item_Type)(int)BackEndDataManager.instance.upgrade_item_csv_data[Upgrade_Lv]["reward_0"];
+        return (Item_Type)(int)BackEndDataManager.instance.upgrade_dungeon_csv_data[Upgrade_Lv]["reward_0"];
     }
 
     public static Item_Type Get_Reward_1_Type()
     {
-        return (Item_Type)(int)BackEndDataManager.instance.upgrade_item_csv_data[Upgrade_Lv]["reward_1"];
+        return (Item_Type)(int)BackEndDataManager.instance.upgrade_dungeon_csv_data[Upgrade_Lv]["reward_1"];
     }
 
     public static Sprite Get_Img_Reward_0()
     {
-        return Utill.Get_Item_Sp((Item_Type)(int)BackEndDataManager.instance.upgrade_item_csv_data[Upgrade_Lv]["reward_0"]);
+        return Utill.Get_Item_Sp((Item_Type)(int)BackEndDataManager.instance.upgrade_dungeon_csv_data[Upgrade_Lv]["reward_0"]);
     }
 
     public static Sprite Get_Img_Reward_1()
     {
-        return Utill.Get_Item_Sp((Item_Type)(int)BackEndDataManager.instance.upgrade_item_csv_data[Upgrade_Lv]["reward_1"]);
+        return Utill.Get_Item_Sp((Item_Type)(int)BackEndDataManager.instance.upgrade_dungeon_csv_data[Upgrade_Lv]["reward_1"]);
     }
-    
+
+}
+
+
+public class Hell_
+{
+
+    public static int Hell_Lv = 0;
+
+    public static int int_Max_Monster = 0;
+
+
+    public static BigInteger Get_Reward_0()
+    {
+        BigInteger big = Calculate.Reward((int)BackEndDataManager.instance.hell_dungeon_csv_data[0]["reward_val_0"], 120, Hell_Lv);
+
+        return big * int_Max_Monster;
+    }
+
+    public static BigInteger Get_Reward_1()
+    {
+
+        BigInteger big = (int)BackEndDataManager.instance.hell_dungeon_csv_data[0]["reward_val_1"] * (Hell_Lv + 1);
+
+        return big * int_Max_Monster;
+    }
+
+    public static Item_Type Get_Reward_0_Type()
+    {
+        return (Item_Type)(int)BackEndDataManager.instance.hell_dungeon_csv_data[Hell_Lv]["reward_0"];
+    }
+
+    public static Item_Type Get_Reward_1_Type()
+    {
+        return (Item_Type)(int)BackEndDataManager.instance.hell_dungeon_csv_data[Hell_Lv]["reward_1"];
+    }
+
+    public static Sprite Get_Img_Reward_0()
+    {
+        return Utill.Get_Item_Sp((Item_Type)(int)BackEndDataManager.instance.hell_dungeon_csv_data[Hell_Lv]["reward_0"]);
+    }
+
+    public static Sprite Get_Img_Reward_1()
+    {
+        return Utill.Get_Item_Sp((Item_Type)(int)BackEndDataManager.instance.hell_dungeon_csv_data[Hell_Lv]["reward_1"]);
+    }
+
 }
 
 public class Utill
