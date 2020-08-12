@@ -23,7 +23,7 @@ public class Content_Upgrade_Panel : MonoBehaviour
 
     Dictionary<string, object> data;
 
-    public void Set_Item(int lv = 0)
+    public void Set_Panel(int lv = 0)
     {
         data = BackEndDataManager.instance.upgrade_dungeon_csv_data[lv];
 

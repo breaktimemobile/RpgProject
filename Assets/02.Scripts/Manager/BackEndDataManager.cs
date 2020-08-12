@@ -99,6 +99,16 @@ public class Content_Data
     public List<Hell_info> hell_info { get; set; }
 }
 
+[DynamoDBTable("pet_info")]
+public class Pet_Data
+{
+    [DynamoDBHashKey] // Hash key.
+    public string id { get; set; }
+    [DynamoDBProperty("pet_info")]
+    public List<Pet_info> pet_info { get; set; }
+
+}
+
 public class Item_Info
 {
     public int type { get; set; }
@@ -137,6 +147,13 @@ public class Hell_info
     public int int_num { get; set; }
 }
 
+public class Pet_info
+{
+    public int int_num { get; set; }
+    public int int_lv{ get; set; }
+
+}
+
 
 public class BackEndDataManager : MonoBehaviour
 {
@@ -149,6 +166,7 @@ public class BackEndDataManager : MonoBehaviour
     Weapon_Data weapon_Data = new Weapon_Data();
     Skill_Data skill_Data = new Skill_Data();
     Content_Data content_Data = new Content_Data();
+    Pet_Data pet_Data = new Pet_Data();
 
     DynamoDBContext context;
     AmazonDynamoDBClient DBclient;
@@ -161,6 +179,7 @@ public class BackEndDataManager : MonoBehaviour
     public Weapon_Data Weapon_Data { get => weapon_Data; }
     public Skill_Data Skill_Data { get => skill_Data; }
     public Content_Data Content_Data { get => content_Data; }
+    public Pet_Data Pet_Data { get => pet_Data;}
 
     public BigInteger Int_exp { get => int_exp; }
 
@@ -173,6 +192,7 @@ public class BackEndDataManager : MonoBehaviour
     public List<Dictionary<string, object>> underground_item_csv_data;         //던전 정보
     public List<Dictionary<string, object>> upgrade_dungeon_csv_data;         //던전 정보
     public List<Dictionary<string, object>> hell_dungeon_csv_data;         //던전 정보
+    public List<Dictionary<string, object>> pet_csv_data;         //던전 정보
 
     public Item_s underground_item_ = new Item_s();         //던전 정보
 
@@ -226,6 +246,7 @@ public class BackEndDataManager : MonoBehaviour
         underground_item_csv_data = CSVReader.Read("underground_item");
         upgrade_dungeon_csv_data = CSVReader.Read("upgrade_dungeon");
         hell_dungeon_csv_data = CSVReader.Read("hell_dungeon");
+        pet_csv_data = CSVReader.Read("pet");
 
         foreach (var data in skill_csv_data)
         {
@@ -360,6 +381,7 @@ public class BackEndDataManager : MonoBehaviour
         Check_Weapon_Data();
         Check_Skill_Data();
         Check_Content_Data();
+        Check_Pet_Data();
     }
 
     #region Check_Data
@@ -640,6 +662,39 @@ public class BackEndDataManager : MonoBehaviour
         });
     }
 
+    public void Check_Pet_Data()
+    {
+        ScanRequest request = new ScanRequest()
+        {
+            TableName = "pet_info"
+        };
+
+        DBclient.ScanAsync(request, (result) =>
+        {
+
+            Dictionary<string, AttributeValue> t =
+              result.Response.Items.Find(x => x["id"].S.Equals(BackEndAuthManager.Get_UserId()));
+
+            Debug.Log(t == null ? "pet 없음" : "pet 있음");
+
+            if (t == null)
+            {
+                pet_Data = new Pet_Data
+                {
+                    id = BackEndAuthManager.Get_UserId(),
+                    pet_info = new List<Pet_info>()
+                };
+
+                Save_Pet_Data();
+            }
+            else
+            {
+                Get_Pet_Data();
+            }
+
+        });
+    }
+
     #endregion
 
     #region Get_Data
@@ -804,6 +859,29 @@ public class BackEndDataManager : MonoBehaviour
         }, null);
     }
 
+    public void Get_Pet_Data() //DB에서 캐릭터 정보 받기
+    {
+
+
+        Debug.Log("Get_Pet_Data");
+
+        context.LoadAsync(BackEndAuthManager.Get_UserId(), (AmazonDynamoDBResult<Pet_Data> result) =>
+        {
+            // id가 abcd인 캐릭터 정보를 DB에서 받아옴
+            if (result.Exception != null)
+            {
+                Debug.Log(result.Exception);
+                return;
+            }
+
+            pet_Data = result.Result;
+
+            Sucess_Data(Data_Type.pet_info);
+
+
+        }, null);
+    }
+
     #endregion
 
     #region Save_Data
@@ -911,6 +989,22 @@ public class BackEndDataManager : MonoBehaviour
                 Debug.Log(result.Exception);
         });
     }
+
+    public void Save_Pet_Data() //DB에서 캐릭터 정보 받기
+    {
+        context.SaveAsync(pet_Data, (result) =>
+        {
+            if (result.Exception == null)
+            {
+                Debug.Log("pet_Data Save");
+                Sucess_Data(Data_Type.pet_info);
+
+            }
+            else
+                Debug.Log(result.Exception);
+        });
+    }
+
 
     #endregion
 

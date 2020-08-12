@@ -12,7 +12,7 @@ public class Weapon_Panel : MonoBehaviour
 
     Dictionary<string, object> data;
 
-    public void Set_Weapon_Item(Dictionary<string, object>  _data)
+    public void Set_Panel(Dictionary<string, object>  _data)
     {
         data = _data;
 

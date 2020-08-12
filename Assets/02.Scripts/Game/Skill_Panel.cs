@@ -22,7 +22,7 @@ public class Skill_Panel : MonoBehaviour
 
     Skill skill;
 
-    public void Set_Skill_Item(int num)
+    public void Set_Panel(int num)
     {
 
         img_Skill = transform.Find("img_Skill").GetComponent<Image>();

@@ -15,7 +15,7 @@ public class Inventory_Panel : MonoBehaviour
 
     public Item_Type Item_Type { get => item_Type; set => item_Type = value; }
 
-    public void Set_Inventory_Item(Item_Type _Type,BigInteger _val)
+    public void Set_Panel(Item_Type _Type,BigInteger _val)
     {
         img_Inventory = transform.Find("img_Inventory").GetComponent<Image>();
         txt_Inventory_Val = GetComponentInChildren<Text>();

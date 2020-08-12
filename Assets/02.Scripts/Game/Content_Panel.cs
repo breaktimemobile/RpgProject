@@ -13,7 +13,7 @@ public class Content_Panel : MonoBehaviour
     private Image img_Reward_1;
     private Image img_Reward_2;
 
-    public void Set_Content_Item(Dictionary<string, object> data)
+    public void Set_Panel(Dictionary<string, object> data)
     {
         btn_content = GetComponent<Button>();
 

@@ -12,7 +12,8 @@ public enum Data_Type
     stage_info,
     weapon_info,
     skill_info,
-    content_info
+    content_info,
+    pet_info
 }
 
 public enum Character_Lv
@@ -580,6 +581,9 @@ public class Utill
         return Resources.Load<Sprite>("Item/icon_" + item_Type.ToString());
     }
 
-
+    public static Sprite Get_Pet_Sp(int num)
+    {
+        return Resources.Load<Sprite>("Pet/pet_" + num.ToString());
+    }
 }
 

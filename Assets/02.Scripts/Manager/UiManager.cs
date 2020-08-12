@@ -23,6 +23,7 @@ public class UiManager : MonoBehaviour
     public GameObject UpgradeRewardPopup;
     public GameObject HellDungeon;
     public GameObject HellRewardPopup;
+    public GameObject PetPopup;
 
     private GameObject obj_Top;
     public GameObject obj_Stage;
@@ -104,6 +105,12 @@ public class UiManager : MonoBehaviour
     private Weapon_Panel[] Shield_Panels;
     private Weapon_Panel[] Accessory_Panels;
     private Weapon_Panel[] Costume_Panels;
+
+    #endregion
+
+    #region Content_Pet
+
+    private Transform scroll_pet;
 
     #endregion
 
@@ -347,6 +354,10 @@ public class UiManager : MonoBehaviour
 
     #endregion
 
+    #region PetPopup
+
+    #endregion
+
     #region Prefabs
 
     public GameObject txt_Damege;
@@ -358,6 +369,7 @@ public class UiManager : MonoBehaviour
     public GameObject Underground_Panel;
     public GameObject Content_Upgrade_Panel;
     public GameObject Content_Hell_Panel;
+    public GameObject Pet_Panel;
 
     #endregion
 
@@ -393,7 +405,7 @@ public class UiManager : MonoBehaviour
         Content_HellPopup = Popup.Find("Content_HellPopup").gameObject;
         HellDungeon = Popup.Find("HellDungeon").gameObject;
         HellRewardPopup = Popup.Find("HellRewardPopup").gameObject;
-
+        PetPopup = Popup.Find("PetPopup").gameObject;
 
         obj_Top = Game.Find("obj_Top").gameObject;
         obj_Stage = Game.Find("obj_Stage").gameObject;
@@ -470,6 +482,14 @@ public class UiManager : MonoBehaviour
         popup_Costume = Content_Weapon.transform.Find("contents/popup_Costume").gameObject;
 
         Weapon_Panels = popup_Weapon.GetComponentsInChildren<Weapon_Panel>();
+
+
+        #endregion
+
+        #region Content_Pet
+
+        scroll_pet = Content_Pet.transform.Find("scroll_pet");
+
 
         #endregion
 
@@ -700,7 +720,6 @@ public class UiManager : MonoBehaviour
 
         #endregion
 
-
         #region HellRewardPopup
 
         img_HellReward_Kill_Monster = HellRewardPopup.transform.Find("img_HellReward_Kill_Monster").GetComponent<Image>();
@@ -923,6 +942,7 @@ public class UiManager : MonoBehaviour
         Set_Skill_Panel();
         Set_Upgrade_Stat();
         Set_Hell_Panel();
+        Set_Pet_Panel();
 
     }
 
@@ -1186,7 +1206,7 @@ public class UiManager : MonoBehaviour
             Content_Panel content = Instantiate(Content_Panel, Content_Content.transform
                 .Find("scroll_content/Viewport/Content")).GetComponent<Content_Panel>();
 
-            content.Set_Content_Item(item);
+            content.Set_Panel(item);
         }
 
     }
@@ -1395,8 +1415,8 @@ public class UiManager : MonoBehaviour
             under_list_0.Add(Inventory_0);
             under_list_1.Add(Inventory_1);
 
-            obj_0.GetComponent<Inventory_Panel>().Set_Inventory_Item(i, val);
-            obj_1.GetComponent<Inventory_Panel>().Set_Inventory_Item(i, val);
+            obj_0.GetComponent<Inventory_Panel>().Set_Panel(i, val);
+            obj_1.GetComponent<Inventory_Panel>().Set_Panel(i, val);
 
         }
         else
@@ -1427,7 +1447,7 @@ public class UiManager : MonoBehaviour
             GameObject under = Instantiate(Content_Upgrade_Panel, Scroll_Content_Upgrade.transform
         .Find("Viewport/Content"));
 
-            under.GetComponent<Content_Upgrade_Panel>().Set_Item(i);
+            under.GetComponent<Content_Upgrade_Panel>().Set_Panel(i);
             content_Upgrade_s.Add(under.GetComponent<Content_Upgrade_Panel>());
         }
 
@@ -1507,7 +1527,6 @@ public class UiManager : MonoBehaviour
 
     #endregion
 
-
     #region Hell_Dungeon
 
 
@@ -1518,7 +1537,7 @@ public class UiManager : MonoBehaviour
             GameObject under = Instantiate(Content_Hell_Panel, Scroll_Content_Hell.transform
         .Find("Viewport/Content"));
 
-            under.GetComponent<Content_Hell_Panel>().Set_Item(i);
+            under.GetComponent<Content_Hell_Panel>().Set_Panel(i);
             content_Hell_s.Add(under.GetComponent<Content_Hell_Panel>());
         }
 
@@ -1628,7 +1647,7 @@ public class UiManager : MonoBehaviour
 
             skill_Panels.Add(skill_);
 
-            skill_.Set_Skill_Item((int)item["stat_type"]);
+            skill_.Set_Panel((int)item["stat_type"]);
 
         }
 
@@ -1704,6 +1723,35 @@ public class UiManager : MonoBehaviour
 
     #endregion
 
+    #region Pet
+
+    public void Set_Pet_Panel()
+    {
+        for (int i = 0; i < BackEndDataManager.instance.pet_csv_data.Count; i++)
+        {
+            Pet_Panel pet = Instantiate(Pet_Panel, scroll_pet.transform
+                .Find("Viewport/Content")).GetComponent<Pet_Panel>();
+
+            pet.Set_Panel(i);
+
+        }
+
+
+    }
+
+    public void Open_Pet_Panel(int num)
+    {
+        Set_Pet_Txt(num);
+        PopupManager.Open_Popup(PetPopup);
+    }
+
+    public void Set_Pet_Txt(int num)
+    {
+
+    }
+
+    #endregion
+
     #region Inventory
 
     public void Set_Inventory()
@@ -1717,7 +1765,7 @@ public class UiManager : MonoBehaviour
             Inventory_Panel Inventory = obj.GetComponent<Inventory_Panel>();
             Inventory_Panels.Add(Inventory);
 
-            obj.GetComponent<Inventory_Panel>().Set_Inventory_Item((Item_Type)item.type,
+            obj.GetComponent<Inventory_Panel>().Set_Panel((Item_Type)item.type,
                 BigInteger.Parse(item.str_val));
         }
 
@@ -1737,7 +1785,7 @@ public class UiManager : MonoBehaviour
             Inventory_Panel Inventory = obj.GetComponent<Inventory_Panel>();
             Inventory_Panels.Add(Inventory);
 
-            obj.GetComponent<Inventory_Panel>().Set_Inventory_Item(i,
+            obj.GetComponent<Inventory_Panel>().Set_Panel(i,
                 BigInteger.Parse(item_Info.str_val));
         }
         else
@@ -1764,7 +1812,7 @@ public class UiManager : MonoBehaviour
             Weapon_Panel weapon_ = Instantiate(weapon_Panel, popup_Weapon.transform
                 .Find("scroll_weapon/Viewport/Content")).GetComponent<Weapon_Panel>();
 
-            weapon_.Set_Weapon_Item(item);
+            weapon_.Set_Panel(item);
 
         }
 

@@ -21,7 +21,7 @@ public class Content_Hell_Panel : MonoBehaviour
 
     Dictionary<string, object> data;
 
-    public void Set_Item(int lv = 0)
+    public void Set_Panel(int lv = 0)
     {
         data = BackEndDataManager.instance.hell_dungeon_csv_data[lv];
 
