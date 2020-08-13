@@ -38,11 +38,11 @@ public class Skill_Panel : MonoBehaviour
         obj_Lock = transform.Find("obj_Lock").gameObject;
 
         btn_Skill_Upgrade.onClick.AddListener(() => Buy());
-        skill = Skill_s.Get_Skill((Skill_Type)num);
+        skill = Skill_s.Get_Skill((Ability_Type)num);
 
         img_Skill_Upgrade.sprite = Utill.Get_Item_Sp((Item_Type)skill.price_type);
 
-        img_Skill.sprite = Resources.Load<Sprite>("Skill/S_skill_" + skill.stat_type);
+        img_Skill.sprite = Resources.Load<Sprite>("Skill/S_skill_" + skill.ability_type);
         txt_Skill_Name.text = skill.name;
         
         obj_Lock.SetActive(false);
@@ -58,10 +58,10 @@ public class Skill_Panel : MonoBehaviour
     {
         UiManager.instance.skill_lv = up_lv;
 
-        string m_up = UiManager.instance.GetGoldString((int)(skill.stat_add) * (int)up_lv);
-        string f_up = string.Format("{0}{1}", (skill.stat_add * 100) * (int)up_lv, "%");
+        string m_up = UiManager.instance.GetGoldString((int)(skill.ability_add) * (int)up_lv);
+        string f_up = string.Format("{0}{1}", (skill.ability_add * 100) * (int)up_lv, "%");
 
-        txt_Skill_Upgrade.text = skill.type.Equals(0) ? f_up : m_up;
+        txt_Skill_Upgrade.text = Ability_.Get_Ability_Type(skill.ability_type).Equals(0) ? f_up : m_up;
 
         Check_Btn();
 
@@ -96,13 +96,11 @@ public class Skill_Panel : MonoBehaviour
 
         int lv = skill_Info == null ? 0 : skill_Info.int_lv;
 
-        txt_Skill_Sub.gameObject.SetActive(lv != 0);
+        int per = Ability_.Get_Ability_Type(skill.ability_type).Equals(0) ? 100 : 1;
 
         txt_Skill_Sub.text = string.Format("{0} {1}{2}",
-            BackEndDataManager.instance.skill_Explan_csv_data[(int)skill.stat_type]["explan"].ToString(),
-            skill.f_total.ToString() , skill.type.Equals(0) ?  "%" : "");
-
-        txt_Skill_Cool.gameObject.SetActive(skill_Info != null);
+            Ability_.Get_Ability_Nmae(skill.ability_type),
+           lv.Equals(0) ? skill.base_ability * per : skill.f_total , Ability_.Ability_Type_Sign(skill.ability_type));
 
         txt_Skill_Cool.text = skill.cool_time == 0 ? "" :
             string.Format("지속:{0} 쿨타임:{1}", skill.skill_time, skill.cool_time);
@@ -138,7 +136,7 @@ public class Skill_Panel : MonoBehaviour
 
             Skill_s.Set_Skill_Val(skill_Info.int_num, skill_Info.int_lv);
 
-            Player_stat.Set_Player_Stat((Skill_Type)skill.stat_type);
+            Player_stat.Set_Player_Stat((Ability_Type)skill.ability_type);
             BackEndDataManager.instance.Save_Skill_Data();
             Set_Sub_Txt();
 

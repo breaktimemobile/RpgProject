@@ -28,25 +28,25 @@ public class Player_stat
         //체력 5퍼 상승
 
 
-        int_Lv = BackEndDataManager.instance.Character_Data.int_character_Lv + (int)Skill_s.Get_Skill_Val(Skill_Type.add_level);
+        int_Lv = BackEndDataManager.instance.Character_Data.int_character_Lv + (int)Skill_s.Get_Skill_Val(Ability_Type.add_level);
 
-        float skill_atk = Use_skill ? Skill_s.Get_Skill_Val(Skill_Type.skill_atk) : 0;
+        float skill_atk = Use_skill ? Skill_s.Get_Skill_Val(Ability_Type.skill_atk) : 0;
 
         int_Base_Atk = 100 + (100 / 20) * (int_Lv - 1);
         BigInteger int_Upgrade = int_Base_Atk * (BackEndDataManager.instance.Character_Data.Int_Upgrade_Lv * 5) / 100;
-        int_Total_Atk = int_Base_Atk + int_Upgrade + (int)Skill_s.Get_Skill_Val(Skill_Type.add_atk) + (int_Base_Atk * (int)skill_atk) / 100;
+        int_Total_Atk = int_Base_Atk + int_Upgrade + (int)Skill_s.Get_Skill_Val(Ability_Type.add_atk) + (int_Base_Atk * (int)skill_atk) / 100;
 
         int_Hp = 2000 + (2000 / 20) * (int_Lv - 1);
 
-        int_Atk_Speed = 100 + Skill_s.Get_Skill_Val(Skill_Type.add_atk_speed)
-            + (Use_skill ? (int)Skill_s.Get_Skill_Val(Skill_Type.skill_atk_speed) : 0);
+        int_Atk_Speed = 100 + Skill_s.Get_Skill_Val(Ability_Type.add_atk_speed)
+            + (Use_skill ? (int)Skill_s.Get_Skill_Val(Ability_Type.skill_atk_speed) : 0);
 
-        int_Critical_Damege = 5 + Skill_s.Get_Skill_Val(Skill_Type.add_critical_damege);
+        int_Critical_Damege = 5 + Skill_s.Get_Skill_Val(Ability_Type.add_critical_damege);
 
-        int_Critical_Percent = 1 + Skill_s.Get_Skill_Val(Skill_Type.add_critical_percent);
+        int_Critical_Percent = 1 + Skill_s.Get_Skill_Val(Ability_Type.add_critical_percent);
 
-        int_Speed = 100 + Skill_s.Get_Skill_Val(Skill_Type.add_speed)
-            + (Use_skill ? (int)Skill_s.Get_Skill_Val(Skill_Type.skill_speed) : 0);
+        int_Speed = 100 + Skill_s.Get_Skill_Val(Ability_Type.add_speed)
+            + (Use_skill ? (int)Skill_s.Get_Skill_Val(Ability_Type.skill_speed) : 0);
 
         int_Top_Scroll_Speed = -int_Speed / 90.0f;
         int_Btm_Scroll_Speed = -int_Speed / 60.0f;
@@ -54,59 +54,59 @@ public class Player_stat
         UiManager.instance.Set_Character_Stat();
     }
 
-    public static void Set_Player_Stat(Skill_Type skill_Type)
+    public static void Set_Player_Stat(Ability_Type skill_Type)
     {
         Debug.Log("이거냐?????");
         switch (skill_Type)
         {
 
-            case Skill_Type.add_atk_speed:
-                int_Atk_Speed = 100 + Skill_s.Get_Skill_Val(Skill_Type.add_atk_speed)
-                    + (Use_skill ? (int)Skill_s.Get_Skill_Val(Skill_Type.skill_atk_speed) : 0);
+            case Ability_Type.add_atk_speed:
+                int_Atk_Speed = 100 + Skill_s.Get_Skill_Val(Ability_Type.add_atk_speed)
+                    + (Use_skill ? (int)Skill_s.Get_Skill_Val(Ability_Type.skill_atk_speed) : 0);
                 break;
 
-            case Skill_Type.add_speed:
-                int_Speed = 100 + Skill_s.Get_Skill_Val(Skill_Type.add_speed)
-                    + (Use_skill ? (int)Skill_s.Get_Skill_Val(Skill_Type.skill_speed) : 0);
+            case Ability_Type.add_speed:
+                int_Speed = 100 + Skill_s.Get_Skill_Val(Ability_Type.add_speed)
+                    + (Use_skill ? (int)Skill_s.Get_Skill_Val(Ability_Type.skill_speed) : 0);
 
                 int_Top_Scroll_Speed = -int_Speed / 90.0f;
                 int_Btm_Scroll_Speed = -int_Speed / 60.0f;
 
                 break;
 
-            case Skill_Type.add_critical_damege:
-                int_Critical_Damege = 5 + Skill_s.Get_Skill_Val(Skill_Type.add_critical_damege);
+            case Ability_Type.add_critical_damege:
+                int_Critical_Damege = 5 + Skill_s.Get_Skill_Val(Ability_Type.add_critical_damege);
 
                 break;
 
-            case Skill_Type.add_critical_percent:
-                int_Critical_Percent = 1 + Skill_s.Get_Skill_Val(Skill_Type.add_critical_percent);
+            case Ability_Type.add_critical_percent:
+                int_Critical_Percent = 1 + Skill_s.Get_Skill_Val(Ability_Type.add_critical_percent);
 
                 break;
 
-            case Skill_Type.add_level:
-                int_Lv = BackEndDataManager.instance.Character_Data.int_character_Lv + (int)Skill_s.Get_Skill_Val(Skill_Type.add_level);
+            case Ability_Type.add_level:
+                int_Lv = BackEndDataManager.instance.Character_Data.int_character_Lv + (int)Skill_s.Get_Skill_Val(Ability_Type.add_level);
 
-                float skill_atk = Use_skill ? Skill_s.Get_Skill_Val(Skill_Type.skill_atk) : 0;
+                float skill_atk = Use_skill ? Skill_s.Get_Skill_Val(Ability_Type.skill_atk) : 0;
 
 
                 int_Base_Atk = 100 + (100 / 20) * (int_Lv - 1);
                 BigInteger int_Upgrade = (int_Base_Atk * BackEndDataManager.instance.Character_Data.Int_Upgrade_Lv * 5) / 100;
-                int_Total_Atk = int_Base_Atk + int_Upgrade + (int)Skill_s.Get_Skill_Val(Skill_Type.add_atk) + (int_Base_Atk * (int)skill_atk) / 100;
+                int_Total_Atk = int_Base_Atk + int_Upgrade + (int)Skill_s.Get_Skill_Val(Ability_Type.add_atk) + (int_Base_Atk * (int)skill_atk) / 100;
 
                 int_Hp = 2000 + (2000 / 20) * ((BigInteger)int_Lv - 1);
                 UiManager.instance.Set_Character_Lv();
                 UiManager.instance.Set_Buy_Lv();
                 break;
 
-            case Skill_Type.add_atk:
+            case Ability_Type.add_atk:
 
-                skill_atk = Use_skill ? Skill_s.Get_Skill_Val(Skill_Type.skill_atk) : 0;
+                skill_atk = Use_skill ? Skill_s.Get_Skill_Val(Ability_Type.skill_atk) : 0;
 
 
                 int_Base_Atk = 100 + (100 / 20) * (int_Lv - 1);
                 int_Upgrade = (int_Base_Atk * BackEndDataManager.instance.Character_Data.Int_Upgrade_Lv * 5) / 100;
-                int_Total_Atk = int_Base_Atk + int_Upgrade + (int)Skill_s.Get_Skill_Val(Skill_Type.add_atk) + (int_Base_Atk * (int)skill_atk) / 100;
+                int_Total_Atk = int_Base_Atk + int_Upgrade + (int)Skill_s.Get_Skill_Val(Ability_Type.add_atk) + (int_Base_Atk * (int)skill_atk) / 100;
 
                 break;
 
@@ -120,9 +120,9 @@ public class Player_stat
 
     public static void Set_Skill_Stat()
     {
-        Set_Player_Stat(Skill_Type.add_atk_speed);
-        Set_Player_Stat(Skill_Type.add_atk);
-        Set_Player_Stat(Skill_Type.skill_speed);
+        Set_Player_Stat(Ability_Type.add_atk_speed);
+        Set_Player_Stat(Ability_Type.add_atk);
+        Set_Player_Stat(Ability_Type.skill_speed);
     }
 
     public static void Add_Lv(int lv)
@@ -130,7 +130,7 @@ public class Player_stat
 
         BackEndDataManager.instance.Character_Data.int_character_Lv += lv;
 
-        Set_Player_Stat(Skill_Type.add_level);
+        Set_Player_Stat(Ability_Type.add_level);
         UiManager.instance.Set_Character_Lv();
         UiManager.instance.Set_Buy_Lv();
 

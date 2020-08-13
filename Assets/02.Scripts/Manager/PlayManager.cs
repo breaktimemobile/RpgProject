@@ -448,13 +448,17 @@ public class PlayManager : MonoBehaviour
         if (is_skill)
             return;
 
-        Skill_info skill_Info = BackEndDataManager.instance.Skill_Data.skill_Info.Find(x => x.int_num.Equals((int)Skill_Type.skill_atk));
+        Skill_info skill_Info = BackEndDataManager.instance.Skill_Data.skill_Info.Find(x => x.int_num.Equals((int)Ability_Type.skill_atk));
 
-        if (skill_Info.int_lv >= 1)
+        if(skill_Info != null)
         {
-            StartCoroutine("Co_Start_Skill");
+            if (skill_Info.int_lv >= 1)
+            {
+                StartCoroutine("Co_Start_Skill");
 
+            }
         }
+ 
     }
 
     bool is_skill = false;
@@ -464,7 +468,7 @@ public class PlayManager : MonoBehaviour
 
         is_skill = true;
 
-        Skill skill = Skill_s.Get_Skill(Skill_Type.skill_atk);
+        Skill skill = Skill_s.Get_Skill(Ability_Type.skill_atk);
 
         float skill_time = skill.skill_time;
 
@@ -492,7 +496,7 @@ public class PlayManager : MonoBehaviour
     IEnumerator Co_Cool_Skill()
     {
 
-        Skill skill = Skill_s.Get_Skill(Skill_Type.skill_atk);
+        Skill skill = Skill_s.Get_Skill(Ability_Type.skill_atk);
 
         float skill_time = skill.cool_time;
         UiManager.instance.Set_Skill_0_Bg();

@@ -186,7 +186,7 @@ public class BackEndDataManager : MonoBehaviour
     public List<Dictionary<string, object>> underground_dungeon_csv_data;         //던전 정보
     public List<Dictionary<string, object>> weapon_csv_data;         //던전 정보
     public List<Dictionary<string, object>> monster_csv_data;         //던전 정보
-    public List<Dictionary<string, object>> skill_Explan_csv_data;         //던전 정보
+    public List<Dictionary<string, object>> ability_csv_data;         //던전 정보
     public List<Dictionary<string, object>> skill_csv_data;         //던전 정보
     public List<Dictionary<string, object>> content_csv_data;         //던전 정보
     public List<Dictionary<string, object>> underground_item_csv_data;         //던전 정보
@@ -240,29 +240,27 @@ public class BackEndDataManager : MonoBehaviour
         underground_dungeon_csv_data = CSVReader.Read("underground_dungeon");
         weapon_csv_data = CSVReader.Read("weapon");
         monster_csv_data = CSVReader.Read("monster");
-        skill_Explan_csv_data = CSVReader.Read("skill_explan");
         skill_csv_data = CSVReader.Read("skill");
         content_csv_data = CSVReader.Read("content");
         underground_item_csv_data = CSVReader.Read("underground_item");
         upgrade_dungeon_csv_data = CSVReader.Read("upgrade_dungeon");
         hell_dungeon_csv_data = CSVReader.Read("hell_dungeon");
         pet_csv_data = CSVReader.Read("pet");
+        ability_csv_data = CSVReader.Read("ability");
 
         foreach (var data in skill_csv_data)
         {
             Skill skill = new Skill
             {
                 num = int.Parse(data["num"].ToString()),
-                type = int.Parse(data["type"].ToString()),
                 name = data["name"].ToString(),
-                start_lv = int.Parse(data["start_lv"].ToString()),
-                end_lv = int.Parse(data["end_lv"].ToString()),
+                max_lv = int.Parse(data["max_lv"].ToString()),
                 price_type = int.Parse(data["price_type"].ToString()),
                 price_val = int.Parse(data["price_val"].ToString()),
                 price_percent = float.Parse(data["price_percent"].ToString()),
-                stat_type = int.Parse(data["stat_type"].ToString()),
-                base_stat = float.Parse(data["base_stat"].ToString()),
-                stat_add = float.Parse(data["stat_add"].ToString()),
+                ability_type = int.Parse(data["ability_type"].ToString()),
+                base_ability = float.Parse(data["base_ability"].ToString()),
+                ability_add = float.Parse(data["ability_add"].ToString()),
                 skill_time = int.Parse(data["skill_time"].ToString()),
                 cool_time = int.Parse(data["cool_time"].ToString()),
                 f_total = 0
@@ -599,15 +597,7 @@ public class BackEndDataManager : MonoBehaviour
                 skill_Data = new Skill_Data
                 {
                     id = BackEndAuthManager.Get_UserId(),
-                    skill_Info = new List<Skill_info>
-                    {
-                        new Skill_info
-                        {
-                            int_num = 0,
-                            int_lv =0
-
-                        }
-                    }
+                    skill_Info = new List<Skill_info>()
                 };
 
                 Save_Skill_Data();

@@ -186,8 +186,9 @@ public enum Item_Type
 
 }
 
-public enum Skill_Type
+public enum Ability_Type
 {
+    character_level,
     skill_atk,
     skill_atk_speed,
     skill_speed,
@@ -211,7 +212,30 @@ public enum Skill_Type
     treasure_monster_percent_increase,
     critical_shield,
     buy_reward_increase,
-    monster_coin_10_percent
+    monster_coin_10_percent,
+    under_boss_soul_stone_increase,
+    boss_hp_decrease,
+    monster_steel_10_percent,
+    counter_cool_decrease,
+    none,
+    under_time_increase,
+    counter_skill_increase,
+    monster_spawn_decrease,
+    double_atk_damege_increase,
+    boss_steel_increase,
+    monster_hp_decrease,
+    boss_round_damege_increase,
+    tournament_damege_increase,
+    tournament_hp_increase,
+    job_time_decrease,
+    hp_increase,
+    damege_double,
+    critical_double,
+    crirical_armer_10_increase,
+    reflect,
+    damege_decrease,
+    faint,
+
 
 }
 
@@ -234,17 +258,17 @@ public class Skill_s
 {
     public static List<Skill> skills = new List<Skill>();
 
-    public static Skill Get_Skill(Skill_Type skill_num)
+    public static Skill Get_Skill(Ability_Type skill_num)
     {
-        Skill skill = skills.Find(x => x.stat_type.Equals((int)skill_num));
+        Skill skill = skills.Find(x => x.ability_type.Equals((int)skill_num));
 
         return skill;
     }
 
-    public static float Get_Skill_Val(Skill_Type skill_num)
+    public static float Get_Skill_Val(Ability_Type skill_num)
     {
 
-        Skill skill = skills.Find(x => x.stat_type.Equals((int)skill_num));
+        Skill skill = skills.Find(x => x.ability_type.Equals((int)skill_num));
 
         return skill == null ? 0 : skill.f_total;
     }
@@ -253,9 +277,9 @@ public class Skill_s
     {
         Skill skill = skills.Find(x => x.num.Equals(skill_num));
 
-        int per = skill.type.Equals(0) ? 100 : 1;
+        int per = Ability_.Get_Ability_Type(skill.ability_type).Equals(0) ? 100 : 1;
 
-        skill.f_total = (skill.base_stat * per) + (skill.stat_add * per) * (lv - 1);
+        skill.f_total = (skill.base_ability * per) + (skill.ability_add * per) * (lv - 1);
 
     }
 
@@ -296,16 +320,14 @@ public class Calculate
 public class Skill
 {
     public int num;
-    public int type;
     public string name;
-    public int start_lv;
-    public int end_lv;
+    public int max_lv;
     public int price_type;
     public int price_val;
     public float price_percent;
-    public int stat_type;
-    public float base_stat;
-    public float stat_add;
+    public int ability_type;
+    public float base_ability;
+    public float ability_add;
     public int skill_time;
     public int cool_time;
     public float f_total;
@@ -528,7 +550,6 @@ public class Upgrade_
 
 }
 
-
 public class Hell_
 {
 
@@ -574,8 +595,81 @@ public class Hell_
 
 }
 
+public class Ability_
+{
+    public static int Get_Ability_Type(int type)
+    {
+        return (int)BackEndDataManager.instance.ability_csv_data[type]["type"];
+    }
+
+    public static string Ability_Type_Sign(int type)
+    {
+        return Get_Ability_Type(type).Equals(0) ? "%" : "";
+;
+    }
+
+    public static string Get_Ability_Nmae(int type)
+    {
+        if (type == -1)
+            return "";
+
+        return BackEndDataManager.instance.ability_csv_data[type]["ability_kr"].ToString();
+    }
+}
+
+public class Pet_
+{
+
+    public static string Pet_Name(int type)
+    {
+        return (string)BackEndDataManager.instance.pet_csv_data[type]["name"];
+    }
+
+    public static int Pet_Ability_type_0(int type)
+    {
+        return (int)BackEndDataManager.instance.pet_csv_data[type]["ability_type_0"];
+    }
+
+    public static int Pet_Ability_type_1(int type)
+    {
+        return (int)BackEndDataManager.instance.pet_csv_data[type]["ability_type_1"];
+    }
+
+    public static float Pet_Ability_type_0_Val(int type)
+    {
+        Debug.Log("0 type " + type +"   " + Pet_Ability_type_0(type));
+        return (float)BackEndDataManager.instance.pet_csv_data[type]["ability_val_0"] * (Ability_.Get_Ability_Type(Pet_Ability_type_0(type)).Equals(0) ? 100 : 1);
+    }
+
+    public static float Pet_Ability_type_1_Val(int type)
+    {
+        Debug.Log("1 type " + type + "   " + Pet_Ability_type_1(type));
+
+        return (float)BackEndDataManager.instance.pet_csv_data[type]["ability_val_1"] * (Ability_.Get_Ability_Type(Pet_Ability_type_1(type)).Equals(0) ? 100 : 1);
+    }
+
+    public static int Pet_Max_lv(int type)
+    {
+        return (int)BackEndDataManager.instance.pet_csv_data[type]["max_lavel"];
+    }
+
+    public static Item_Type Pet_Price_Type(int type)
+    {
+        return (Item_Type)BackEndDataManager.instance.pet_csv_data[type]["price_type"];
+    }
+    
+    public static BigInteger Price(int num,int my_lv , int add_lv)
+    {
+        int price_val = (int)BackEndDataManager.instance.pet_csv_data[num]["price_val"];
+        float price_percent = (float)BackEndDataManager.instance.pet_csv_data[num]["price_percent"] * 100;
+
+        return Calculate.Price(price_val,(int)price_percent, my_lv,add_lv) ;
+    }
+}
+
 public class Utill
 {
+
     public static Sprite Get_Item_Sp(Item_Type item_Type)
     {
         return Resources.Load<Sprite>("Item/icon_" + item_Type.ToString());

@@ -356,6 +356,34 @@ public class UiManager : MonoBehaviour
 
     #region PetPopup
 
+    Button btn_Pet_Close;
+    Image img_pet;
+
+    Button btn_pet_lv_1;
+    Image img_pet_lv_1;
+    Text txt_pet_lv_1_val;
+
+    Button btn_pet_lv_10;
+    Image img_pet_lv_10;
+    Text txt_pet_lv_10_val;
+
+    Button btn_pet_lv_100;
+    Image img_pet_lv_100;
+    Text txt_pet_lv_100_val;
+
+    Text txt_pet_name;
+    Text txt_pet_name_val;
+    Text txt_pet_lv_val;
+    Text txt_pet_stat_sub_0;
+    Text txt_pet_stat_0_val;
+    Text txt_pet_stat_sub_1;
+    Text txt_pet_stat_1_val;
+    Button btn_pet_buy;
+    Button btn_pet_spawn;
+    Button btn_pet_limit;
+    Image img_pet_buy;
+    Text txt_pet_buy;
+
     #endregion
 
     #region Prefabs
@@ -732,6 +760,37 @@ public class UiManager : MonoBehaviour
         Btn_HellReward_Ok = HellRewardPopup.transform.Find("Btn_HellReward_Ok").GetComponent<Button>();
 
         #endregion
+
+        #region PetPopup
+
+        btn_Pet_Close = PetPopup.transform.Find("btn_Pet_Close").GetComponent<Button>();
+        img_pet = PetPopup.transform.Find("img_pet").GetComponent<Image>();
+
+        btn_pet_lv_1 = PetPopup.transform.Find("btn_pet_lv_1").GetComponent<Button>();
+        img_pet_lv_1 = btn_pet_lv_1.transform.Find("img_pet_lv_1").GetComponent<Image>();
+        txt_pet_lv_1_val = btn_pet_lv_1.transform.Find("txt_pet_lv_1_val").GetComponent<Text>();
+        btn_pet_lv_10 = PetPopup.transform.Find("btn_pet_lv_10").GetComponent<Button>();
+        img_pet_lv_10 = btn_pet_lv_10.transform.Find("img_pet_lv_10").GetComponent<Image>();
+        txt_pet_lv_10_val = btn_pet_lv_10.transform.Find("txt_pet_lv_10_val").GetComponent<Text>();
+        btn_pet_lv_100 = PetPopup.transform.Find("btn_pet_lv_100").GetComponent<Button>();
+        img_pet_lv_100 = btn_pet_lv_100.transform.Find("img_pet_lv_100").GetComponent<Image>();
+        txt_pet_lv_100_val = btn_pet_lv_100.transform.Find("txt_pet_lv_100_val").GetComponent<Text>();
+
+        txt_pet_name = PetPopup.transform.Find("txt_pet_name").GetComponent<Text>();
+        txt_pet_name_val = PetPopup.transform.Find("txt_pet_name_val").GetComponent<Text>();
+        txt_pet_lv_val = PetPopup.transform.Find("txt_pet_lv_val").GetComponent<Text>();
+        txt_pet_stat_sub_0 = PetPopup.transform.Find("txt_pet_stat_sub_0").GetComponent<Text>();
+        txt_pet_stat_0_val = PetPopup.transform.Find("txt_pet_stat_0_val").GetComponent<Text>();
+        txt_pet_stat_sub_1 = PetPopup.transform.Find("txt_pet_stat_sub_1").GetComponent<Text>();
+        txt_pet_stat_1_val = PetPopup.transform.Find("txt_pet_stat_1_val").GetComponent<Text>();
+        btn_pet_buy = PetPopup.transform.Find("btn_pet_buy").GetComponent<Button>();
+        img_pet_buy = btn_pet_buy.transform.Find("img_pet_buy").GetComponent<Image>();
+        txt_pet_buy = btn_pet_buy.transform.Find("txt_pet_buy").GetComponent<Text>();
+        btn_pet_spawn = PetPopup.transform.Find("btn_pet_spawn").GetComponent<Button>();
+        btn_pet_limit = PetPopup.transform.Find("btn_pet_limit").GetComponent<Button>();
+
+
+        #endregion
     }
 
     private void AddListener()
@@ -834,6 +893,18 @@ public class UiManager : MonoBehaviour
 
         #endregion
 
+
+        #region PetPopup
+
+        btn_Pet_Close.onClick.AddListener(() => PopupManager.Close_Popup());
+        //btn_pet_lv_1 = PetPopup.transform.Find("btn_pet_lv_1").GetComponent<Button>();
+        //btn_pet_lv_10 = PetPopup.transform.Find("btn_pet_lv_10").GetComponent<Button>();
+        //btn_pet_lv_100 = PetPopup.transform.Find("btn_pet_lv_100").GetComponent<Button>();
+        //btn_pet_buy = PetPopup.transform.Find("btn_pet_buy").GetComponent<Button>();
+        //btn_pet_spawn = PetPopup.transform.Find("btn_pet_spawn").GetComponent<Button>();
+        //btn_pet_limit = PetPopup.transform.Find("btn_pet_limit").GetComponent<Button>();
+
+        #endregion
     }
 
     private void Start()
@@ -1096,7 +1167,7 @@ public class UiManager : MonoBehaviour
     {
         txt_State_Lv.text = string.Format("Lv.{0}(+{1})",
             BackEndDataManager.instance.Character_Data.int_character_Lv,
-            Skill_s.Get_Skill_Val(Skill_Type.add_level));
+            Skill_s.Get_Skill_Val(Ability_Type.add_level));
 
     }
 
@@ -1647,7 +1718,7 @@ public class UiManager : MonoBehaviour
 
             skill_Panels.Add(skill_);
 
-            skill_.Set_Panel((int)item["stat_type"]);
+            skill_.Set_Panel((int)item["ability_type"]);
 
         }
 
@@ -1715,7 +1786,7 @@ public class UiManager : MonoBehaviour
 
         Set_Upgrade_Stat();
 
-        Player_stat.Set_Player_Stat(Skill_Type.add_atk);
+        Player_stat.Set_Player_Stat(Ability_Type.add_atk);
 
     }
 
@@ -1747,6 +1818,28 @@ public class UiManager : MonoBehaviour
 
     public void Set_Pet_Txt(int num)
     {
+        Pet_info pet_info = BackEndDataManager.instance.Pet_Data.pet_info.Find(x => x.int_num.Equals(num));
+
+        int Pet_Ability_type_0 = Pet_.Pet_Ability_type_0(num);
+        int Pet_Ability_type_1 = Pet_.Pet_Ability_type_1(num);
+
+        Sprite sprite = Utill.Get_Item_Sp(Pet_.Pet_Price_Type(num));
+        
+        img_pet.sprite = Utill.Get_Pet_Sp(num);
+        img_pet_buy.sprite = img_pet_lv_1.sprite = img_pet_lv_10.sprite = img_pet_lv_100.sprite = sprite;
+
+        txt_pet_lv_1_val.text = GetGoldString(Pet_.Price(num,0,1));
+        txt_pet_lv_10_val.text = GetGoldString(Pet_.Price(num,0,10));
+        txt_pet_lv_100_val.text = GetGoldString(Pet_.Price(num,0,100));
+
+        txt_pet_name_val.text = Pet_.Pet_Name(num);
+        txt_pet_stat_sub_0.text = Ability_.Get_Ability_Nmae(Pet_Ability_type_0);
+        txt_pet_stat_sub_1.text = Ability_.Get_Ability_Nmae(Pet_Ability_type_1);
+
+        txt_pet_lv_val.text = pet_info == null ? "0" : pet_info.int_lv.ToString();
+
+        txt_pet_stat_0_val.text = Pet_Ability_type_0 != -1 ? Pet_.Pet_Ability_type_0_Val(num).ToString() + Ability_.Ability_Type_Sign(Pet_Ability_type_0) : "" ;
+        txt_pet_stat_1_val.text = Pet_Ability_type_1 != -1 ? Pet_.Pet_Ability_type_1_Val(num).ToString() + Ability_.Ability_Type_Sign(Pet_Ability_type_1) : "" ;
 
     }
 
