@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -27,6 +28,8 @@ public class UiManager : MonoBehaviour
 
     private GameObject obj_Top;
     public GameObject obj_Stage;
+    private GameObject obj_Btns;
+
     private GameObject obj_Content;
     private GameObject obj_Icon;
 
@@ -58,17 +61,24 @@ public class UiManager : MonoBehaviour
 
     public Slider slider_Boss_Timer;
     public Text txt_Boss_Timer;
+    public List<Button> btn_Pet = new List<Button>();
+
+    #endregion
+
+    #region obj_Btns
 
     private Button btn_Boss;
     private Button btn_Boss_Exit;
     private Button btn_Inventory;
 
-
     private Image img_Skill_0;
     private Image img_Skill_0_bg;
     private Text txt_Skill_0;
 
+
     #endregion
+
+
 
     #region Content_Content
 
@@ -96,7 +106,7 @@ public class UiManager : MonoBehaviour
     private Button btn_Accessory;
     private Button btn_Costume;
 
-    private GameObject popup_Weapon;
+    private GameObject popup_Sword;
     private GameObject popup_Shield;
     private GameObject popup_Accessory;
     private GameObject popup_Costume;
@@ -112,6 +122,8 @@ public class UiManager : MonoBehaviour
 
     private Transform scroll_pet;
 
+    List<Pet> obj_Pets = new List<Pet>();
+
     #endregion
 
     #region  popup_State;
@@ -120,6 +132,11 @@ public class UiManager : MonoBehaviour
     private Text txt_State_Lv;
 
     private Transform pos_Character;
+
+    public Transform Spawn;
+    public Transform Monster_Spawn;
+    public Transform Pet_Spawn;
+    public Transform Character_Spawn;
 
     private Button btn_Lv_1;
     private Button btn_Lv_10;
@@ -356,6 +373,8 @@ public class UiManager : MonoBehaviour
 
     #region PetPopup
 
+    List<Pet_Panel> pet_Panels = new List<Pet_Panel>();
+
     Button btn_Pet_Close;
     Image img_pet;
 
@@ -403,7 +422,6 @@ public class UiManager : MonoBehaviour
 
 
 
-
     public Character_Lv skill_lv = Character_Lv.lv_1;
 
     private void Awake()
@@ -437,6 +455,7 @@ public class UiManager : MonoBehaviour
 
         obj_Top = Game.Find("obj_Top").gameObject;
         obj_Stage = Game.Find("obj_Stage").gameObject;
+        obj_Btns = Game.Find("obj_Btns").gameObject;
         obj_Content = Game.Find("obj_Content").gameObject;
         obj_Icon = Game.Find("obj_Icon").gameObject;
 
@@ -455,21 +474,37 @@ public class UiManager : MonoBehaviour
 
         #region obj_Stage
 
+        Spawn = obj_Stage.transform.Find("Spawn");
+        Monster_Spawn = Spawn.Find("Monster_Spawn");
+        Pet_Spawn = Spawn.Find("Pet_Spawn");
+        Character_Spawn = Spawn.Find("Character_Spawn");
+
         txt_State_Chapter = obj_Stage.transform.Find("state_Stage/txt_State_Chapter").GetComponent<Text>();
         txt_State_Stage = obj_Stage.transform.Find("state_Stage/txt_State_Stage").GetComponent<Text>();
 
         slider_Boss_Timer = obj_Stage.transform.Find("slider_Boss_Timer").GetComponent<Slider>();
         txt_Boss_Timer = slider_Boss_Timer.transform.Find("txt_Boss_Timer").GetComponent<Text>();
+        btn_Pet = obj_Stage.transform.Find("Pet").GetComponentsInChildren<Button>(true).ToList();
 
-        btn_Boss = obj_Stage.transform.Find("Stage_Content/btn_Boss").GetComponent<Button>();
-        btn_Boss_Exit = obj_Stage.transform.Find("Stage_Content/btn_Boss_Exit").GetComponent<Button>();
-        btn_Inventory = obj_Stage.transform.Find("Stage_Content/btn_Inventory").GetComponent<Button>();
+        #endregion
 
-        img_Skill_0 = obj_Stage.transform.Find("Stage_Content/img_Skill_0").GetComponent<Image>();
+        #region obj_Btns
+
+
+        btn_Boss = obj_Btns.transform.Find("btn_Boss").GetComponent<Button>();
+        btn_Boss_Exit = obj_Btns.transform.Find("btn_Boss_Exit").GetComponent<Button>();
+        btn_Inventory = obj_Btns.transform.Find("btn_Inventory").GetComponent<Button>();
+
+
+
+        img_Skill_0 = obj_Btns.transform.Find("img_Skill_0").GetComponent<Image>();
         img_Skill_0_bg = img_Skill_0.transform.Find("img_Skill_0_bg").GetComponent<Image>();
         txt_Skill_0 = img_Skill_0.transform.Find("txt_Skill_0").GetComponent<Text>();
 
+
         #endregion
+
+
 
         #region obj_Content
 
@@ -504,12 +539,12 @@ public class UiManager : MonoBehaviour
         btn_Accessory = Content_Weapon.transform.Find("grid_Btn/btn_Accessory").GetComponent<Button>();
         btn_Costume = Content_Weapon.transform.Find("grid_Btn/btn_Costume").GetComponent<Button>();
 
-        popup_Weapon = Content_Weapon.transform.Find("contents/popup_Weapon").gameObject;
+        popup_Sword = Content_Weapon.transform.Find("contents/popup_Sword").gameObject;
         popup_Shield = Content_Weapon.transform.Find("contents/popup_Shield").gameObject;
         popup_Accessory = Content_Weapon.transform.Find("contents/popup_Accessory").gameObject;
         popup_Costume = Content_Weapon.transform.Find("contents/popup_Costume").gameObject;
 
-        Weapon_Panels = popup_Weapon.GetComponentsInChildren<Weapon_Panel>();
+        Weapon_Panels = popup_Sword.GetComponentsInChildren<Weapon_Panel>();
 
 
         #endregion
@@ -535,10 +570,10 @@ public class UiManager : MonoBehaviour
 
         #region  popup_State
 
+        pos_Character = popup_State.transform.Find("img_Chatacter_Bg/pos_Character");
+
         txt_State_Name = popup_State.transform.Find("img_State_Bg/txt_State_Name").GetComponent<Text>();
         txt_State_Lv = popup_State.transform.Find("img_State_Bg/txt_State_Lv").GetComponent<Text>();
-
-        pos_Character = popup_State.transform.Find("img_Chatacter_Bg/pos_Character");
 
         btn_Lv_1 = popup_State.transform.Find("lv_Ups/btn_Lv_1").GetComponent<Button>();
         btn_Lv_10 = popup_State.transform.Find("lv_Ups/btn_Lv_10").GetComponent<Button>();
@@ -808,16 +843,14 @@ public class UiManager : MonoBehaviour
 
         #region Content_Weapon
 
-        btn_Weapon.onClick.AddListener(() => Change_Weapon_Contnet(Weapon_Content.Weapon));
+        btn_Weapon.onClick.AddListener(() => Change_Weapon_Contnet(Weapon_Content.Sword));
         btn_Shield.onClick.AddListener(() => Change_Weapon_Contnet(Weapon_Content.Shield));
         btn_Accessory.onClick.AddListener(() => Change_Weapon_Contnet(Weapon_Content.Accessory));
         btn_Costume.onClick.AddListener(() => Change_Weapon_Contnet(Weapon_Content.Costume));
 
         #endregion
 
-        btn_Boss.onClick.AddListener(() => PlayManager.instance.Start_Boss_Stage());
-        btn_Boss_Exit.onClick.AddListener(() => PlayManager.instance.Stop_Boss_Timer(true));
-        btn_Inventory.onClick.AddListener(() => PopupManager.Open_Popup(InventoryPopup));
+        #region  popup_State
 
         btn_Lv_1.onClick.AddListener(() => BackEndDataManager.instance.Buy_Character_Lv(Character_Lv.lv_1));
         btn_Lv_10.onClick.AddListener(() => BackEndDataManager.instance.Buy_Character_Lv(Character_Lv.lv_10));
@@ -844,6 +877,27 @@ public class UiManager : MonoBehaviour
         btn_Upgrade_10.onClick.AddListener(() => Upgrade_Buy(Character_Lv.lv_10));
         btn_Upgrade_100.onClick.AddListener(() => Upgrade_Buy(Character_Lv.lv_100));
 
+        #endregion
+
+        #region obj_Stage
+
+        for (int i = 0; i < btn_Pet.Count; i++)
+        {
+            int pos = i + 1;
+            btn_Pet[i].onClick.AddListener(() => Set_Pet_Pos(pos));
+        }
+        
+        #endregion
+
+        #region obj_Btns
+
+
+        btn_Boss.onClick.AddListener(() => PlayManager.instance.Start_Boss_Stage());
+        btn_Boss_Exit.onClick.AddListener(() => PlayManager.instance.Stop_Boss_Timer(true));
+        btn_Inventory.onClick.AddListener(() => PopupManager.Open_Popup(InventoryPopup));
+
+
+        #endregion
 
         #region WeaponPopup
 
@@ -895,13 +949,14 @@ public class UiManager : MonoBehaviour
 
 
         #region PetPopup
-
+        
         btn_Pet_Close.onClick.AddListener(() => PopupManager.Close_Popup());
-        //btn_pet_lv_1 = PetPopup.transform.Find("btn_pet_lv_1").GetComponent<Button>();
-        //btn_pet_lv_10 = PetPopup.transform.Find("btn_pet_lv_10").GetComponent<Button>();
-        //btn_pet_lv_100 = PetPopup.transform.Find("btn_pet_lv_100").GetComponent<Button>();
-        //btn_pet_buy = PetPopup.transform.Find("btn_pet_buy").GetComponent<Button>();
-        //btn_pet_spawn = PetPopup.transform.Find("btn_pet_spawn").GetComponent<Button>();
+        btn_pet_lv_1.onClick.AddListener(() => Buy_Pet(Character_Lv.lv_1));
+        btn_pet_lv_10.onClick.AddListener(() => Buy_Pet(Character_Lv.lv_10));
+        btn_pet_lv_100.onClick.AddListener(() => Buy_Pet(Character_Lv.lv_100));
+
+        btn_pet_buy.onClick.AddListener(() => Buy_Pet(Character_Lv.lv_1));
+        btn_pet_spawn.onClick.AddListener(() => Set_Pet_Btn());
         //btn_pet_limit = PetPopup.transform.Find("btn_pet_limit").GetComponent<Button>();
 
         #endregion
@@ -1006,7 +1061,9 @@ public class UiManager : MonoBehaviour
         Set_Buy_Lv();
 
         Set_Inventory();
-        Set_Weapon_Popup();
+        Set_Sword_Panel();
+        Set_Shield_Panel();
+        Set_Accessory_Panel();
         Set_Content_Panel();
         Set_Underground_Panel();
         Set_Upgrade_Panel();
@@ -1015,6 +1072,7 @@ public class UiManager : MonoBehaviour
         Set_Hell_Panel();
         Set_Pet_Panel();
 
+        Pet_Init();
     }
 
     #region PlayerUI 세팅
@@ -1220,7 +1278,7 @@ public class UiManager : MonoBehaviour
 
     public void Change_Weapon_Contnet(Weapon_Content popup)
     {
-        popup_Weapon.SetActive(popup.Equals(Weapon_Content.Weapon));
+        popup_Sword.SetActive(popup.Equals(Weapon_Content.Sword));
         popup_Shield.SetActive(popup.Equals(Weapon_Content.Shield));
         popup_Accessory.SetActive(popup.Equals(Weapon_Content.Accessory));
         popup_Costume.SetActive(popup.Equals(Weapon_Content.Costume));
@@ -1804,7 +1862,7 @@ public class UiManager : MonoBehaviour
                 .Find("Viewport/Content")).GetComponent<Pet_Panel>();
 
             pet.Set_Panel(i);
-
+            pet_Panels.Add(pet);
         }
 
 
@@ -1818,28 +1876,128 @@ public class UiManager : MonoBehaviour
 
     public void Set_Pet_Txt(int num)
     {
+        Pet_.int_pet = num;
+
         Pet_info pet_info = BackEndDataManager.instance.Pet_Data.pet_info.Find(x => x.int_num.Equals(num));
 
-        int Pet_Ability_type_0 = Pet_.Pet_Ability_type_0(num);
-        int Pet_Ability_type_1 = Pet_.Pet_Ability_type_1(num);
+        btn_pet_buy.gameObject.SetActive(pet_info == null);
+        btn_pet_spawn.gameObject.SetActive(pet_info != null);
+        btn_pet_limit.gameObject.SetActive(pet_info != null);
 
-        Sprite sprite = Utill.Get_Item_Sp(Pet_.Pet_Price_Type(num));
+     
+        int Pet_Ability_type_0 = Pet_.Pet_Ability_type_0();
+        int Pet_Ability_type_1 = Pet_.Pet_Ability_type_1();
+
+        Sprite sprite = Utill.Get_Item_Sp(Pet_.Pet_Price_Type());
         
         img_pet.sprite = Utill.Get_Pet_Sp(num);
         img_pet_buy.sprite = img_pet_lv_1.sprite = img_pet_lv_10.sprite = img_pet_lv_100.sprite = sprite;
 
-        txt_pet_lv_1_val.text = GetGoldString(Pet_.Price(num,0,1));
-        txt_pet_lv_10_val.text = GetGoldString(Pet_.Price(num,0,10));
-        txt_pet_lv_100_val.text = GetGoldString(Pet_.Price(num,0,100));
+        txt_pet_buy.text = GetGoldString(Pet_.Price(pet_info == null ? 0 : pet_info.int_lv, (int)Character_Lv.lv_1));
 
-        txt_pet_name_val.text = Pet_.Pet_Name(num);
+        txt_pet_lv_1_val.text = GetGoldString(Pet_.Price( pet_info == null ? 0: pet_info.int_lv, (int)Character_Lv.lv_1));
+        txt_pet_lv_10_val.text = GetGoldString(Pet_.Price( pet_info == null ? 0 : pet_info.int_lv, (int)Character_Lv.lv_10));
+        txt_pet_lv_100_val.text = GetGoldString(Pet_.Price( pet_info == null ? 0 : pet_info.int_lv, (int)Character_Lv.lv_100));
+
+        txt_pet_name_val.text = Pet_.Pet_Name();
         txt_pet_stat_sub_0.text = Ability_.Get_Ability_Nmae(Pet_Ability_type_0);
         txt_pet_stat_sub_1.text = Ability_.Get_Ability_Nmae(Pet_Ability_type_1);
 
         txt_pet_lv_val.text = pet_info == null ? "0" : pet_info.int_lv.ToString();
 
-        txt_pet_stat_0_val.text = Pet_Ability_type_0 != -1 ? Pet_.Pet_Ability_type_0_Val(num).ToString() + Ability_.Ability_Type_Sign(Pet_Ability_type_0) : "" ;
-        txt_pet_stat_1_val.text = Pet_Ability_type_1 != -1 ? Pet_.Pet_Ability_type_1_Val(num).ToString() + Ability_.Ability_Type_Sign(Pet_Ability_type_1) : "" ;
+        txt_pet_stat_0_val.text = Pet_Ability_type_0 != -1 ? Pet_.Pet_Ability_type_0_Val().ToString() + Ability_.Ability_Type_Sign(Pet_Ability_type_0) : "" ;
+        txt_pet_stat_1_val.text = Pet_Ability_type_1 != -1 ? Pet_.Pet_Ability_type_1_Val().ToString() + Ability_.Ability_Type_Sign(Pet_Ability_type_1) : "" ;
+
+    }
+
+    public void Pet_Init()
+    {
+        for (int i = 0; i < BackEndDataManager.instance.pet_csv_data.Count; i++)
+        {
+            Pet obj_Pet = Instantiate(Resources.Load<GameObject>("Prefabs/Pet/Pet_"+i), Pet_Spawn).GetComponent<Pet>();
+            obj_Pet.gameObject.SetActive(false);
+            obj_Pets.Add(obj_Pet);
+            obj_Pet.Set_item(i);
+        }
+
+        foreach (var item in BackEndDataManager.instance.Pet_Data.pet_info)
+        {
+            if (item.int_pos != 0)
+            {
+                Pet_.int_pet = item.int_num;
+
+                Set_Pet_Pos(item.int_pos);
+            }
+        }
+    }
+
+    public void Buy_Pet(Character_Lv _Lv)
+    {
+        Pet_info pet_info = BackEndDataManager.instance.Pet_Data.pet_info.Find(x => x.int_num.Equals(Pet_.int_pet));
+
+        BigInteger bigInteger = Pet_.Price(pet_info == null ? 0 : pet_info.int_lv, (int)_Lv);
+
+        if (BackEndDataManager.instance.Get_Item(Pet_.Pet_Price_Type()) >= bigInteger)
+        {
+            if (pet_info == null)
+            {
+                pet_info = new Pet_info
+                {
+                    int_num = Pet_.int_pet,
+                    int_lv = (int)_Lv
+                };
+
+                BackEndDataManager.instance.Pet_Data.pet_info.Add(pet_info);
+            }
+            else
+            {
+                pet_info.int_lv += (int)_Lv;
+            }
+
+            pet_Panels[pet_info.int_num].Set_Panel(pet_info.int_num);
+            BackEndDataManager.instance.Save_Pet_Data();
+            Set_Pet_Txt(Pet_.int_pet);
+        }
+
+    }
+
+    public void Pet_Btn_Active(bool active)
+    {
+        foreach (var item in btn_Pet)
+        {
+            item.gameObject.SetActive(active);
+        }
+    }
+
+    public void Set_Pet_Btn()
+    {
+        Pet_Btn_Active(true);
+        PopupManager.Close_Popup();
+    }
+
+    public void Set_Pet_Pos(int pos)
+    {
+        Pet_info pet_info = BackEndDataManager.instance.Pet_Data.pet_info.Find(x => x.int_pos.Equals(pos));
+
+        if (pet_info != null)
+        {
+            pet_info.int_pos = 0;
+
+            obj_Pets[pet_info.int_num].gameObject.SetActive(false);
+
+        }
+
+        pet_info = BackEndDataManager.instance.Pet_Data.pet_info.Find(x => x.int_num.Equals(Pet_.int_pet));
+
+        pet_info.int_pos = pos;
+
+        obj_Pets[pet_info.int_num].transform.position = btn_Pet[pos - 1].transform.position;
+        obj_Pets[pet_info.int_num].gameObject.SetActive(true);
+        obj_Pets[pet_info.int_num].Set_Move();
+
+        BackEndDataManager.instance.Save_Pet_Data();
+
+        Pet_Btn_Active(false);
 
     }
 
@@ -1897,19 +2055,47 @@ public class UiManager : MonoBehaviour
     //popup_Accessory;
     //popup_Costume;
 
-    public void Set_Weapon_Popup()
+    public void Set_Sword_Panel()
     {
-        foreach (var item in BackEndDataManager.instance.weapon_csv_data)
+
+        for (int i = 0; i < BackEndDataManager.instance.sword_csv_data.Count; i++)
         {
+            Weapon_Panel weapon_ = Instantiate(weapon_Panel, popup_Sword.transform
+            .Find("scroll_sword/Viewport/Content")).GetComponent<Weapon_Panel>();
 
-            Weapon_Panel weapon_ = Instantiate(weapon_Panel, popup_Weapon.transform
-                .Find("scroll_weapon/Viewport/Content")).GetComponent<Weapon_Panel>();
-
-            weapon_.Set_Panel(item);
-
+            weapon_.Set_Panel(i,Weapon_Content.Sword);
         }
+
 
     }
 
+
+    public void Set_Shield_Panel()
+    {
+
+        for (int i = 0; i < BackEndDataManager.instance.shield_csv_data.Count; i++)
+        {
+            Weapon_Panel weapon_ = Instantiate(weapon_Panel, popup_Shield.transform
+            .Find("scroll_shield/Viewport/Content")).GetComponent<Weapon_Panel>();
+
+            weapon_.Set_Panel(i, Weapon_Content.Shield);
+        }
+
+
+    }
+
+    public void Set_Accessory_Panel()
+    {
+
+        for (int i = 0; i < BackEndDataManager.instance.accessory_csv_data.Count; i++)
+        {
+            Weapon_Panel weapon_ = Instantiate(weapon_Panel, popup_Accessory.transform
+            .Find("scroll_accessory/Viewport/Content")).GetComponent<Weapon_Panel>();
+
+            weapon_.Set_Panel(i, Weapon_Content.Accessory);
+        }
+
+
+    }
     #endregion
 }

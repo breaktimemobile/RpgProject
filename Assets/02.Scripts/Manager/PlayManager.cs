@@ -92,14 +92,14 @@ public class PlayManager : MonoBehaviour
 
     public void Set_Character()
     {
-        GameObject obj_Player = Instantiate(Characters[0]);
+        GameObject obj_Player = Instantiate(Characters[0],UiManager.instance.Character_Spawn);
         obj_Player.transform.position = pos_Character.position;
 
         sc_Player = obj_Player.GetComponent<Player>();
         sc_Player.Init();
 
         Set_Change_Stage(Stage_State.stage);
-
+        
 
     }
 
@@ -127,8 +127,7 @@ public class PlayManager : MonoBehaviour
                 break;
         }
 
-        sc_Player.transform.SetParent(pos);
-        sc_Player.transform.localScale = Vector3.one;
+        UiManager.instance.Spawn.SetParent(pos);
     }
 
     public void Start_Game(Stage_State stage)
@@ -209,16 +208,16 @@ public class PlayManager : MonoBehaviour
     public void Set_Monster()
     {
 
+        GameObject obj_Monster = Instantiate(Monsters[0], UiManager.instance.Monster_Spawn);
+        obj_Monster.transform.position = pos_Monster.position;
+
+        sc_Monster = obj_Monster.GetComponent<Monster>();
+        sc_Monster.transform.localScale = Vector3.one;
+
         switch (stage_State)
         {
             case Stage_State.stage:
-                Transform pos = UiManager.instance.obj_Stage.transform;
 
-                GameObject obj_Monster = Instantiate(Monsters[0], pos);
-                obj_Monster.transform.position = pos_Monster.position;
-
-                sc_Monster = obj_Monster.GetComponent<Monster>();
-                sc_Monster.transform.localScale = Vector3.one;
 
                 if (BackEndDataManager.instance.Stage_Data.int_step > 10)
                 {
@@ -241,11 +240,6 @@ public class PlayManager : MonoBehaviour
                 break;
             case Stage_State.underground:
 
-                pos = UiManager.instance.UndergroundDungeon.transform;
-
-                obj_Monster = Instantiate(Monsters[0], pos);
-                obj_Monster.transform.position = pos_Monster.position;
-
                 sc_Monster = obj_Monster.GetComponent<Monster>();
                 sc_Monster.transform.localScale = Vector3.one;
 
@@ -265,11 +259,6 @@ public class PlayManager : MonoBehaviour
 
             case Stage_State.upgrade:
 
-                pos = UiManager.instance.UpgradeDungeon.transform;
-
-                obj_Monster = Instantiate(Monsters[0], pos);
-                obj_Monster.transform.position = pos_Monster.position;
-
                 sc_Monster = obj_Monster.GetComponent<Monster>();
                 sc_Monster.transform.localScale = Vector3.one;
 
@@ -278,11 +267,6 @@ public class PlayManager : MonoBehaviour
                 break;
 
             case Stage_State.hell:
-
-                pos = UiManager.instance.HellDungeon.transform;
-
-                obj_Monster = Instantiate(Monsters[0], pos);
-                obj_Monster.transform.position = pos_Monster.position;
 
                 sc_Monster = obj_Monster.GetComponent<Monster>();
                 sc_Monster.transform.localScale = Vector3.one;

@@ -24,7 +24,7 @@ public enum Monster_State
 
 public class Monster : MonoBehaviour
 {
-    int stop_pos = 150;
+    int stop_pos = 0;
 
     Slider slider_Hp;
     Animator anim_Monster;

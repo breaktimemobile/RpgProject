@@ -151,6 +151,7 @@ public class Pet_info
 {
     public int int_num { get; set; }
     public int int_lv{ get; set; }
+    public int int_pos { get; set; }
 
 }
 
@@ -184,7 +185,9 @@ public class BackEndDataManager : MonoBehaviour
     public BigInteger Int_exp { get => int_exp; }
 
     public List<Dictionary<string, object>> underground_dungeon_csv_data;         //던전 정보
-    public List<Dictionary<string, object>> weapon_csv_data;         //던전 정보
+    public List<Dictionary<string, object>> sword_csv_data;         //던전 정보
+    public List<Dictionary<string, object>> shield_csv_data;         //던전 정보
+    public List<Dictionary<string, object>> accessory_csv_data;         //던전 정보
     public List<Dictionary<string, object>> monster_csv_data;         //던전 정보
     public List<Dictionary<string, object>> ability_csv_data;         //던전 정보
     public List<Dictionary<string, object>> skill_csv_data;         //던전 정보
@@ -238,7 +241,9 @@ public class BackEndDataManager : MonoBehaviour
     {
 
         underground_dungeon_csv_data = CSVReader.Read("underground_dungeon");
-        weapon_csv_data = CSVReader.Read("weapon");
+        sword_csv_data = CSVReader.Read("sword");
+        shield_csv_data = CSVReader.Read("shield");
+        accessory_csv_data = CSVReader.Read("accessory");
         monster_csv_data = CSVReader.Read("monster");
         skill_csv_data = CSVReader.Read("skill");
         content_csv_data = CSVReader.Read("content");

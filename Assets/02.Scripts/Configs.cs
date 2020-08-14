@@ -40,7 +40,7 @@ public enum Character_Contnet
 
 public enum Weapon_Content
 {
-    Weapon,
+    Sword,
     Shield,
     Accessory,
     Costume,
@@ -605,7 +605,7 @@ public class Ability_
     public static string Ability_Type_Sign(int type)
     {
         return Get_Ability_Type(type).Equals(0) ? "%" : "";
-;
+        ;
     }
 
     public static string Get_Ability_Nmae(int type)
@@ -619,51 +619,64 @@ public class Ability_
 
 public class Pet_
 {
+    public static int int_pet = 0;
 
-    public static string Pet_Name(int type)
+    public static string Pet_Name()
     {
-        return (string)BackEndDataManager.instance.pet_csv_data[type]["name"];
+        return (string)BackEndDataManager.instance.pet_csv_data[int_pet]["name"];
     }
 
-    public static int Pet_Ability_type_0(int type)
+    public static int Pet_Ability_type_0()
     {
-        return (int)BackEndDataManager.instance.pet_csv_data[type]["ability_type_0"];
+        return (int)BackEndDataManager.instance.pet_csv_data[int_pet]["ability_type_0"];
     }
 
-    public static int Pet_Ability_type_1(int type)
+    public static int Pet_Ability_type_1()
     {
-        return (int)BackEndDataManager.instance.pet_csv_data[type]["ability_type_1"];
+        return (int)BackEndDataManager.instance.pet_csv_data[int_pet]["ability_type_1"];
     }
 
-    public static float Pet_Ability_type_0_Val(int type)
+    public static float Pet_Ability_type_0_Val()
     {
-        Debug.Log("0 type " + type +"   " + Pet_Ability_type_0(type));
-        return (float)BackEndDataManager.instance.pet_csv_data[type]["ability_val_0"] * (Ability_.Get_Ability_Type(Pet_Ability_type_0(type)).Equals(0) ? 100 : 1);
+        Pet_info pet_Info = BackEndDataManager.instance.Pet_Data.pet_info.Find(x => x.int_num.Equals(int_pet));
+
+        int mix = Ability_.Get_Ability_Type(Pet_Ability_type_0()).Equals(0) ? 100 : 1;
+        float val = (float)BackEndDataManager.instance.pet_csv_data[int_pet]["ability_val_0"] * mix;
+        float percent = (float)BackEndDataManager.instance.pet_csv_data[int_pet]["ability_percent_0"] * mix;
+
+        Debug.Log("0 type " + val + "   " + percent);
+        return val + percent * (pet_Info != null ? (pet_Info.int_lv - 1) : 0);
     }
 
-    public static float Pet_Ability_type_1_Val(int type)
+    public static float Pet_Ability_type_1_Val()
     {
-        Debug.Log("1 type " + type + "   " + Pet_Ability_type_1(type));
+        Pet_info pet_Info = BackEndDataManager.instance.Pet_Data.pet_info.Find(x => x.int_num.Equals(int_pet));
 
-        return (float)BackEndDataManager.instance.pet_csv_data[type]["ability_val_1"] * (Ability_.Get_Ability_Type(Pet_Ability_type_1(type)).Equals(0) ? 100 : 1);
+        int mix = Ability_.Get_Ability_Type(Pet_Ability_type_1()).Equals(0) ? 100 : 1;
+        float val = (float)BackEndDataManager.instance.pet_csv_data[int_pet]["ability_val_1"] * mix;
+        float percent = (float)BackEndDataManager.instance.pet_csv_data[int_pet]["ability_percent_1"] * mix;
+
+        Debug.Log("1 type " + int_pet + "   " + Pet_Ability_type_0());
+
+        return val + percent * (pet_Info != null ? (pet_Info.int_lv - 1) : 0); ;
     }
 
-    public static int Pet_Max_lv(int type)
+    public static int Pet_Max_lv()
     {
-        return (int)BackEndDataManager.instance.pet_csv_data[type]["max_lavel"];
+        return (int)BackEndDataManager.instance.pet_csv_data[int_pet]["max_lavel"];
     }
 
-    public static Item_Type Pet_Price_Type(int type)
+    public static Item_Type Pet_Price_Type()
     {
-        return (Item_Type)BackEndDataManager.instance.pet_csv_data[type]["price_type"];
+        return (Item_Type)BackEndDataManager.instance.pet_csv_data[int_pet]["price_type"];
     }
-    
-    public static BigInteger Price(int num,int my_lv , int add_lv)
-    {
-        int price_val = (int)BackEndDataManager.instance.pet_csv_data[num]["price_val"];
-        float price_percent = (float)BackEndDataManager.instance.pet_csv_data[num]["price_percent"] * 100;
 
-        return Calculate.Price(price_val,(int)price_percent, my_lv,add_lv) ;
+    public static BigInteger Price(int my_lv, int add_lv)
+    {
+        int price_val = (int)BackEndDataManager.instance.pet_csv_data[int_pet]["price_val"];
+        float price_percent = (float)BackEndDataManager.instance.pet_csv_data[int_pet]["price_percent"] * 100;
+
+        return Calculate.Price(price_val, (int)price_percent, my_lv, add_lv);
     }
 }
 
@@ -678,6 +691,21 @@ public class Utill
     public static Sprite Get_Pet_Sp(int num)
     {
         return Resources.Load<Sprite>("Pet/pet_" + num.ToString());
+    }
+
+    public static Sprite Get_Sword_Sp(int num)
+    {
+        return Resources.Load<Sprite>("Weapon/Weapon_" + num.ToString());
+    }
+
+    public static Sprite Get_Shield_Sp(int num)
+    {
+        return Resources.Load<Sprite>("Shield/Shield_" + num.ToString());
+    }
+
+    public static Sprite Get_Accessory_Sp(int num)
+    {
+        return Resources.Load<Sprite>("Accessory/Accessory_" + num.ToString());
     }
 }
 

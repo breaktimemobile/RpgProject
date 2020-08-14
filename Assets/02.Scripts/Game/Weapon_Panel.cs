@@ -12,14 +12,32 @@ public class Weapon_Panel : MonoBehaviour
 
     Dictionary<string, object> data;
 
-    public void Set_Panel(Dictionary<string, object>  _data)
+    public void Set_Panel(int num , Weapon_Content weapon_Content)
     {
-        data = _data;
+        data = BackEndDataManager.instance.sword_csv_data[num];
 
         img_Weapon = transform.Find("img_Weapon").GetComponent<Image>();
         txt_Weapon_Grade = transform.Find("txt_Weapon_Grade").GetComponent<Text>();
         txt_Weapon_Lv = transform.Find("txt_Weapon_Lv").GetComponent<Text>();
+        switch (weapon_Content)
+        {
+            case Weapon_Content.Sword:
+                img_Weapon.sprite = Utill.Get_Sword_Sp((int)data["num"]);
 
+                break;
+            case Weapon_Content.Shield:
+                img_Weapon.sprite = Utill.Get_Shield_Sp((int)data["num"]);
+
+                break;
+            case Weapon_Content.Accessory:
+                img_Weapon.sprite = Utill.Get_Accessory_Sp((int)data["num"]);
+
+                break;
+            case Weapon_Content.Costume:
+                break;
+            default:
+                break;
+        }
         txt_Weapon_Grade.text = data["grade"].ToString();
 
         Weapon_info weapon_Info = BackEndDataManager.instance.Weapon_Data.weapon_Info.Find(x => x.int_num.Equals((int)data["num"]));
