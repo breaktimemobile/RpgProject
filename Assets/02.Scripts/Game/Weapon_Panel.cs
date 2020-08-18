@@ -12,6 +12,8 @@ public class Weapon_Panel : MonoBehaviour
 
     Dictionary<string, object> data;
 
+    Weapon_Content weapon_Content = Weapon_Content.Accessory;
+
     public void Set_Panel(int num , Weapon_Content weapon_Content)
     {
         data = BackEndDataManager.instance.sword_csv_data[num];
@@ -19,6 +21,9 @@ public class Weapon_Panel : MonoBehaviour
         img_Weapon = transform.Find("img_Weapon").GetComponent<Image>();
         txt_Weapon_Grade = transform.Find("txt_Weapon_Grade").GetComponent<Text>();
         txt_Weapon_Lv = transform.Find("txt_Weapon_Lv").GetComponent<Text>();
+
+        this.weapon_Content = weapon_Content;
+
         switch (weapon_Content)
         {
             case Weapon_Content.Sword:
@@ -38,6 +43,7 @@ public class Weapon_Panel : MonoBehaviour
             default:
                 break;
         }
+
         txt_Weapon_Grade.text = data["grade"].ToString();
 
         Weapon_info weapon_Info = BackEndDataManager.instance.Weapon_Data.weapon_Info.Find(x => x.int_num.Equals((int)data["num"]));
@@ -53,10 +59,15 @@ public class Weapon_Panel : MonoBehaviour
             
         }
 
+        GetComponent<Button>().onClick.AddListener(() => Open_Weapon_Popup());
     }
 
     public void Open_Weapon_Popup()
     {
+        Weapon_.Select_Weapon = (int)data["num"];
+        Weapon_.Weapon_Content = weapon_Content;
+
+        UiManager.instance.Open_WeaponPopup();
 
     }
 }

@@ -680,6 +680,14 @@ public class Pet_
     }
 }
 
+public class Weapon_
+{
+    public static int Select_Weapon = 0;
+
+    public static Weapon_Content Weapon_Content = Weapon_Content.Sword;
+
+}
+
 public class Utill
 {
 

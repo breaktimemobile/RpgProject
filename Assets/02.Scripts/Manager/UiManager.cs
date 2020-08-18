@@ -250,6 +250,48 @@ public class UiManager : MonoBehaviour
     private GameObject content_Weapon_Roon;
     private GameObject content_Weapon_Decom;
 
+    private Button btn_Weapon_Close;
+
+    #region content_Weapon_Info
+
+    Text txt_Weapon_name;
+    List<Button> obj_roon = new List<Button>();
+
+    Image img_weapon_bg;
+    Image img_Weapon;
+    Text txt_Weapon_Grade;
+    Text txt_Weapon_Lv;
+
+    Button btn_Weapon_Limit;
+    Button btn_Weapon_Mount;
+
+    List<Text> txt_Mount_sub = new List<Text>();
+    List<Text> txt_Mount_val = new List<Text>();
+    List<Text> txt_Mount_limit_sub = new List<Text>();
+    List<Text> txt_Mount_limit_val = new List<Text>();
+    List<Text> txt_Use_sub = new List<Text>();
+    List<Text> txt_Use_val = new List<Text>();
+    List<Text> txt_Use_limit_sub = new List<Text>();
+    List<Text> txt_Use_limit_val = new List<Text>();
+
+    #endregion
+
+    #region content_Weapon_Upgrade
+
+    #endregion
+
+    #region content_Weapon_Mix
+
+    #endregion
+
+    #region content_Weapon_Roon
+
+    #endregion
+
+    #region content_Weapon_Decom
+
+    #endregion
+
     #endregion
 
     #region UndergroundDungeon
@@ -405,6 +447,7 @@ public class UiManager : MonoBehaviour
 
     #endregion
 
+
     #region Prefabs
 
     public GameObject txt_Damege;
@@ -419,8 +462,6 @@ public class UiManager : MonoBehaviour
     public GameObject Pet_Panel;
 
     #endregion
-
-
 
     public Character_Lv skill_lv = Character_Lv.lv_1;
 
@@ -641,16 +682,53 @@ public class UiManager : MonoBehaviour
         #region WeaponPopup
 
         btn_Weapon_Info = WeaponPopup.transform.Find("btn_grids/btn_Weapon_Info").GetComponent<Button>();
-        btn_Weapon_Upgrade = WeaponPopup.transform.Find("btn_grids/btn_Weapon_Info").GetComponent<Button>();
-        btn_Weapon_Mix = WeaponPopup.transform.Find("btn_grids/btn_Weapon_Info").GetComponent<Button>();
-        btn_Weapon_Roon = WeaponPopup.transform.Find("btn_grids/btn_Weapon_Info").GetComponent<Button>();
-        btn_Weapon_Decom = WeaponPopup.transform.Find("btn_grids/btn_Weapon_Info").GetComponent<Button>();
+        btn_Weapon_Upgrade = WeaponPopup.transform.Find("btn_grids/btn_Weapon_Upgrade").GetComponent<Button>();
+        btn_Weapon_Mix = WeaponPopup.transform.Find("btn_grids/btn_Weapon_Mix").GetComponent<Button>();
+        btn_Weapon_Roon = WeaponPopup.transform.Find("btn_grids/btn_Weapon_Roon").GetComponent<Button>();
+        btn_Weapon_Decom = WeaponPopup.transform.Find("btn_grids/btn_Weapon_Decom").GetComponent<Button>();
 
         content_Weapon_Info = WeaponPopup.transform.Find("contents/content_Weapon_Info").gameObject;
         content_Weapon_Upgrade = WeaponPopup.transform.Find("contents/content_Weapon_Upgrade").gameObject;
         content_Weapon_Mix = WeaponPopup.transform.Find("contents/content_Weapon_Mix").gameObject;
         content_Weapon_Roon = WeaponPopup.transform.Find("contents/content_Weapon_Roon").gameObject;
         content_Weapon_Decom = WeaponPopup.transform.Find("contents/content_Weapon_Decom").gameObject;
+
+        btn_Weapon_Close = WeaponPopup.transform.Find("btn_Weapon_Close").GetComponent<Button>();
+
+        #region content_Weapon_Info
+
+        txt_Weapon_name = content_Weapon_Info.transform.Find("txt_Weapon_name").GetComponent<Text>();
+        obj_roon = content_Weapon_Info.transform.Find("obj_roon").GetComponentsInChildren<Button>(true).ToList();
+
+        img_weapon_bg = content_Weapon_Info.transform.Find("img_weapon_bg").GetComponent<Image>();
+        img_Weapon = img_weapon_bg.transform.Find("img_Weapon").GetComponent<Image>();
+        txt_Weapon_Grade = img_weapon_bg.transform.Find("txt_Weapon_Grade").GetComponent<Text>();
+        txt_Weapon_Lv = img_weapon_bg.transform.Find("txt_Weapon_Lv").GetComponent<Text>();
+
+        btn_Weapon_Limit = content_Weapon_Info.transform.Find("btn_Weapon_Limit").GetComponent<Button>();
+        btn_Weapon_Mount = content_Weapon_Info.transform.Find("btn_Weapon_Mount").GetComponent<Button>();
+
+        txt_Mount_sub = content_Weapon_Info.transform.Find("Mount").GetComponentsInChildren<Text>(true).ToList();
+        txt_Mount_sub.RemoveAll(x => !x.name.Contains("sub"));
+        txt_Mount_val = content_Weapon_Info.transform.Find("Mount").GetComponentsInChildren<Text>(true).ToList();
+        txt_Mount_val.RemoveAll(x => !x.name.Contains("val"));
+
+        txt_Mount_limit_sub = content_Weapon_Info.transform.Find("Limit_Mount").GetComponentsInChildren<Text>(true).ToList();
+        txt_Mount_limit_sub.RemoveAll(x => !x.name.Contains("limit_sub"));
+        txt_Mount_limit_val = content_Weapon_Info.transform.Find("Limit_Mount").GetComponentsInChildren<Text>(true).ToList();
+        txt_Mount_limit_val.RemoveAll(x => !x.name.Contains("limit_val"));
+
+        txt_Use_sub = content_Weapon_Info.transform.Find("Use").GetComponentsInChildren<Text>(true).ToList();
+        txt_Use_sub.RemoveAll(x => !x.name.Contains("sub"));
+        txt_Use_val = content_Weapon_Info.transform.Find("Use").GetComponentsInChildren<Text>(true).ToList();
+        txt_Use_val.RemoveAll(x => !x.name.Contains("val"));
+
+        txt_Use_limit_sub = content_Weapon_Info.transform.Find("Limit_Use").GetComponentsInChildren<Text>(true).ToList();
+        txt_Use_limit_sub.RemoveAll(x => !x.name.Contains("limit_sub"));
+        txt_Use_limit_val = content_Weapon_Info.transform.Find("Limit_Use").GetComponentsInChildren<Text>(true).ToList();
+        txt_Use_limit_val.RemoveAll(x => !x.name.Contains("limit_val"));
+
+        #endregion
 
         #endregion
 
@@ -886,7 +964,7 @@ public class UiManager : MonoBehaviour
             int pos = i + 1;
             btn_Pet[i].onClick.AddListener(() => Set_Pet_Pos(pos));
         }
-        
+
         #endregion
 
         #region obj_Btns
@@ -907,7 +985,19 @@ public class UiManager : MonoBehaviour
         btn_Weapon_Roon.onClick.AddListener(() => Change_Weapon_Popup(Weapon_Popup.roon));
         btn_Weapon_Decom.onClick.AddListener(() => Change_Weapon_Popup(Weapon_Popup.decom));
 
+        btn_Weapon_Close.onClick.AddListener(() => PopupManager.Close_Popup());
+
+        #region content_Weapon_Info
+
+        //obj_roon = content_Weapon_Info.transform.Find("obj_roon").GetComponentsInChildren<Button>(true).ToList();
+
+        //btn_Weapon_Limit = content_Weapon_Info.transform.Find("btn_Weapon_Limit").GetComponent<Button>();
+        //btn_Weapon_Mount = content_Weapon_Info.transform.Find("btn_Weapon_Mount").GetComponent<Button>();
+
         #endregion
+
+        #endregion
+
 
         #region UndergroundPopup
 
@@ -949,7 +1039,7 @@ public class UiManager : MonoBehaviour
 
 
         #region PetPopup
-        
+
         btn_Pet_Close.onClick.AddListener(() => PopupManager.Close_Popup());
         btn_pet_lv_1.onClick.AddListener(() => Buy_Pet(Character_Lv.lv_1));
         btn_pet_lv_10.onClick.AddListener(() => Buy_Pet(Character_Lv.lv_10));
@@ -1884,20 +1974,20 @@ public class UiManager : MonoBehaviour
         btn_pet_spawn.gameObject.SetActive(pet_info != null);
         btn_pet_limit.gameObject.SetActive(pet_info != null);
 
-     
+
         int Pet_Ability_type_0 = Pet_.Pet_Ability_type_0();
         int Pet_Ability_type_1 = Pet_.Pet_Ability_type_1();
 
         Sprite sprite = Utill.Get_Item_Sp(Pet_.Pet_Price_Type());
-        
+
         img_pet.sprite = Utill.Get_Pet_Sp(num);
         img_pet_buy.sprite = img_pet_lv_1.sprite = img_pet_lv_10.sprite = img_pet_lv_100.sprite = sprite;
 
         txt_pet_buy.text = GetGoldString(Pet_.Price(pet_info == null ? 0 : pet_info.int_lv, (int)Character_Lv.lv_1));
 
-        txt_pet_lv_1_val.text = GetGoldString(Pet_.Price( pet_info == null ? 0: pet_info.int_lv, (int)Character_Lv.lv_1));
-        txt_pet_lv_10_val.text = GetGoldString(Pet_.Price( pet_info == null ? 0 : pet_info.int_lv, (int)Character_Lv.lv_10));
-        txt_pet_lv_100_val.text = GetGoldString(Pet_.Price( pet_info == null ? 0 : pet_info.int_lv, (int)Character_Lv.lv_100));
+        txt_pet_lv_1_val.text = GetGoldString(Pet_.Price(pet_info == null ? 0 : pet_info.int_lv, (int)Character_Lv.lv_1));
+        txt_pet_lv_10_val.text = GetGoldString(Pet_.Price(pet_info == null ? 0 : pet_info.int_lv, (int)Character_Lv.lv_10));
+        txt_pet_lv_100_val.text = GetGoldString(Pet_.Price(pet_info == null ? 0 : pet_info.int_lv, (int)Character_Lv.lv_100));
 
         txt_pet_name_val.text = Pet_.Pet_Name();
         txt_pet_stat_sub_0.text = Ability_.Get_Ability_Nmae(Pet_Ability_type_0);
@@ -1905,8 +1995,8 @@ public class UiManager : MonoBehaviour
 
         txt_pet_lv_val.text = pet_info == null ? "0" : pet_info.int_lv.ToString();
 
-        txt_pet_stat_0_val.text = Pet_Ability_type_0 != -1 ? Pet_.Pet_Ability_type_0_Val().ToString() + Ability_.Ability_Type_Sign(Pet_Ability_type_0) : "" ;
-        txt_pet_stat_1_val.text = Pet_Ability_type_1 != -1 ? Pet_.Pet_Ability_type_1_Val().ToString() + Ability_.Ability_Type_Sign(Pet_Ability_type_1) : "" ;
+        txt_pet_stat_0_val.text = Pet_Ability_type_0 != -1 ? Pet_.Pet_Ability_type_0_Val().ToString() + Ability_.Ability_Type_Sign(Pet_Ability_type_0) : "";
+        txt_pet_stat_1_val.text = Pet_Ability_type_1 != -1 ? Pet_.Pet_Ability_type_1_Val().ToString() + Ability_.Ability_Type_Sign(Pet_Ability_type_1) : "";
 
     }
 
@@ -1914,7 +2004,7 @@ public class UiManager : MonoBehaviour
     {
         for (int i = 0; i < BackEndDataManager.instance.pet_csv_data.Count; i++)
         {
-            Pet obj_Pet = Instantiate(Resources.Load<GameObject>("Prefabs/Pet/Pet_"+i), Pet_Spawn).GetComponent<Pet>();
+            Pet obj_Pet = Instantiate(Resources.Load<GameObject>("Prefabs/Pet/Pet_" + i), Pet_Spawn).GetComponent<Pet>();
             obj_Pet.gameObject.SetActive(false);
             obj_Pets.Add(obj_Pet);
             obj_Pet.Set_item(i);
@@ -2063,7 +2153,7 @@ public class UiManager : MonoBehaviour
             Weapon_Panel weapon_ = Instantiate(weapon_Panel, popup_Sword.transform
             .Find("scroll_sword/Viewport/Content")).GetComponent<Weapon_Panel>();
 
-            weapon_.Set_Panel(i,Weapon_Content.Sword);
+            weapon_.Set_Panel(i, Weapon_Content.Sword);
         }
 
 
@@ -2098,4 +2188,139 @@ public class UiManager : MonoBehaviour
 
     }
     #endregion
+
+    #region WeaponPopup
+
+    Color[] grade_colors = new Color[] { Color.gray, Color.green, Color.blue, Color.black, Color.red, Color.yellow };
+    string[] grade = new string[] { "D", "C", "B", "A", "S", "SS" };
+
+    public void Open_WeaponPopup()
+    {
+        PopupManager.Open_Popup(WeaponPopup);
+        Set_WeaponPopup();
+    }
+
+    public void Set_WeaponPopup()
+    {
+        Change_Weapon_Popup(Weapon_Popup.info);
+        Debug.Log("we " + Weapon_.Select_Weapon + "   " + Weapon_.Weapon_Content);
+
+        Dictionary<string, object> data = BackEndDataManager.instance.sword_csv_data[Weapon_.Select_Weapon]; ;
+
+        switch (Weapon_.Weapon_Content)
+        {
+            case Weapon_Content.Sword:
+                data = BackEndDataManager.instance.sword_csv_data[Weapon_.Select_Weapon];
+                img_Weapon.sprite = Utill.Get_Sword_Sp(Weapon_.Select_Weapon);
+
+                break;
+            case Weapon_Content.Shield:
+                data = BackEndDataManager.instance.shield_csv_data[Weapon_.Select_Weapon];
+                img_Weapon.sprite = Utill.Get_Shield_Sp(Weapon_.Select_Weapon);
+
+                break;
+            case Weapon_Content.Accessory:
+                data = BackEndDataManager.instance.accessory_csv_data[Weapon_.Select_Weapon];
+                img_Weapon.sprite = Utill.Get_Accessory_Sp(Weapon_.Select_Weapon);
+
+                break;
+            case Weapon_Content.Costume:
+                // data = BackEndDataManager.instance.co[Weapon_.Select_Weapon];
+
+                break;
+            default:
+                break;
+        }
+
+        txt_Weapon_name.text = data["name"].ToString();
+        img_weapon_bg.color = grade_colors[Array.FindIndex(grade, i => i == data["grade"].ToString())];
+        txt_Weapon_Grade.text = data["grade"].ToString();
+
+        Weapon_info weapon_Info = BackEndDataManager.instance.Weapon_Data.weapon_Info.Find(x => x.int_num.Equals(Weapon_.Select_Weapon));
+
+        txt_Weapon_Lv.text = string.Format("{0}{1}", "Lv", weapon_Info == null ? 0 :weapon_Info.int_lv);
+
+        for (int i = 0; i < txt_Mount_sub.Count; i++)
+        {
+            bool isActive = (int)data["ability_type_" + i] != -1;
+
+            txt_Mount_sub[i].gameObject.SetActive(isActive);
+            txt_Mount_val[i].gameObject.SetActive(isActive);
+            txt_Use_sub[i].gameObject.SetActive(isActive);
+            txt_Use_val[i].gameObject.SetActive(isActive);
+
+            int ability_type_ = (int)data["ability_type_" + i];
+            float ability_val_ = (float)data["ability_val_" + i];
+
+            Debug.Log(ability_type_);
+
+            if (isActive)
+            {
+                if (weapon_Info == null)
+                {
+                    txt_Mount_sub[i].text = Ability_.Get_Ability_Nmae(ability_type_);
+                    txt_Use_sub[i].text = Ability_.Get_Ability_Nmae(ability_type_);
+                    txt_Mount_val[i].text = ability_val_ + Ability_.Ability_Type_Sign(ability_type_);
+                    txt_Use_val[i].text = ability_val_ + Ability_.Ability_Type_Sign(ability_type_);
+                }
+                else
+                {
+
+                    txt_Mount_sub[i].text = Ability_.Get_Ability_Nmae(ability_type_);
+                    txt_Use_sub[i].text = Ability_.Get_Ability_Nmae(ability_type_);
+                    txt_Mount_val[i].text = ability_val_ + Ability_.Ability_Type_Sign(ability_type_);
+                    txt_Use_val[i].text = ability_val_ + Ability_.Ability_Type_Sign(ability_type_);
+                }
+  
+
+            }
+
+
+        }
+
+
+        for (int i = 0; i < 2; i++)
+        {
+            bool isActive = (int)data["limit_ability_type_" + i] != -1;
+
+            txt_Mount_limit_sub[i].gameObject.SetActive(isActive);
+            txt_Mount_limit_val[i].gameObject.SetActive(false);
+            txt_Use_limit_sub[i].gameObject.SetActive(isActive);
+            txt_Use_limit_val[i].gameObject.SetActive(false);
+
+
+            int ability_type_ = (int)data["limit_ability_type_" + i];
+            float ability_val_ = (float)data["limit_ability_val_" + i];
+
+
+            if (isActive)
+            {
+                txt_Mount_limit_sub[i].text = string.Format("{0}{1}{2}", "초월", i + 1, "필요");
+                txt_Use_limit_sub[i].text = string.Format("{0}{1}{2}", "초월", i + 1, "필요");
+                txt_Mount_limit_val[i].text = string.Format("{0}{1}{2}", "초월", i + 1, "필요");
+                txt_Use_limit_val[i].text = string.Format("{0}{1}{2}", "초월", i + 1, "필요");
+
+                if (weapon_Info != null)
+                {
+                    if (i > weapon_Info.int_limit)
+                    {
+                        txt_Mount_limit_val[i].gameObject.SetActive(true);
+                        txt_Use_limit_val[i].gameObject.SetActive(true);
+
+                        txt_Mount_limit_sub[i].text = Ability_.Get_Ability_Nmae(ability_type_);
+                        txt_Use_limit_sub[i].text = Ability_.Get_Ability_Nmae(ability_type_);
+                        txt_Mount_limit_val[i].text = ability_val_ + Ability_.Ability_Type_Sign(ability_type_);
+                        txt_Use_limit_val[i].text = ability_val_ + Ability_.Ability_Type_Sign(ability_type_);
+                    }
+                }
+            }
+
+        }
+
+
+
+    }
+
+    #endregion
+
 }
