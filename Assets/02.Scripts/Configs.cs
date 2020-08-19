@@ -1,8 +1,10 @@
 ﻿
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Numerics;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public enum Data_Type
 {
@@ -287,6 +289,21 @@ public class Skill_s
 
 public class Calculate
 {
+    public static BigInteger Percent(int base_price, float percent, int lv, int end_lv)
+    {
+        BigInteger total = 0;
+
+        int m_percent = (int)Math.Ceiling(base_price * percent);
+
+        for (int i = lv; i < lv + end_lv; i++)
+        {
+            total += base_price + m_percent * i;
+            Debug.Log(total);
+        }
+
+        return total;
+    }
+
     public static BigInteger Price(int base_price, int percent, int lv, int end_lv)
     {
         BigInteger total = 0;

@@ -80,12 +80,8 @@ public class Skill_Panel : MonoBehaviour
 
         txt_Skill_Lv.text = "Lv."+lv;
 
-        int m_percent = (int)Math.Ceiling(skill.price_val * skill.price_percent);
 
-        for (int i = lv; i < lv + (int)UiManager.instance.skill_lv; i++)
-        {
-            total += skill.price_val + m_percent * i;
-        }
+        total = Calculate.Percent(skill.price_val, skill.price_percent, lv, (int)UiManager.instance.skill_lv);
 
         btn_Skill_Upgrade.interactable = BackEndDataManager.instance.Get_Item((Item_Type)skill.price_type) >= total;
     }
@@ -132,7 +128,7 @@ public class Skill_Panel : MonoBehaviour
                 skill_Info.int_lv += (int)UiManager.instance.skill_lv;
             }
 
-            BackEndDataManager.instance.Minus_Item((Item_Type)skill.price_type, total);
+            BackEndDataManager.instance.Set_Item((Item_Type)skill.price_type, total,Calculate_Type.mius);
 
             Skill_s.Set_Skill_Val(skill_Info.int_num, skill_Info.int_lv);
 

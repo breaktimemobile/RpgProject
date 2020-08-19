@@ -69,9 +69,18 @@ public class Item_Data
 [DynamoDBTable("weapon_info")]
 public class Weapon_Data
 {
+
     [DynamoDBHashKey] // Hash key.
     public string id { get; set; }
-    [DynamoDBProperty("Weapon_info")]
+    [DynamoDBProperty]
+    public int sword_mount { get; set; }
+    [DynamoDBProperty]
+    public int shield_mount { get; set; }
+    [DynamoDBProperty]
+    public int accessory_mount { get; set; }
+    [DynamoDBProperty]
+    public int costume_mount { get; set; }
+    [DynamoDBProperty("weapon_info")]
     public List<Weapon_info> weapon_Info { get; set; }
 
 }
@@ -117,10 +126,13 @@ public class Item_Info
 
 public class Weapon_info
 {
+    public Weapon_Content enum_weapon { get; set; }
     public int int_num { get; set; }
     public int int_lv { get; set; }
     public int int_upgread { get; set; }
     public int int_limit { get; set; }
+    public int int_val { get; set; }
+
 }
 
 public class Skill_info
@@ -563,6 +575,7 @@ public class BackEndDataManager : MonoBehaviour
                     {
                         new Weapon_info
                         {
+                            enum_weapon = Weapon_Content.Sword,
                             int_num = 0,
                             int_lv =1,
                             int_upgread =0,
@@ -1178,7 +1191,7 @@ public class BackEndDataManager : MonoBehaviour
 
                 break;
             case Item_Type.upgrade_stone:
-                UiManager.instance.Set_Txt_Upgread_Stone();
+                UiManager.instance.Set_Txt_Upgrade_Stone();
 
                 break;
             case Item_Type.limit_stone:
@@ -1325,7 +1338,8 @@ public class BackEndDataManager : MonoBehaviour
         int lv = Character_Data.int_character_Lv;
         BigInteger lv_1 = Calculate.Price(500, 5, lv, (int)character_Lv);
 
-        Minus_Item(Item_Type.coin, lv_1);
+        Set_Item(Item_Type.coin, lv_1,Calculate_Type.mius);
+
         Player_stat.Add_Lv((int)character_Lv);
 
     }

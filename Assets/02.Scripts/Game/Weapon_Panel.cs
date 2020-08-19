@@ -46,7 +46,7 @@ public class Weapon_Panel : MonoBehaviour
 
         txt_Weapon_Grade.text = data["grade"].ToString();
 
-        Weapon_info weapon_Info = BackEndDataManager.instance.Weapon_Data.weapon_Info.Find(x => x.int_num.Equals((int)data["num"]));
+        Weapon_info weapon_Info = BackEndDataManager.instance.Weapon_Data.weapon_Info.Find(x => x.int_num.Equals((int)data["num"]) && x.enum_weapon.Equals(Weapon_.Weapon_Content));
 
         if (weapon_Info == null)
         {

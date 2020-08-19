@@ -238,11 +238,11 @@ public class UiManager : MonoBehaviour
 
     #region WeaponPopup
 
-    private Button btn_Weapon_Info;
-    private Button btn_Weapon_Upgrade;
-    private Button btn_Weapon_Mix;
-    private Button btn_Weapon_Roon;
-    private Button btn_Weapon_Decom;
+    private Button btn_Weapon_Info_Popup;
+    private Button btn_Weapon_Upgrade_Popup;
+    private Button btn_Weapon_Mix_Popup;
+    private Button btn_Weapon_Roon_Popup;
+    private Button btn_Weapon_Decom_Popup;
 
     private GameObject content_Weapon_Info;
     private GameObject content_Weapon_Upgrade;
@@ -278,9 +278,53 @@ public class UiManager : MonoBehaviour
 
     #region content_Weapon_Upgrade
 
+    Text txt_Weapon_Lv_Low_Upgrade;
+    Text txt_Weapon_Lv_Next_Upgrade;
+    Image img_weapon_bg_Upgrade;
+    Image img_Weapon_Upgrade;
+    Text txt_Weapon_Grade_Upgrade;
+
+
+    List<Text> txt_Mount_sub_Upgrade = new List<Text>();
+    List<Text> txt_Mount_val_Upgrade = new List<Text>();
+    List<Text> txt_Mount_limit_sub_Upgrade = new List<Text>();
+    List<Text> txt_Mount_limit_val_Upgrade = new List<Text>();
+    List<Text> txt_Use_sub_Upgrade = new List<Text>();
+    List<Text> txt_Use_val_Upgrade = new List<Text>();
+    List<Text> txt_Use_limit_sub_Upgrade = new List<Text>();
+    List<Text> txt_Use_limit_val_Upgrade = new List<Text>();
+
+
+    Image img_Upgrade_Stone;
+    Text txt_My_Upgrade_Stone;
+    Text txt_Upgrade_Stone;
+    Button btn_Weapon_Upgrade;
+
     #endregion
 
     #region content_Weapon_Mix
+
+    Image img_my_weapon_bg_Mix;
+    Image img_my_Weapon_Mix;
+    Text txt_my_Weapon_Grade_Mix;
+    Text txt_my_Weapon_Lv_Mix;
+    Text txt_my_Weapon_Ea_Mix;
+
+    Image img_next_weapon_bg_Mix;
+    Image img_next_Weapon_Mix;
+    Text txt_next_Weapon_Grade_Mix;
+    Text txt_next_Weapon_Lv_Mix;
+    Text txt_next_Weapon_Ea_Mix;
+
+    Button btn_Mix_Mius;
+    Text txt_Mix_val;
+    Button btn_Mix_Plus;
+
+    Image img_Mix_Stone;
+    Text txt_My_Mix_Stone;
+    Text txt_Mix_Stone;
+
+    Button btn_Mix;
 
     #endregion
 
@@ -681,11 +725,11 @@ public class UiManager : MonoBehaviour
 
         #region WeaponPopup
 
-        btn_Weapon_Info = WeaponPopup.transform.Find("btn_grids/btn_Weapon_Info").GetComponent<Button>();
-        btn_Weapon_Upgrade = WeaponPopup.transform.Find("btn_grids/btn_Weapon_Upgrade").GetComponent<Button>();
-        btn_Weapon_Mix = WeaponPopup.transform.Find("btn_grids/btn_Weapon_Mix").GetComponent<Button>();
-        btn_Weapon_Roon = WeaponPopup.transform.Find("btn_grids/btn_Weapon_Roon").GetComponent<Button>();
-        btn_Weapon_Decom = WeaponPopup.transform.Find("btn_grids/btn_Weapon_Decom").GetComponent<Button>();
+        btn_Weapon_Info_Popup = WeaponPopup.transform.Find("btn_grids/btn_Weapon_Info_Popup").GetComponent<Button>();
+        btn_Weapon_Upgrade_Popup = WeaponPopup.transform.Find("btn_grids/btn_Weapon_Upgrade_Popup").GetComponent<Button>();
+        btn_Weapon_Mix_Popup = WeaponPopup.transform.Find("btn_grids/btn_Weapon_Mix_Popup").GetComponent<Button>();
+        btn_Weapon_Roon_Popup = WeaponPopup.transform.Find("btn_grids/btn_Weapon_Roon_Popup").GetComponent<Button>();
+        btn_Weapon_Decom_Popup = WeaponPopup.transform.Find("btn_grids/btn_Weapon_Decom_Popup").GetComponent<Button>();
 
         content_Weapon_Info = WeaponPopup.transform.Find("contents/content_Weapon_Info").gameObject;
         content_Weapon_Upgrade = WeaponPopup.transform.Find("contents/content_Weapon_Upgrade").gameObject;
@@ -727,6 +771,67 @@ public class UiManager : MonoBehaviour
         txt_Use_limit_sub.RemoveAll(x => !x.name.Contains("limit_sub"));
         txt_Use_limit_val = content_Weapon_Info.transform.Find("Limit_Use").GetComponentsInChildren<Text>(true).ToList();
         txt_Use_limit_val.RemoveAll(x => !x.name.Contains("limit_val"));
+
+        #endregion
+
+        #region content_Weapon_Upgrade
+
+        txt_Weapon_Lv_Low_Upgrade = content_Weapon_Upgrade.transform.Find("Lv/txt_Weapon_Lv_Low_Upgrade").GetComponent<Text>();
+        txt_Weapon_Lv_Next_Upgrade = content_Weapon_Upgrade.transform.Find("Lv/txt_Weapon_Lv_Next_Upgrade").GetComponent<Text>();
+        img_weapon_bg_Upgrade = content_Weapon_Upgrade.transform.Find("img_weapon_bg_Upgrade").GetComponent<Image>();
+        img_Weapon_Upgrade = img_weapon_bg_Upgrade.transform.Find("img_Weapon_Upgrade").GetComponent<Image>();
+        txt_Weapon_Grade_Upgrade = img_weapon_bg_Upgrade.transform.Find("txt_Weapon_Grade_Upgrade").GetComponent<Text>();
+
+        txt_Mount_sub_Upgrade = content_Weapon_Upgrade.transform.Find("Mount").GetComponentsInChildren<Text>(true).ToList();
+        txt_Mount_sub_Upgrade.RemoveAll(x => !x.name.Contains("sub"));
+        txt_Mount_val_Upgrade = content_Weapon_Upgrade.transform.Find("Mount").GetComponentsInChildren<Text>(true).ToList();
+        txt_Mount_val_Upgrade.RemoveAll(x => !x.name.Contains("val"));
+
+        txt_Mount_limit_sub_Upgrade = content_Weapon_Upgrade.transform.Find("Limit_Mount").GetComponentsInChildren<Text>(true).ToList();
+        txt_Mount_limit_sub_Upgrade.RemoveAll(x => !x.name.Contains("limit_sub"));
+        txt_Mount_limit_val_Upgrade = content_Weapon_Upgrade.transform.Find("Limit_Mount").GetComponentsInChildren<Text>(true).ToList();
+        txt_Mount_limit_val_Upgrade.RemoveAll(x => !x.name.Contains("limit_val"));
+
+        txt_Use_sub_Upgrade = content_Weapon_Upgrade.transform.Find("Use").GetComponentsInChildren<Text>(true).ToList();
+        txt_Use_sub_Upgrade.RemoveAll(x => !x.name.Contains("sub"));
+        txt_Use_val_Upgrade = content_Weapon_Upgrade.transform.Find("Use").GetComponentsInChildren<Text>(true).ToList();
+        txt_Use_val_Upgrade.RemoveAll(x => !x.name.Contains("val"));
+
+        txt_Use_limit_sub_Upgrade = content_Weapon_Upgrade.transform.Find("Limit_Use").GetComponentsInChildren<Text>(true).ToList();
+        txt_Use_limit_sub_Upgrade.RemoveAll(x => !x.name.Contains("limit_sub"));
+        txt_Use_limit_val_Upgrade = content_Weapon_Upgrade.transform.Find("Limit_Use").GetComponentsInChildren<Text>(true).ToList();
+        txt_Use_limit_val_Upgrade.RemoveAll(x => !x.name.Contains("limit_val"));
+
+        img_Upgrade_Stone = content_Weapon_Upgrade.transform.Find("Obj_Upgrade/img_Upgrade_Stone").GetComponent<Image>();
+        txt_My_Upgrade_Stone = content_Weapon_Upgrade.transform.Find("Obj_Upgrade/txt_My_Upgrade_Stone").GetComponent<Text>();
+        txt_Upgrade_Stone = content_Weapon_Upgrade.transform.Find("Obj_Upgrade/txt_Upgrade_Stone").GetComponent<Text>();
+        btn_Weapon_Upgrade = content_Weapon_Upgrade.transform.Find("Obj_Upgrade/btn_Weapon_Upgrade").GetComponent<Button>();
+
+        #endregion
+
+        #region content_Weapon_Mix
+
+        img_my_weapon_bg_Mix = content_Weapon_Mix.transform.Find("img_my_weapon_bg_Mix").GetComponent<Image>();
+        img_my_Weapon_Mix = img_my_weapon_bg_Mix.transform.Find("img_my_Weapon_Mix").GetComponent<Image>();
+        txt_my_Weapon_Grade_Mix = img_my_weapon_bg_Mix.transform.Find("txt_my_Weapon_Grade_Mix").GetComponent<Text>();
+        txt_my_Weapon_Lv_Mix = img_my_weapon_bg_Mix.transform.Find("txt_my_Weapon_Lv_Mix").GetComponent<Text>();
+        txt_my_Weapon_Ea_Mix = img_my_weapon_bg_Mix.transform.Find("txt_my_Weapon_Ea_Mix").GetComponent<Text>();
+
+        img_next_weapon_bg_Mix = content_Weapon_Mix.transform.Find("img_next_weapon_bg_Mix").GetComponent<Image>();
+        img_next_Weapon_Mix = img_next_weapon_bg_Mix.transform.Find("img_next_Weapon_Mix").GetComponent<Image>();
+        txt_next_Weapon_Grade_Mix = img_next_weapon_bg_Mix.transform.Find("txt_next_Weapon_Grade_Mix").GetComponent<Text>();
+        txt_next_Weapon_Lv_Mix = img_next_weapon_bg_Mix.transform.Find("txt_next_Weapon_Lv_Mix").GetComponent<Text>();
+        txt_next_Weapon_Ea_Mix = img_next_weapon_bg_Mix.transform.Find("txt_next_Weapon_Ea_Mix").GetComponent<Text>();
+
+        btn_Mix_Mius = content_Weapon_Mix.transform.Find("btn_Mix_Mius").GetComponent<Button>();
+        txt_Mix_val = content_Weapon_Mix.transform.Find("txt_Mix_val").GetComponent<Text>();
+        btn_Mix_Plus = content_Weapon_Mix.transform.Find("btn_Mix_Plus").GetComponent<Button>();
+
+        img_Mix_Stone = content_Weapon_Mix.transform.Find("Obj_Mix/img_Mix_Stone").GetComponent<Image>();
+        txt_My_Mix_Stone = content_Weapon_Mix.transform.Find("Obj_Mix/txt_My_Mix_Stone").GetComponent<Text>();
+        txt_Mix_Stone = content_Weapon_Mix.transform.Find("Obj_Mix/txt_Mix_Stone").GetComponent<Text>();
+
+        btn_Mix = content_Weapon_Mix.transform.Find("Obj_Mix/btn_Mix").GetComponent<Button>();
 
         #endregion
 
@@ -979,20 +1084,34 @@ public class UiManager : MonoBehaviour
 
         #region WeaponPopup
 
-        btn_Weapon_Info.onClick.AddListener(() => Change_Weapon_Popup(Weapon_Popup.info));
-        btn_Weapon_Upgrade.onClick.AddListener(() => Change_Weapon_Popup(Weapon_Popup.upgrade));
-        btn_Weapon_Mix.onClick.AddListener(() => Change_Weapon_Popup(Weapon_Popup.mix));
-        btn_Weapon_Roon.onClick.AddListener(() => Change_Weapon_Popup(Weapon_Popup.roon));
-        btn_Weapon_Decom.onClick.AddListener(() => Change_Weapon_Popup(Weapon_Popup.decom));
+        btn_Weapon_Info_Popup.onClick.AddListener(() => Change_Weapon_Popup(Weapon_Popup.info));
+        btn_Weapon_Upgrade_Popup.onClick.AddListener(() => Change_Weapon_Popup(Weapon_Popup.upgrade));
+        btn_Weapon_Mix_Popup.onClick.AddListener(() => Change_Weapon_Popup(Weapon_Popup.mix));
+        btn_Weapon_Roon_Popup.onClick.AddListener(() => Change_Weapon_Popup(Weapon_Popup.roon));
+        btn_Weapon_Decom_Popup.onClick.AddListener(() => Change_Weapon_Popup(Weapon_Popup.decom));
 
         btn_Weapon_Close.onClick.AddListener(() => PopupManager.Close_Popup());
 
         #region content_Weapon_Info
 
-        //obj_roon = content_Weapon_Info.transform.Find("obj_roon").GetComponentsInChildren<Button>(true).ToList();
-
         //btn_Weapon_Limit = content_Weapon_Info.transform.Find("btn_Weapon_Limit").GetComponent<Button>();
         //btn_Weapon_Mount = content_Weapon_Info.transform.Find("btn_Weapon_Mount").GetComponent<Button>();
+
+        #endregion
+
+        #region content_Weapon_Upgrade
+
+        btn_Weapon_Upgrade.onClick.AddListener(() => Buy_Weapon_Upgrade());
+
+        #endregion
+
+
+        #region content_Weapon_Mix
+   
+        //btn_Mix_Mius = content_Weapon_Mix.transform.Find("btn_Mix_Mius").GetComponent<Button>();
+        //btn_Mix_Plus = content_Weapon_Mix.transform.Find("btn_Mix_Plus").GetComponent<Button>();
+
+        //btn_Mix = content_Weapon_Mix.transform.Find("Obj_Mix/btn_Mix").GetComponent<Button>();
 
         #endregion
 
@@ -1137,7 +1256,7 @@ public class UiManager : MonoBehaviour
         Set_Txt_Chapter();
         Set_Txt_Stage();
         Set_Txt_Soul_Stone();
-        Set_Txt_Upgread_Stone();
+        Set_Txt_Upgrade_Stone();
         Set_Txt_Underground_Ticket();
         Check_Underground_Ticket();
         Set_Txt_Upgrade_Ticket();
@@ -1202,7 +1321,6 @@ public class UiManager : MonoBehaviour
     {
         txt_Steel_Val.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.steel));
         txt_Content_Upgrade_Steel_Val.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.steel));
-
     }
 
     public void Set_Txt_Coin()
@@ -1215,11 +1333,13 @@ public class UiManager : MonoBehaviour
         txt_Dia_Val.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.crystal));
     }
 
-    public void Set_Txt_Upgread_Stone()
+    public void Set_Txt_Upgrade_Stone()
     {
         txt_Underground_Upgread_Stone_Val.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.upgrade_stone));
         txt_Content_Upgrade_Upgread_Stone_Val.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.upgrade_stone));
         txt_Content_Hell_Upgread_Stone_Val.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.upgrade_stone));
+        txt_My_Upgrade_Stone.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.upgrade_stone));
+        txt_My_Mix_Stone.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.upgrade_stone));
 
     }
 
@@ -1376,6 +1496,28 @@ public class UiManager : MonoBehaviour
 
     public void Change_Weapon_Popup(Weapon_Popup popup)
     {
+
+        switch (popup)
+        {
+            case Weapon_Popup.info:
+                Set_Weapon_Info();
+
+                break;
+            case Weapon_Popup.upgrade:
+                Set_Weapon_Upgrade();
+
+                break;
+            case Weapon_Popup.mix:
+                Set_Weapon_Mix();
+                break;
+            case Weapon_Popup.roon:
+                break;
+            case Weapon_Popup.decom:
+                break;
+            default:
+                break;
+        }
+
         content_Weapon_Info.SetActive(popup.Equals(Weapon_Popup.info));
         content_Weapon_Upgrade.SetActive(popup.Equals(Weapon_Popup.upgrade));
         content_Weapon_Mix.SetActive(popup.Equals(Weapon_Popup.mix));
@@ -1930,7 +2072,7 @@ public class UiManager : MonoBehaviour
         BackEndDataManager.instance.Character_Data.Int_Upgrade_Lv += (int)character_Lv;
         BackEndDataManager.instance.Save_Character_Data();
 
-        BackEndDataManager.instance.Minus_Item(Item_Type.soul_stone, Calculate.Price(500, 5, lv, (int)character_Lv));
+        BackEndDataManager.instance.Set_Item(Item_Type.soul_stone, Calculate.Price(500, 5, lv, (int)character_Lv), Calculate_Type.mius);
 
         Set_Upgrade_Stat();
 
@@ -2193,35 +2335,41 @@ public class UiManager : MonoBehaviour
 
     Color[] grade_colors = new Color[] { Color.gray, Color.green, Color.blue, Color.black, Color.red, Color.yellow };
     string[] grade = new string[] { "D", "C", "B", "A", "S", "SS" };
+    Dictionary<string, object> Weapon_data = new Dictionary<string, object>();
 
     public void Open_WeaponPopup()
     {
         PopupManager.Open_Popup(WeaponPopup);
-        Set_WeaponPopup();
+        Change_Weapon_Popup(Weapon_Popup.info);
     }
 
-    public void Set_WeaponPopup()
+
+    public void Set_Weapon_Info()
     {
-        Change_Weapon_Popup(Weapon_Popup.info);
+
         Debug.Log("we " + Weapon_.Select_Weapon + "   " + Weapon_.Weapon_Content);
 
-        Dictionary<string, object> data = BackEndDataManager.instance.sword_csv_data[Weapon_.Select_Weapon]; ;
+
+        Weapon_info weapon_Info = BackEndDataManager.instance.Weapon_Data.weapon_Info.Find(x => x.int_num.Equals(Weapon_.Select_Weapon) && x.enum_weapon.Equals(Weapon_.Weapon_Content));
 
         switch (Weapon_.Weapon_Content)
         {
             case Weapon_Content.Sword:
-                data = BackEndDataManager.instance.sword_csv_data[Weapon_.Select_Weapon];
+                Weapon_data = BackEndDataManager.instance.sword_csv_data[Weapon_.Select_Weapon];
                 img_Weapon.sprite = Utill.Get_Sword_Sp(Weapon_.Select_Weapon);
+                btn_Weapon_Mount.gameObject.SetActive(weapon_Info != null && !BackEndDataManager.instance.Weapon_Data.sword_mount.Equals(Weapon_.Select_Weapon));
 
                 break;
             case Weapon_Content.Shield:
-                data = BackEndDataManager.instance.shield_csv_data[Weapon_.Select_Weapon];
+                Weapon_data = BackEndDataManager.instance.shield_csv_data[Weapon_.Select_Weapon];
                 img_Weapon.sprite = Utill.Get_Shield_Sp(Weapon_.Select_Weapon);
+                btn_Weapon_Mount.gameObject.SetActive(weapon_Info != null && !BackEndDataManager.instance.Weapon_Data.shield_mount.Equals(Weapon_.Select_Weapon));
 
                 break;
             case Weapon_Content.Accessory:
-                data = BackEndDataManager.instance.accessory_csv_data[Weapon_.Select_Weapon];
+                Weapon_data = BackEndDataManager.instance.accessory_csv_data[Weapon_.Select_Weapon];
                 img_Weapon.sprite = Utill.Get_Accessory_Sp(Weapon_.Select_Weapon);
+                btn_Weapon_Mount.gameObject.SetActive(weapon_Info != null && !BackEndDataManager.instance.Weapon_Data.accessory_mount.Equals(Weapon_.Select_Weapon));
 
                 break;
             case Weapon_Content.Costume:
@@ -2232,25 +2380,36 @@ public class UiManager : MonoBehaviour
                 break;
         }
 
-        txt_Weapon_name.text = data["name"].ToString();
-        img_weapon_bg.color = grade_colors[Array.FindIndex(grade, i => i == data["grade"].ToString())];
-        txt_Weapon_Grade.text = data["grade"].ToString();
 
-        Weapon_info weapon_Info = BackEndDataManager.instance.Weapon_Data.weapon_Info.Find(x => x.int_num.Equals(Weapon_.Select_Weapon));
+        txt_Weapon_name.text = Weapon_data["name"].ToString();
+        img_weapon_bg.color = grade_colors[Array.FindIndex(grade, i => i == Weapon_data["grade"].ToString())];
+        txt_Weapon_Grade.text = Weapon_data["grade"].ToString();
 
-        txt_Weapon_Lv.text = string.Format("{0}{1}", "Lv", weapon_Info == null ? 0 :weapon_Info.int_lv);
+
+        txt_Weapon_Lv.text = string.Format("{0}{1}", "Lv", weapon_Info == null ? 0 : weapon_Info.int_lv);
+
+        btn_Weapon_Limit.gameObject.SetActive(weapon_Info != null);
+
+
+        Set_Weapon_Info_Stat();
+    }
+
+    public void Set_Weapon_Info_Stat()
+    {
+        Weapon_info weapon_Info = BackEndDataManager.instance.Weapon_Data.weapon_Info.Find(x => x.int_num.Equals(Weapon_.Select_Weapon) && x.enum_weapon.Equals(Weapon_.Weapon_Content));
 
         for (int i = 0; i < txt_Mount_sub.Count; i++)
         {
-            bool isActive = (int)data["ability_type_" + i] != -1;
+            bool isActive = (int)Weapon_data["ability_type_" + i] != -1;
 
             txt_Mount_sub[i].gameObject.SetActive(isActive);
             txt_Mount_val[i].gameObject.SetActive(isActive);
             txt_Use_sub[i].gameObject.SetActive(isActive);
             txt_Use_val[i].gameObject.SetActive(isActive);
 
-            int ability_type_ = (int)data["ability_type_" + i];
-            float ability_val_ = (float)data["ability_val_" + i];
+            int ability_type_ = (int)Weapon_data["ability_type_" + i];
+            float ability_val_ = (float)Weapon_data["ability_val_" + i];
+            float ability_val_amount = (float)Weapon_data["ability_val_amount_" + i];
 
             Debug.Log(ability_type_);
 
@@ -2268,10 +2427,10 @@ public class UiManager : MonoBehaviour
 
                     txt_Mount_sub[i].text = Ability_.Get_Ability_Nmae(ability_type_);
                     txt_Use_sub[i].text = Ability_.Get_Ability_Nmae(ability_type_);
-                    txt_Mount_val[i].text = ability_val_ + Ability_.Ability_Type_Sign(ability_type_);
-                    txt_Use_val[i].text = ability_val_ + Ability_.Ability_Type_Sign(ability_type_);
+                    txt_Mount_val[i].text = (ability_val_ + ability_val_amount * weapon_Info.int_lv) + Ability_.Ability_Type_Sign(ability_type_);
+                    txt_Use_val[i].text = (ability_val_ + ability_val_amount * weapon_Info.int_lv) + Ability_.Ability_Type_Sign(ability_type_);
                 }
-  
+
 
             }
 
@@ -2281,34 +2440,35 @@ public class UiManager : MonoBehaviour
 
         for (int i = 0; i < 2; i++)
         {
-            bool isActive = (int)data["limit_ability_type_" + i] != -1;
+            bool isActive = (int)Weapon_data["limit_ability_type_" + i] != -1;
 
-            txt_Mount_limit_sub[i].gameObject.SetActive(isActive);
-            txt_Mount_limit_val[i].gameObject.SetActive(false);
-            txt_Use_limit_sub[i].gameObject.SetActive(isActive);
-            txt_Use_limit_val[i].gameObject.SetActive(false);
+            txt_Mount_limit_sub[i].gameObject.SetActive(true);
+            txt_Mount_limit_val[i].gameObject.SetActive(isActive);
+            txt_Use_limit_sub[i].gameObject.SetActive(true);
+            txt_Use_limit_val[i].gameObject.SetActive(isActive);
 
 
-            int ability_type_ = (int)data["limit_ability_type_" + i];
-            float ability_val_ = (float)data["limit_ability_val_" + i];
+            int ability_type_ = (int)Weapon_data["limit_ability_type_" + i];
+            float ability_val_ = (float)Weapon_data["limit_ability_val_" + i];
+
+
+            txt_Mount_limit_val[i].text = string.Format("{0}{1}{2}", "초월", i + 1, "필요");
+            txt_Use_limit_val[i].text = string.Format("{0}{1}{2}", "초월", i + 1, "필요");
 
 
             if (isActive)
             {
-                txt_Mount_limit_sub[i].text = string.Format("{0}{1}{2}", "초월", i + 1, "필요");
-                txt_Use_limit_sub[i].text = string.Format("{0}{1}{2}", "초월", i + 1, "필요");
-                txt_Mount_limit_val[i].text = string.Format("{0}{1}{2}", "초월", i + 1, "필요");
-                txt_Use_limit_val[i].text = string.Format("{0}{1}{2}", "초월", i + 1, "필요");
+                txt_Mount_limit_sub[i].text = Ability_.Get_Ability_Nmae(ability_type_);
+                txt_Use_limit_sub[i].text = Ability_.Get_Ability_Nmae(ability_type_);
 
                 if (weapon_Info != null)
                 {
-                    if (i > weapon_Info.int_limit)
+                    Debug.Log(i + "    " + weapon_Info.int_limit);
+                    if (weapon_Info.int_limit > i)
                     {
                         txt_Mount_limit_val[i].gameObject.SetActive(true);
                         txt_Use_limit_val[i].gameObject.SetActive(true);
 
-                        txt_Mount_limit_sub[i].text = Ability_.Get_Ability_Nmae(ability_type_);
-                        txt_Use_limit_sub[i].text = Ability_.Get_Ability_Nmae(ability_type_);
                         txt_Mount_limit_val[i].text = ability_val_ + Ability_.Ability_Type_Sign(ability_type_);
                         txt_Use_limit_val[i].text = ability_val_ + Ability_.Ability_Type_Sign(ability_type_);
                     }
@@ -2318,6 +2478,232 @@ public class UiManager : MonoBehaviour
         }
 
 
+
+    }
+
+    public void Set_Weapon_Upgrade()
+    {
+
+        Weapon_info weapon_Info = BackEndDataManager.instance.Weapon_Data.weapon_Info.Find(x => x.int_num.Equals(Weapon_.Select_Weapon) && x.enum_weapon.Equals(Weapon_.Weapon_Content));
+
+        img_weapon_bg_Upgrade.color = grade_colors[Array.FindIndex(grade, i => i == Weapon_data["grade"].ToString())];
+        txt_Weapon_Grade_Upgrade.text = Weapon_data["grade"].ToString();
+
+
+        switch (Weapon_.Weapon_Content)
+        {
+            case Weapon_Content.Sword:
+                img_Weapon_Upgrade.sprite = Utill.Get_Sword_Sp(Weapon_.Select_Weapon);
+
+                break;
+            case Weapon_Content.Shield:
+                img_Weapon_Upgrade.sprite = Utill.Get_Shield_Sp(Weapon_.Select_Weapon);
+
+                break;
+            case Weapon_Content.Accessory:
+                img_Weapon_Upgrade.sprite = Utill.Get_Accessory_Sp(Weapon_.Select_Weapon);
+
+                break;
+            case Weapon_Content.Costume:
+
+                break;
+            default:
+                break;
+        }
+
+        img_Upgrade_Stone.sprite = Utill.Get_Item_Sp((Item_Type)Weapon_data["upgrade_type"]);
+
+        Set_Weapon_Upgrade_Stat();
+
+    }
+
+    public void Set_Weapon_Upgrade_Stat()
+    {
+        Weapon_info weapon_Info = BackEndDataManager.instance.Weapon_Data.weapon_Info.Find(x => x.int_num.Equals(Weapon_.Select_Weapon) && x.enum_weapon.Equals(Weapon_.Weapon_Content));
+
+        BigInteger big = Calculate.Percent((int)Weapon_data["upgrade_val"], 0.05f, weapon_Info == null ? 1 : weapon_Info.int_lv, 1);
+
+        Debug.Log(big);
+
+        Debug.Log(weapon_Info.int_lv);
+
+        txt_Upgrade_Stone.text = GetGoldString(big);
+
+        btn_Weapon_Upgrade.interactable = weapon_Info != null && BackEndDataManager.instance.Get_Item((Item_Type)Weapon_data["upgrade_type"]) >= big;
+
+        for (int i = 0; i < txt_Mount_sub_Upgrade.Count; i++)
+        {
+            bool isActive = (int)Weapon_data["ability_type_" + i] != -1;
+
+            txt_Mount_sub_Upgrade[i].gameObject.SetActive(isActive);
+            txt_Mount_val_Upgrade[i].gameObject.SetActive(isActive);
+            txt_Use_sub_Upgrade[i].gameObject.SetActive(isActive);
+            txt_Use_val_Upgrade[i].gameObject.SetActive(isActive);
+
+            int ability_type_ = (int)Weapon_data["ability_type_" + i];
+            float ability_val_ = (float)Weapon_data["ability_val_" + i];
+            float ability_val_amount = (float)Weapon_data["ability_val_amount_" + i];
+
+            Debug.Log(ability_type_);
+
+            if (isActive)
+            {
+                if (weapon_Info == null)
+                {
+                    txt_Mount_sub_Upgrade[i].text = Ability_.Get_Ability_Nmae(ability_type_);
+                    txt_Use_sub_Upgrade[i].text = Ability_.Get_Ability_Nmae(ability_type_);
+                    txt_Mount_val_Upgrade[i].text = ability_val_ + Ability_.Ability_Type_Sign(ability_type_);
+                    txt_Use_val_Upgrade[i].text = ability_val_ + Ability_.Ability_Type_Sign(ability_type_);
+                }
+                else
+                {
+
+                    txt_Mount_sub_Upgrade[i].text = Ability_.Get_Ability_Nmae(ability_type_);
+                    txt_Use_sub_Upgrade[i].text = Ability_.Get_Ability_Nmae(ability_type_);
+                    txt_Mount_val_Upgrade[i].text = (ability_val_ + ability_val_amount * weapon_Info.int_lv) + Ability_.Ability_Type_Sign(ability_type_);
+                    txt_Use_val_Upgrade[i].text = (ability_val_ + ability_val_amount * weapon_Info.int_lv) + Ability_.Ability_Type_Sign(ability_type_);
+                }
+
+
+            }
+
+
+        }
+
+
+        for (int i = 0; i < txt_Mount_limit_sub_Upgrade.Count; i++)
+        {
+            bool isActive = (int)Weapon_data["limit_ability_type_" + i] != -1;
+
+            txt_Mount_limit_sub_Upgrade[i].gameObject.SetActive(true);
+            txt_Mount_limit_val_Upgrade[i].gameObject.SetActive(isActive);
+            txt_Use_limit_sub_Upgrade[i].gameObject.SetActive(true);
+            txt_Use_limit_val_Upgrade[i].gameObject.SetActive(isActive);
+
+
+            int ability_type_ = (int)Weapon_data["limit_ability_type_" + i];
+            float ability_val_ = (float)Weapon_data["limit_ability_val_" + i];
+
+
+            txt_Mount_limit_val_Upgrade[i].text = string.Format("{0}{1}{2}", "초월", i + 1, "필요");
+            txt_Use_limit_val_Upgrade[i].text = string.Format("{0}{1}{2}", "초월", i + 1, "필요");
+
+
+            if (isActive)
+            {
+                txt_Mount_limit_sub_Upgrade[i].text = Ability_.Get_Ability_Nmae(ability_type_);
+                txt_Use_limit_sub_Upgrade[i].text = Ability_.Get_Ability_Nmae(ability_type_);
+
+                if (weapon_Info != null)
+                {
+                    Debug.Log(i + "    " + weapon_Info.int_limit);
+                    if (weapon_Info.int_limit > i)
+                    {
+                        txt_Mount_limit_val_Upgrade[i].gameObject.SetActive(true);
+                        txt_Use_limit_val_Upgrade[i].gameObject.SetActive(true);
+
+                        txt_Mount_limit_val_Upgrade[i].text = ability_val_ + Ability_.Ability_Type_Sign(ability_type_);
+                        txt_Use_limit_val_Upgrade[i].text = ability_val_ + Ability_.Ability_Type_Sign(ability_type_);
+                    }
+                }
+            }
+
+        }
+
+        txt_Weapon_Lv_Low_Upgrade.text = string.Format("{0}{1}", "Lv.", weapon_Info == null ? 0 : weapon_Info.int_lv);
+        txt_Weapon_Lv_Next_Upgrade.text = string.Format("{0}{1}", "Lv.", weapon_Info == null ? 1 : weapon_Info.int_lv + 1);
+
+    }
+
+    public void Buy_Weapon_Upgrade()
+    {
+
+        Weapon_info weapon_Info = BackEndDataManager.instance.Weapon_Data.weapon_Info.Find(x => x.int_num.Equals(Weapon_.Select_Weapon) && x.enum_weapon.Equals(Weapon_.Weapon_Content));
+
+        BigInteger big = Calculate.Percent((int)Weapon_data["upgrade_val"], 0.05f, weapon_Info == null ? 1 : weapon_Info.int_lv, 1);
+
+        if (BackEndDataManager.instance.Get_Item((Item_Type)Weapon_data["upgrade_type"]) >= big)
+        {
+            BackEndDataManager.instance.Set_Item((Item_Type)Weapon_data["upgrade_type"], big, Calculate_Type.mius);
+
+            weapon_Info.int_lv += 1;
+            BackEndDataManager.instance.Save_Weapon_Data();
+
+            Set_Weapon_Upgrade_Stat();
+        }
+
+    }
+
+
+    public void Set_Weapon_Mix()
+    {
+
+        Dictionary<string, object> my_data = new Dictionary<string, object>();
+        Dictionary<string, object> next_data = new Dictionary<string, object>();
+
+        Weapon_info my_Info = BackEndDataManager.instance.Weapon_Data.weapon_Info.Find(x => x.int_num.Equals(Weapon_.Select_Weapon) && x.enum_weapon.Equals(Weapon_.Weapon_Content));
+        Weapon_info next_Info = BackEndDataManager.instance.Weapon_Data.weapon_Info.Find(x => x.int_num.Equals(Weapon_.Select_Weapon + 1) && x.enum_weapon.Equals(Weapon_.Weapon_Content));
+
+
+        switch (Weapon_.Weapon_Content)
+        {
+            case Weapon_Content.Sword:
+                my_data = BackEndDataManager.instance.sword_csv_data[Weapon_.Select_Weapon];
+                next_data = BackEndDataManager.instance.sword_csv_data[Weapon_.Select_Weapon + 1];
+
+                img_my_Weapon_Mix.sprite = Utill.Get_Sword_Sp(Weapon_.Select_Weapon);
+                img_next_Weapon_Mix.sprite = Utill.Get_Sword_Sp(Weapon_.Select_Weapon + 1);
+                break;
+            case Weapon_Content.Shield:
+                my_data = BackEndDataManager.instance.shield_csv_data[Weapon_.Select_Weapon];
+                next_data = BackEndDataManager.instance.shield_csv_data[Weapon_.Select_Weapon + 1];
+
+                img_my_Weapon_Mix.sprite = Utill.Get_Shield_Sp(Weapon_.Select_Weapon);
+                img_next_Weapon_Mix.sprite = Utill.Get_Shield_Sp(Weapon_.Select_Weapon + 1);
+                break;
+            case Weapon_Content.Accessory:
+                my_data = BackEndDataManager.instance.accessory_csv_data[Weapon_.Select_Weapon];
+                next_data = BackEndDataManager.instance.accessory_csv_data[Weapon_.Select_Weapon + 1];
+
+                img_my_Weapon_Mix.sprite = Utill.Get_Accessory_Sp(Weapon_.Select_Weapon);
+                img_next_Weapon_Mix.sprite = Utill.Get_Shield_Sp(Weapon_.Select_Weapon + 1);
+                break;
+            case Weapon_Content.Costume:
+
+                break;
+            default:
+                break;
+        }
+
+        
+        img_my_weapon_bg_Mix.color = grade_colors[Array.FindIndex(grade, i => i == my_data["grade"].ToString())];
+        txt_my_Weapon_Grade_Mix.text = my_data["grade"].ToString();
+        txt_my_Weapon_Lv_Mix.text = string.Format("{0}{1}", "Lv", my_Info == null ? 0 : my_Info.int_lv);
+
+        img_next_weapon_bg_Mix.color = grade_colors[Array.FindIndex(grade, i => i == next_data["grade"].ToString())];
+         
+        txt_next_Weapon_Grade_Mix.text = next_data["grade"].ToString();
+        txt_next_Weapon_Lv_Mix.text = string.Format("{0}{1}", "Lv", next_Info == null ? 0 : next_Info.int_lv);
+            
+        img_Mix_Stone.sprite = Utill.Get_Item_Sp((Item_Type)my_data["upgrade_type"]);
+
+        txt_Mix_Stone.text = next_data["mix"].ToString();
+
+        Set_Weapon_Mix_Val();
+    }
+
+    public void Set_Weapon_Mix_Val()
+    {
+        Weapon_info my_Info = BackEndDataManager.instance.Weapon_Data.weapon_Info.Find(x => x.int_num.Equals(Weapon_.Select_Weapon) && x.enum_weapon.Equals(Weapon_.Weapon_Content));
+        Weapon_info next_Info = BackEndDataManager.instance.Weapon_Data.weapon_Info.Find(x => x.int_num.Equals(Weapon_.Select_Weapon + 1) && x.enum_weapon.Equals(Weapon_.Weapon_Content));
+
+
+        txt_my_Weapon_Ea_Mix.text = string.Format("{0}", my_Info == null ? 0 : my_Info.int_val);
+        txt_next_Weapon_Ea_Mix.text = string.Format("{0}", next_Info == null ? 0 : next_Info.int_val);
+
+        txt_Mix_val.text = my_Info.int_val >= 10 ? "1" : "0";
+
+        btn_Mix.interactable = my_Info.int_val >= 10;
 
     }
 
