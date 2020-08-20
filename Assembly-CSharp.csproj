@@ -163,6 +163,7 @@
     <Compile Include="Assets\GPGSIds.cs" />
     <Compile Include="Assets\Pet.cs" />
     <Compile Include="Assets\Pet_Panel.cs" />
+    <Compile Include="Assets\Roon.cs" />
     <Compile Include="Assets\Unity-Logs-Viewer\Reporter\MultiKeyDictionary.cs" />
     <Compile Include="Assets\Unity-Logs-Viewer\Reporter\Reporter.cs" />
     <Compile Include="Assets\Unity-Logs-Viewer\Reporter\ReporterGUI.cs" />

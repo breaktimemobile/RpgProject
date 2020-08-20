@@ -61,7 +61,7 @@ public class Item_Data
 {
     [DynamoDBHashKey] // Hash key.
     public string id { get; set; }
-    [DynamoDBProperty("Item_Info")]
+    [DynamoDBProperty("item_Info")]
     public List<Item_Info> item_Info { get; set; }
 
 }
@@ -82,7 +82,8 @@ public class Weapon_Data
     public int costume_mount { get; set; }
     [DynamoDBProperty("weapon_info")]
     public List<Weapon_info> weapon_Info { get; set; }
-
+    [DynamoDBProperty("roon_Info")]
+    public List<Item_Info> roon_Info { get; set; }
 }
 
 [DynamoDBTable("skill_info")]
@@ -132,7 +133,7 @@ public class Weapon_info
     public int int_upgread { get; set; }
     public int int_limit { get; set; }
     public int int_val { get; set; }
-
+    public List<Roon_Slot> list_roon { get; set; }
 }
 
 public class Skill_info
@@ -167,6 +168,12 @@ public class Pet_info
 
 }
 
+public class Roon_Slot
+{
+    public int int_slot = 0;
+    public int int_roon = -1;
+    public bool isLock = false;
+}
 
 public class BackEndDataManager : MonoBehaviour
 {
@@ -1140,6 +1147,46 @@ public class BackEndDataManager : MonoBehaviour
             return 0;
         else
             return BigInteger.Parse(item_Info.str_val);
+
+    }
+
+    public void Set_Roon(int type, BigInteger val, Calculate_Type calculate)
+    {
+        Item_Info item_Info = Weapon_Data.roon_Info.Find(x => x.type.Equals(type));
+
+        if (item_Info == null)
+        {
+            Item_Info item_ = new Item_Info
+            {
+                type = type,
+                str_val = val.ToString()
+            };
+
+            Weapon_Data.roon_Info.Add(item_);
+
+        }
+        else
+        {
+            BigInteger total = BigInteger.Parse(item_Info.str_val);
+
+            Debug.Log(val);
+            switch (calculate)
+            {
+                case Calculate_Type.plus:
+                    total += val;
+                    break;
+                case Calculate_Type.mius:
+                    total -= val;
+                    break;
+                default:
+                    break;
+            }
+
+            item_Info.str_val = total.ToString();
+
+        }
+
+        Save_Weapon_Data();
 
     }
 

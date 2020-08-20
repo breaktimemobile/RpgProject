@@ -255,7 +255,6 @@ public enum Popup_Type
 
 }
 
-
 public class Skill_s
 {
     public static List<Skill> skills = new List<Skill>();
@@ -702,6 +701,8 @@ public class Weapon_
     public static int Select_Weapon = 0;
 
     public static Weapon_Content Weapon_Content = Weapon_Content.Sword;
+
+    public static int Mix_Count = 0;
 
 }
 
