@@ -63,7 +63,8 @@ public class Item_Data
     public string id { get; set; }
     [DynamoDBProperty("item_Info")]
     public List<Item_Info> item_Info { get; set; }
-
+    [DynamoDBProperty("roon_Info")]
+    public List<Roon_Info> roon_Info { get; set; }
 }
 
 [DynamoDBTable("weapon_info")]
@@ -82,8 +83,7 @@ public class Weapon_Data
     public int costume_mount { get; set; }
     [DynamoDBProperty("weapon_info")]
     public List<Weapon_info> weapon_Info { get; set; }
-    [DynamoDBProperty("roon_Info")]
-    public List<Item_Info> roon_Info { get; set; }
+
 }
 
 [DynamoDBTable("skill_info")]
@@ -125,6 +125,11 @@ public class Item_Info
     public string str_val { get; set; }
 }
 
+public class Roon_Info
+{
+    public int type  = -1;
+}
+
 public class Weapon_info
 {
     public Weapon_Content enum_weapon { get; set; }
@@ -163,7 +168,7 @@ public class Hell_info
 public class Pet_info
 {
     public int int_num { get; set; }
-    public int int_lv{ get; set; }
+    public int int_lv { get; set; }
     public int int_pos { get; set; }
 
 }
@@ -171,7 +176,7 @@ public class Pet_info
 public class Roon_Slot
 {
     public int int_slot = 0;
-    public int int_roon = -1;
+    public Roon_Info int_roon;
     public bool isLock = false;
 }
 
@@ -199,7 +204,7 @@ public class BackEndDataManager : MonoBehaviour
     public Weapon_Data Weapon_Data { get => weapon_Data; }
     public Skill_Data Skill_Data { get => skill_Data; }
     public Content_Data Content_Data { get => content_Data; }
-    public Pet_Data Pet_Data { get => pet_Data;}
+    public Pet_Data Pet_Data { get => pet_Data; }
 
     public BigInteger Int_exp { get => int_exp; }
 
@@ -215,6 +220,7 @@ public class BackEndDataManager : MonoBehaviour
     public List<Dictionary<string, object>> upgrade_dungeon_csv_data;         //던전 정보
     public List<Dictionary<string, object>> hell_dungeon_csv_data;         //던전 정보
     public List<Dictionary<string, object>> pet_csv_data;         //던전 정보
+    public List<Dictionary<string, object>> roon_csv_data;         //던전 정보
 
     public Item_s underground_item_ = new Item_s();         //던전 정보
 
@@ -249,7 +255,7 @@ public class BackEndDataManager : MonoBehaviour
         }
 
         Get_Csv_Data();
-        
+
         StartCoroutine("WebCheck");
     }
 
@@ -271,6 +277,7 @@ public class BackEndDataManager : MonoBehaviour
         hell_dungeon_csv_data = CSVReader.Read("hell_dungeon");
         pet_csv_data = CSVReader.Read("pet");
         ability_csv_data = CSVReader.Read("ability");
+        roon_csv_data = CSVReader.Read("roon");
 
         foreach (var data in skill_csv_data)
         {
@@ -1150,43 +1157,22 @@ public class BackEndDataManager : MonoBehaviour
 
     }
 
-    public void Set_Roon(int type, BigInteger val, Calculate_Type calculate)
+    public void Set_Roon(int type, Calculate_Type calculate)
     {
-        Item_Info item_Info = Weapon_Data.roon_Info.Find(x => x.type.Equals(type));
-
-        if (item_Info == null)
+        Roon_Info item_ = new Roon_Info
         {
-            Item_Info item_ = new Item_Info
-            {
-                type = type,
-                str_val = val.ToString()
-            };
+            type = type,
+        };
 
-            Weapon_Data.roon_Info.Add(item_);
-
-        }
-        else
+        if (Item_Data.roon_Info == null)
         {
-            BigInteger total = BigInteger.Parse(item_Info.str_val);
-
-            Debug.Log(val);
-            switch (calculate)
-            {
-                case Calculate_Type.plus:
-                    total += val;
-                    break;
-                case Calculate_Type.mius:
-                    total -= val;
-                    break;
-                default:
-                    break;
-            }
-
-            item_Info.str_val = total.ToString();
+            Item_Data.roon_Info = new List<Roon_Info>();
 
         }
 
-        Save_Weapon_Data();
+        Item_Data.roon_Info.Add(item_);
+
+        Save_Item_Data();
 
     }
 
@@ -1385,7 +1371,7 @@ public class BackEndDataManager : MonoBehaviour
         int lv = Character_Data.int_character_Lv;
         BigInteger lv_1 = Calculate.Price(500, 5, lv, (int)character_Lv);
 
-        Set_Item(Item_Type.coin, lv_1,Calculate_Type.mius);
+        Set_Item(Item_Type.coin, lv_1, Calculate_Type.mius);
 
         Player_stat.Add_Lv((int)character_Lv);
 

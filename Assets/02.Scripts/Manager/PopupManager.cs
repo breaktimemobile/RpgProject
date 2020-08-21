@@ -15,7 +15,7 @@ public class PopupManager
 
     public static void Close_Popup()
     {
-        Debug.Log(objects.Count);
+        Debug.Log("팝업 클로즈 "+objects.Count);
 
         if (objects.Count >= 1)
         {
@@ -30,7 +30,7 @@ public class PopupManager
 
     public static void Open_Popup(GameObject obj)
     {
-        Debug.Log(objects.Count);
+        Debug.Log("팝업 오픈" + objects.Count);
 
         objects.Push(obj);
         obj.gameObject.SetActive(true);

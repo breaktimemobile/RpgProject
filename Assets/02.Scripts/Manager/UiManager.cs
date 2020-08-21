@@ -342,6 +342,9 @@ public class UiManager : MonoBehaviour
     GameObject Roon_Stat;
     Image img_select_roon;
     Text txt_select_roon_stat;
+    Text txt_select_roon_stat_val;
+
+
     Button btn_roon_release;
     Button btn_roon_mount;
     Button btn_roon_stat_close;
@@ -349,6 +352,22 @@ public class UiManager : MonoBehaviour
     #endregion
 
     #region content_Weapon_Decom
+
+    Button btn_Decom;
+    Image img_weapon_bg_decom;
+    Image img_Weapon_decom;
+    Text txt_Weapon_Grade_decom;
+    Text txt_Weapon_Lv_decom;
+    Text txt_Weapon_Ea_decom;
+
+    Image img_Decom_bg;
+    Image img_Decom;
+    Text txt_Decom_Lv_decom;
+    Text txt_Decom_Ea_decom;
+
+    Button btn_Decom_Mius;
+    Text txt_Decom_val;
+    Button btn_Decom_Plus;
 
     #endregion
 
@@ -520,6 +539,7 @@ public class UiManager : MonoBehaviour
     public GameObject Content_Upgrade_Panel;
     public GameObject Content_Hell_Panel;
     public GameObject Pet_Panel;
+    public GameObject pef_roon;
 
     #endregion
 
@@ -867,9 +887,31 @@ public class UiManager : MonoBehaviour
 
         img_select_roon = Roon_Stat.transform.Find("img_select_roon").GetComponent<Image>();
         txt_select_roon_stat = Roon_Stat.transform.Find("txt_select_roon_stat").GetComponent<Text>();
+        txt_select_roon_stat_val = Roon_Stat.transform.Find("txt_select_roon_stat_val").GetComponent<Text>();
         btn_roon_release = Roon_Stat.transform.Find("btn_roon_release").GetComponent<Button>();
         btn_roon_mount = Roon_Stat.transform.Find("btn_roon_mount").GetComponent<Button>();
         btn_roon_stat_close = Roon_Stat.transform.Find("btn_roon_stat_close").GetComponent<Button>();
+
+        #endregion
+
+        #region content_Weapon_Decom
+
+        btn_Decom = content_Weapon_Decom.transform.Find("btn_Decom").GetComponent<Button>();
+
+        img_weapon_bg_decom = btn_Decom.transform.Find("img_weapon_bg_decom").GetComponent<Image>();
+        img_Weapon_decom = btn_Decom.transform.Find("img_Weapon_decom").GetComponent<Image>();
+        txt_Weapon_Grade_decom = img_weapon_bg_decom.transform.Find("txt_Weapon_Grade_decom").GetComponent<Text>();
+        txt_Weapon_Lv_decom = img_weapon_bg_decom.transform.Find("txt_Weapon_Lv_decom").GetComponent<Text>();
+        txt_Weapon_Ea_decom = img_weapon_bg_decom.transform.Find("txt_Weapon_Ea_decom").GetComponent<Text>();
+
+        img_Decom_bg = content_Weapon_Decom.transform.Find("img_Decom_bg").GetComponent<Image>();
+        img_Decom = img_Decom_bg.transform.Find("img_Decom").GetComponent<Image>();
+        txt_Decom_Lv_decom = img_Decom_bg.transform.Find("txt_Decom_Lv_decom").GetComponent<Text>();
+        txt_Decom_Ea_decom = img_Decom_bg.transform.Find("txt_Decom_Ea_decom").GetComponent<Text>();
+
+        btn_Decom_Mius = content_Weapon_Decom.transform.Find("btn_Decom_Mius").GetComponent<Button>();
+        txt_Decom_val = content_Weapon_Decom.transform.Find("txt_Decom_val").GetComponent<Text>();
+        btn_Decom_Plus = content_Weapon_Decom.transform.Find("btn_Decom_Plus").GetComponent<Button>();
 
         #endregion
 
@@ -1155,13 +1197,20 @@ public class UiManager : MonoBehaviour
 
         #region content_Weapon_roon
 
-        //btn_roon_close = My_Roon.transform.Find("btn_roon_close").GetComponent<Button>();
+        btn_roon_close.onClick.AddListener(() => PopupManager.Close_Popup());
 
-        //btn_roon_release = Roon_Stat.transform.Find("btn_roon_close").GetComponent<Button>();
-        //btn_roon_mount = Roon_Stat.transform.Find("btn_roon_mount").GetComponent<Button>();
-        //btn_roon_stat_close = Roon_Stat.transform.Find("btn_roon_stat_close").GetComponent<Button>();
+        btn_roon_release.onClick.AddListener(() => Roon_Release());
+        btn_roon_mount.onClick.AddListener(() => Roon_Mount());
+        btn_roon_stat_close.onClick.AddListener(() => PopupManager.Close_Popup());
 
         #endregion
+
+
+        //btn_Decom = content_Weapon_Decom.transform.Find("btn_Decom").GetComponent<Button>();
+
+        //btn_Decom_Mius = content_Weapon_Decom.transform.Find("btn_Decom_Mius").GetComponent<Button>();
+        //btn_Decom_Plus = content_Weapon_Decom.transform.Find("btn_Decom_Plus").GetComponent<Button>();
+
 
         #endregion
 
@@ -1330,6 +1379,7 @@ public class UiManager : MonoBehaviour
         Set_Pet_Panel();
 
         Pet_Init();
+        Set_MyRoon();
     }
 
     #region PlayerUI 세팅
@@ -2384,6 +2434,7 @@ public class UiManager : MonoBehaviour
 
     Color[] grade_colors = new Color[] { Color.gray, Color.green, Color.blue, Color.black, Color.red, Color.yellow };
     string[] grade = new string[] { "D", "C", "B", "A", "S", "SS" };
+    int[] grade_decom = new int[] { 100, 80, 60, 50, 30, 15 };
 
     Dictionary<string, object> my_data = new Dictionary<string, object>();
     Dictionary<string, object> next_data = new Dictionary<string, object>();
@@ -2718,7 +2769,7 @@ public class UiManager : MonoBehaviour
                 img_next_Weapon_Mix.sprite = Utill.Get_Sword_Sp(Weapon_.Select_Weapon + 1);
                 break;
             case Weapon_Content.Shield:
- 
+
                 img_my_Weapon_Mix.sprite = Utill.Get_Shield_Sp(Weapon_.Select_Weapon);
                 img_next_Weapon_Mix.sprite = Utill.Get_Shield_Sp(Weapon_.Select_Weapon + 1);
                 break;
@@ -2860,11 +2911,6 @@ public class UiManager : MonoBehaviour
 
     }
 
-    public void SDD_ROON(int TYPE)
-    {
-        BackEndDataManager.instance.Set_Roon(TYPE, 1, Calculate_Type.plus);
-    }
-
     public void Set_Weapon_Roon()
     {
         switch (Weapon_.Weapon_Content)
@@ -2898,10 +2944,10 @@ public class UiManager : MonoBehaviour
             for (int i = 0; i < 6; i++)
             {
 
-                   Roon_Slot roon_Slot = new Roon_Slot
+                Roon_Slot roon_Slot = new Roon_Slot
                 {
                     int_slot = i,
-                    int_roon = -1,
+                    int_roon = new Roon_Info(),
                     isLock = i >= 3
                 };
 
@@ -2914,7 +2960,7 @@ public class UiManager : MonoBehaviour
 
         for (int i = 0; i < mount_roons.Count; i++)
         {
-            mount_roons[i].Set_Item(my_Info.list_roon[i]);
+            mount_roons[i].Set_Item_Slot(my_Info.list_roon[i]);
 
         }
 
@@ -2925,6 +2971,241 @@ public class UiManager : MonoBehaviour
 
     }
 
+    List<Roon> roons = new List<Roon>();
+
+    public void Set_MyRoon()
+    {
+        foreach (var item in roons)
+        {
+            item.gameObject.SetActive(false);
+        }
+
+        for (int i = 0; i < BackEndDataManager.instance.Item_Data.roon_Info.Count; i++)
+        {
+            if (i >= roons.Count)
+            {
+                Roon roon = Instantiate(pef_roon, My_Roon.transform.Find("scroll_roon/Viewport/Content")).GetComponent<Roon>();
+                roons.Add(roon);
+                roon.Set_Item(BackEndDataManager.instance.Item_Data.roon_Info[i]);
+            }
+            else
+            {
+                roons[i].Set_Item(BackEndDataManager.instance.Item_Data.roon_Info[i]);
+                roons[i].gameObject.SetActive(true);
+            }
+
+        }
+
+
+    }
+
+    public void Open_My_Roon()
+    {
+        PopupManager.Open_Popup(My_Roon);
+    }
+
+    public void Open_Roon_Stat(bool isMount)
+    {
+
+        img_select_roon.sprite = Utill.Get_Roon_Sp(Weapon_.roon_Info.type);
+        int ability_Type = (int)BackEndDataManager.instance.roon_csv_data[Weapon_.roon_Info.type]["ability_type_0"];
+        txt_select_roon_stat.text = Ability_.Get_Ability_Nmae(ability_Type);
+        txt_select_roon_stat_val.text = (float)BackEndDataManager.instance.roon_csv_data[Weapon_.roon_Info.type]["ability_val_0"] + Ability_.Ability_Type_Sign(ability_Type);
+
+        btn_roon_mount.gameObject.SetActive(isMount);
+        btn_roon_release.gameObject.SetActive(!isMount && BackEndDataManager.instance.Get_Item(Item_Type.crystal) >= 100);
+
+        PopupManager.Open_Popup(Roon_Stat);
+
+    }
+
+    public void Roon_Mount()
+    {
+
+        my_Info.list_roon[Weapon_.roon_Slot.int_slot].int_roon = Weapon_.roon_Info;
+
+        mount_roons[Weapon_.roon_Slot.int_slot].Set_Item_Slot(my_Info.list_roon[Weapon_.roon_Slot.int_slot]);
+
+        BackEndDataManager.instance.Item_Data.roon_Info.Remove(Weapon_.roon_Info);
+
+        BackEndDataManager.instance.Save_Weapon_Data();
+        BackEndDataManager.instance.Save_Item_Data();
+
+        PopupManager.Close_Popup();
+        PopupManager.Close_Popup();
+
+        Set_MyRoon();
+    }
+
+    public void Roon_Release()
+    {
+        if (BackEndDataManager.instance.Get_Item(Item_Type.crystal) >= 100)
+        {
+            BackEndDataManager.instance.Set_Item(Item_Type.crystal, 100, Calculate_Type.mius);
+
+            Roon_Info _Info = new Roon_Info
+            {
+                type = Weapon_.roon_Slot.int_roon.type
+            };
+
+            Debug.Log("해제 타입 " + _Info.type);
+
+            BackEndDataManager.instance.Item_Data.roon_Info.Add(_Info);
+
+            my_Info.list_roon[Weapon_.roon_Slot.int_slot].int_roon.type = -1;
+
+            mount_roons[Weapon_.roon_Slot.int_slot].Set_Item_Slot(my_Info.list_roon[Weapon_.roon_Slot.int_slot]);
+
+            BackEndDataManager.instance.Save_Weapon_Data();
+            BackEndDataManager.instance.Save_Item_Data();
+
+            PopupManager.Close_Popup();
+            Set_MyRoon();
+        }
+
+    }
+
+    public void Set_Weapon_Decom()
+    {
+        img_Decom.sprite = Utill.Get_Item_Sp(Item_Type.limit_stone);
+
+        switch (Weapon_.Weapon_Content)
+        {
+            case Weapon_Content.Sword:
+
+                img_Weapon_decom.sprite = Utill.Get_Sword_Sp(Weapon_.Select_Weapon);
+                break;
+            case Weapon_Content.Shield:
+
+                img_Weapon_decom.sprite = Utill.Get_Shield_Sp(Weapon_.Select_Weapon);
+                break;
+            case Weapon_Content.Accessory:
+
+                img_Weapon_decom.sprite = Utill.Get_Accessory_Sp(Weapon_.Select_Weapon);
+                break;
+            case Weapon_Content.Costume:
+
+                break;
+            default:
+                break;
+        }
+
+
+        img_weapon_bg_decom.color = grade_colors[Array.FindIndex(grade, i => i == my_data["grade"].ToString())];
+        txt_Weapon_Grade_decom.text = my_data["grade"].ToString();
+        txt_Weapon_Lv_decom.text = string.Format("{0}{1}", "Lv", my_Info == null ? 0 : my_Info.int_lv);
+
+        Weapon_.Decom_Count = my_Info == null ? 0 : my_Info.int_val - 1;
+
+        Set_Weapon_Mix_Val();
+    }
+
+
+    public void Set_Weapon_Decom_Val()
+    {
+
+        int grade_val = grade_decom[Array.FindIndex(grade, i => i == my_data["grade"].ToString())];
+
+        txt_Weapon_Ea_decom.text = string.Format("{0}(-{1})", my_Info == null ? 0 : my_Info.int_val, Weapon_.Decom_Count);
+        txt_Decom_Ea_decom.text = string.Format("{0}(+{1})", next_Info == null ? 0 : 
+            BackEndDataManager.instance.Get_Item(Item_Type.ss), Weapon_.Decom_Count * grade_val);
+
+        txt_Mix_val.text = Weapon_.Mix_Count.ToString();
+
+        txt_Mix_Stone.text = ((int)my_data["mix"] * Weapon_.Mix_Count).ToString();
+
+        btn_Mix.interactable = my_Info != null && my_Info.int_val >= 10
+            && BackEndDataManager.instance.Get_Item((Item_Type)my_data["upgrade_type"]) >= (int)my_data["mix"];
+
+    }
+
+    public void Decom_Plus_Mius(Calculate_Type calculate_Type)
+    {
+        if (my_Info == null)
+            return;
+
+        switch (calculate_Type)
+        {
+            case Calculate_Type.plus:
+                Weapon_.Mix_Count += 1;
+
+                if (Weapon_.Mix_Count > my_Info.int_val / 10)
+                    Weapon_.Mix_Count = my_Info.int_val / 10;
+
+                break;
+            case Calculate_Type.mius:
+                Weapon_.Mix_Count -= 1;
+
+                if (my_Info.int_val / 10 >= 1 && Weapon_.Mix_Count <= 1)
+                    Weapon_.Mix_Count = 1;
+                else if (my_Info.int_val / 10 < 1)
+                    Weapon_.Mix_Count = 0;
+
+                break;
+            default:
+                break;
+        }
+
+
+
+        Set_Weapon_Mix_Val();
+    }
+
+    public void Weapon_Decom()
+    {
+        BackEndDataManager.instance.Set_Item((Item_Type)my_data["upgrade_type"],
+            (int)my_data["mix"] * Weapon_.Mix_Count, Calculate_Type.mius);
+
+        my_Info.int_val -= Weapon_.Mix_Count * 10;
+
+        if (next_Info == null)
+        {
+            Weapon_info weapon_Info = new Weapon_info
+            {
+                int_num = Weapon_.Select_Weapon + 1,
+                enum_weapon = Weapon_.Weapon_Content,
+                int_val = Weapon_.Mix_Count,
+                int_lv = 1,
+                int_upgread = 0,
+                int_limit = 0
+            };
+
+            BackEndDataManager.instance.Weapon_Data.weapon_Info.Add(weapon_Info);
+
+
+        }
+        else
+        {
+            next_Info.int_val = Weapon_.Mix_Count;
+        }
+
+        List<Weapon_Panel> weapon_s = new List<Weapon_Panel>();
+
+        switch (Weapon_.Weapon_Content)
+        {
+            case Weapon_Content.Sword:
+                weapon_s = popup_Sword.GetComponentsInChildren<Weapon_Panel>(true).ToList();
+                break;
+            case Weapon_Content.Shield:
+                weapon_s = popup_Shield.GetComponentsInChildren<Weapon_Panel>(true).ToList();
+                break;
+            case Weapon_Content.Accessory:
+                weapon_s = popup_Accessory.GetComponentsInChildren<Weapon_Panel>(true).ToList();
+                break;
+            case Weapon_Content.Costume:
+                break;
+            default:
+                break;
+        }
+
+        weapon_s.Find(x => x.item_num.Equals(Weapon_.Select_Weapon + 1)).Set_Weapon_Lv();
+
+        BackEndDataManager.instance.Save_Weapon_Data();
+
+        Set_Weapon_Mix();
+
+    }
+   
     #endregion
 
 }

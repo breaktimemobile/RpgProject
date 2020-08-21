@@ -704,6 +704,12 @@ public class Weapon_
 
     public static int Mix_Count = 0;
 
+    public static int Decom_Count = 0;
+
+    public static Roon_Slot roon_Slot;
+
+    public static Roon_Info roon_Info;
+    
 }
 
 public class Utill
@@ -732,6 +738,12 @@ public class Utill
     public static Sprite Get_Accessory_Sp(int num)
     {
         return Resources.Load<Sprite>("Accessory/Accessory_" + num.ToString());
+    }
+
+
+    public static Sprite Get_Roon_Sp(int num)
+    {
+        return Resources.Load<Sprite>("Roon/roon_" + num.ToString());
     }
 }
 
