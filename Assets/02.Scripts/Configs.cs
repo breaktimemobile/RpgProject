@@ -15,7 +15,8 @@ public enum Data_Type
     weapon_info,
     skill_info,
     content_info,
-    pet_info
+    pet_info,
+    job_info
 }
 
 public enum Character_Lv
@@ -123,18 +124,6 @@ public enum Item_Type
     weapon_limit_stone_a,
     weapon_limit_stone_s,
     weapon_limit_stone_ss,
-    weapon_shield_stone_d,
-    weapon_shield_stone_c,
-    weapon_shield_stone_b,
-    weapon_shield_stone_a,
-    weapon_shield_stone_s,
-    weapon_shield_stone_ss,
-    weapon_accessory_stone_d,
-    weapon_accessory_stone_c,
-    weapon_accessory_stone_b,
-    weapon_accessory_stone_a,
-    weapon_accessory_stone_s,
-    weapon_accessory_stone_ss,
     item_gacha_ticket_1,
     transform_gacha_ticket_1,
     pet_gacha_ticket_1,
@@ -297,13 +286,12 @@ public class Calculate
         for (int i = lv; i < lv + end_lv; i++)
         {
             total += base_price + m_percent * i;
-            Debug.Log(total);
         }
 
         return total;
     }
 
-    public static BigInteger Price(int base_price, int percent, int lv, int end_lv)
+    public static BigInteger Price(BigInteger base_price, int percent, int lv, int end_lv)
     {
         BigInteger total = 0;
 
@@ -315,7 +303,7 @@ public class Calculate
         return total;
     }
 
-    public static BigInteger Reward(int base_price, int percent, int lv)
+    public static BigInteger Reward(BigInteger base_price, int percent, int lv)
     {
         BigInteger total = base_price;
         BigInteger pow = 1;
@@ -745,5 +733,11 @@ public class Utill
     {
         return Resources.Load<Sprite>("Roon/roon_" + num.ToString());
     }
+
+    public static Sprite Get_Job_Sp(int num)
+    {
+        return Resources.Load<Sprite>("Job/job_" + num.ToString());
+    }
+
 }
 

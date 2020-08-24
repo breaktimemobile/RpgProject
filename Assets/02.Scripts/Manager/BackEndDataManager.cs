@@ -119,6 +119,15 @@ public class Pet_Data
 
 }
 
+[DynamoDBTable("job_info")]
+public class Job_Data
+{
+    [DynamoDBHashKey] // Hash key.
+    public string id { get; set; }
+    [DynamoDBProperty("job_info")]
+    public List<Job_info> job_info { get; set; }
+
+}
 public class Item_Info
 {
     public int type { get; set; }
@@ -180,6 +189,13 @@ public class Roon_Slot
     public bool isLock = false;
 }
 
+public class Job_info
+{
+    public int int_num { get; set; }
+    public int int_lv { get; set; }
+    public string str_time { get; set; }
+}
+
 public class BackEndDataManager : MonoBehaviour
 {
     public static BackEndDataManager instance = null;
@@ -192,6 +208,7 @@ public class BackEndDataManager : MonoBehaviour
     Skill_Data skill_Data = new Skill_Data();
     Content_Data content_Data = new Content_Data();
     Pet_Data pet_Data = new Pet_Data();
+    Job_Data job_Data = new Job_Data();
 
     DynamoDBContext context;
     AmazonDynamoDBClient DBclient;
@@ -205,6 +222,7 @@ public class BackEndDataManager : MonoBehaviour
     public Skill_Data Skill_Data { get => skill_Data; }
     public Content_Data Content_Data { get => content_Data; }
     public Pet_Data Pet_Data { get => pet_Data; }
+    public Job_Data Job_Data { get => job_Data; }
 
     public BigInteger Int_exp { get => int_exp; }
 
@@ -221,6 +239,7 @@ public class BackEndDataManager : MonoBehaviour
     public List<Dictionary<string, object>> hell_dungeon_csv_data;         //던전 정보
     public List<Dictionary<string, object>> pet_csv_data;         //던전 정보
     public List<Dictionary<string, object>> roon_csv_data;         //던전 정보
+    public List<Dictionary<string, object>> job_csv_data;         //던전 정보
 
     public Item_s underground_item_ = new Item_s();         //던전 정보
 
@@ -278,6 +297,7 @@ public class BackEndDataManager : MonoBehaviour
         pet_csv_data = CSVReader.Read("pet");
         ability_csv_data = CSVReader.Read("ability");
         roon_csv_data = CSVReader.Read("roon");
+        job_csv_data = CSVReader.Read("job");
 
         foreach (var data in skill_csv_data)
         {
@@ -411,6 +431,8 @@ public class BackEndDataManager : MonoBehaviour
         Check_Skill_Data();
         Check_Content_Data();
         Check_Pet_Data();
+        Check_Job_Data();
+
     }
 
     #region Check_Data
@@ -717,6 +739,48 @@ public class BackEndDataManager : MonoBehaviour
         });
     }
 
+    public void Check_Job_Data()
+    {
+        ScanRequest request = new ScanRequest()
+        {
+            TableName = "job_info"
+        };
+
+        DBclient.ScanAsync(request, (result) =>
+        {
+
+            Dictionary<string, AttributeValue> t =
+              result.Response.Items.Find(x => x["id"].S.Equals(BackEndAuthManager.Get_UserId()));
+
+            Debug.Log(t == null ? "job 없음" : "job 있음");
+
+            if (t == null)
+            {
+                job_Data = new Job_Data
+                {
+                    id = BackEndAuthManager.Get_UserId(),
+                    job_info = new List<Job_info>()
+                };
+
+                Job_info job_ = new Job_info()
+                {
+                    int_lv = 1,
+                    int_num = 0,
+                    str_time = ""
+                };
+
+                job_Data.job_info.Add(job_);
+
+                Save_Job_Data();
+            }
+            else
+            {
+                Get_Job_Data();
+            }
+
+        });
+    }
+
     #endregion
 
     #region Get_Data
@@ -904,6 +968,29 @@ public class BackEndDataManager : MonoBehaviour
         }, null);
     }
 
+    public void Get_Job_Data() //DB에서 캐릭터 정보 받기
+    {
+
+
+        Debug.Log("Get_Job_Data");
+
+        context.LoadAsync(BackEndAuthManager.Get_UserId(), (AmazonDynamoDBResult<Job_Data> result) =>
+        {
+            // id가 abcd인 캐릭터 정보를 DB에서 받아옴
+            if (result.Exception != null)
+            {
+                Debug.Log(result.Exception);
+                return;
+            }
+
+            job_Data = result.Result;
+
+            Sucess_Data(Data_Type.job_info);
+
+
+        }, null);
+    }
+
     #endregion
 
     #region Save_Data
@@ -1027,6 +1114,23 @@ public class BackEndDataManager : MonoBehaviour
         });
     }
 
+
+    public void Save_Job_Data() //DB에서 캐릭터 정보 받기
+    {
+        context.SaveAsync(job_Data, (result) =>
+        {
+            if (result.Exception == null)
+            {
+                Debug.Log("job_Data Save");
+                Sucess_Data(Data_Type.job_info);
+
+            }
+            else
+                Debug.Log(result.Exception);
+        });
+    }
+
+    
 
     #endregion
 
@@ -1335,30 +1439,7 @@ public class BackEndDataManager : MonoBehaviour
                 break;
             case Item_Type.weapon_limit_stone_ss:
                 break;
-            case Item_Type.weapon_shield_stone_d:
-                break;
-            case Item_Type.weapon_shield_stone_c:
-                break;
-            case Item_Type.weapon_shield_stone_b:
-                break;
-            case Item_Type.weapon_shield_stone_a:
-                break;
-            case Item_Type.weapon_shield_stone_s:
-                break;
-            case Item_Type.weapon_shield_stone_ss:
-                break;
-            case Item_Type.weapon_accessory_stone_d:
-                break;
-            case Item_Type.weapon_accessory_stone_c:
-                break;
-            case Item_Type.weapon_accessory_stone_b:
-                break;
-            case Item_Type.weapon_accessory_stone_a:
-                break;
-            case Item_Type.weapon_accessory_stone_s:
-                break;
-            case Item_Type.weapon_accessory_stone_ss:
-                break;
+           
             default:
                 break;
         }

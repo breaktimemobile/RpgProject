@@ -78,8 +78,6 @@ public class UiManager : MonoBehaviour
 
     #endregion
 
-
-
     #region Content_Content
 
     #endregion
@@ -362,7 +360,6 @@ public class UiManager : MonoBehaviour
 
     Image img_Decom_bg;
     Image img_Decom;
-    Text txt_Decom_Lv_decom;
     Text txt_Decom_Ea_decom;
 
     Button btn_Decom_Mius;
@@ -526,6 +523,17 @@ public class UiManager : MonoBehaviour
 
     #endregion
 
+    #region Content_Job
+
+    Transform scroll_Job;
+
+    List<Job_Panel> job_Panels = new List<Job_Panel>();
+
+    Button btn_Job_Lv1;
+    Button btn_Job_Lv10;
+    Button btn_Job_Lv100;
+
+    #endregion
 
     #region Prefabs
 
@@ -540,6 +548,7 @@ public class UiManager : MonoBehaviour
     public GameObject Content_Hell_Panel;
     public GameObject Pet_Panel;
     public GameObject pef_roon;
+    public GameObject Job_Panel;
 
     #endregion
 
@@ -898,15 +907,14 @@ public class UiManager : MonoBehaviour
 
         btn_Decom = content_Weapon_Decom.transform.Find("btn_Decom").GetComponent<Button>();
 
-        img_weapon_bg_decom = btn_Decom.transform.Find("img_weapon_bg_decom").GetComponent<Image>();
-        img_Weapon_decom = btn_Decom.transform.Find("img_Weapon_decom").GetComponent<Image>();
+        img_weapon_bg_decom = content_Weapon_Decom.transform.Find("img_weapon_bg_decom").GetComponent<Image>();
+        img_Weapon_decom = img_weapon_bg_decom.transform.Find("img_Weapon_decom").GetComponent<Image>();
         txt_Weapon_Grade_decom = img_weapon_bg_decom.transform.Find("txt_Weapon_Grade_decom").GetComponent<Text>();
         txt_Weapon_Lv_decom = img_weapon_bg_decom.transform.Find("txt_Weapon_Lv_decom").GetComponent<Text>();
         txt_Weapon_Ea_decom = img_weapon_bg_decom.transform.Find("txt_Weapon_Ea_decom").GetComponent<Text>();
 
         img_Decom_bg = content_Weapon_Decom.transform.Find("img_Decom_bg").GetComponent<Image>();
         img_Decom = img_Decom_bg.transform.Find("img_Decom").GetComponent<Image>();
-        txt_Decom_Lv_decom = img_Decom_bg.transform.Find("txt_Decom_Lv_decom").GetComponent<Text>();
         txt_Decom_Ea_decom = img_Decom_bg.transform.Find("txt_Decom_Ea_decom").GetComponent<Text>();
 
         btn_Decom_Mius = content_Weapon_Decom.transform.Find("btn_Decom_Mius").GetComponent<Button>();
@@ -1089,6 +1097,17 @@ public class UiManager : MonoBehaviour
 
 
         #endregion
+
+        #region Content_Job
+
+        scroll_Job = Content_Job.transform.Find("scroll_Job");
+
+
+       btn_Job_Lv1 = Content_Job.transform.Find("btn_Job_Lv1").GetComponent<Button>();
+       btn_Job_Lv10 = Content_Job.transform.Find("btn_Job_Lv10").GetComponent<Button>();
+        btn_Job_Lv100 = Content_Job.transform.Find("btn_Job_Lv100").GetComponent<Button>();
+
+        #endregion
     }
 
     private void AddListener()
@@ -1206,10 +1225,10 @@ public class UiManager : MonoBehaviour
         #endregion
 
 
-        //btn_Decom = content_Weapon_Decom.transform.Find("btn_Decom").GetComponent<Button>();
+        btn_Decom.onClick.AddListener(() => Weapon_Decom());
 
-        //btn_Decom_Mius = content_Weapon_Decom.transform.Find("btn_Decom_Mius").GetComponent<Button>();
-        //btn_Decom_Plus = content_Weapon_Decom.transform.Find("btn_Decom_Plus").GetComponent<Button>();
+        btn_Decom_Mius.onClick.AddListener(() => Decom_Plus_Mius(Calculate_Type.mius));
+        btn_Decom_Plus.onClick.AddListener(() => Decom_Plus_Mius(Calculate_Type.plus));
 
 
         #endregion
@@ -1264,6 +1283,14 @@ public class UiManager : MonoBehaviour
         btn_pet_buy.onClick.AddListener(() => Buy_Pet(Character_Lv.lv_1));
         btn_pet_spawn.onClick.AddListener(() => Set_Pet_Btn());
         //btn_pet_limit = PetPopup.transform.Find("btn_pet_limit").GetComponent<Button>();
+
+        #endregion
+
+        #region Content_Job
+
+        btn_Job_Lv1.onClick.AddListener(() => Change_Job_Lv(Character_Lv.lv_1));
+        btn_Job_Lv10.onClick.AddListener(() => Change_Job_Lv(Character_Lv.lv_10));
+        btn_Job_Lv100.onClick.AddListener(() => Change_Job_Lv(Character_Lv.lv_100));
 
         #endregion
     }
@@ -1377,6 +1404,7 @@ public class UiManager : MonoBehaviour
         Set_Upgrade_Stat();
         Set_Hell_Panel();
         Set_Pet_Panel();
+        Set_Job_Panel();
 
         Pet_Init();
         Set_MyRoon();
@@ -1612,6 +1640,7 @@ public class UiManager : MonoBehaviour
                 Set_Weapon_Roon();
                 break;
             case Weapon_Popup.decom:
+                Set_Weapon_Decom();
                 break;
             default:
                 break;
@@ -3067,7 +3096,6 @@ public class UiManager : MonoBehaviour
 
     public void Set_Weapon_Decom()
     {
-        img_Decom.sprite = Utill.Get_Item_Sp(Item_Type.limit_stone);
 
         switch (Weapon_.Weapon_Content)
         {
@@ -3090,32 +3118,32 @@ public class UiManager : MonoBehaviour
                 break;
         }
 
+        int int_grade = Array.FindIndex(grade, i => i == my_data["grade"].ToString());
+        img_Decom.sprite = Utill.Get_Item_Sp(Item_Type.weapon_limit_stone_d + int_grade);
 
-        img_weapon_bg_decom.color = grade_colors[Array.FindIndex(grade, i => i == my_data["grade"].ToString())];
+        img_weapon_bg_decom.color = grade_colors[int_grade];
         txt_Weapon_Grade_decom.text = my_data["grade"].ToString();
         txt_Weapon_Lv_decom.text = string.Format("{0}{1}", "Lv", my_Info == null ? 0 : my_Info.int_lv);
 
-        Weapon_.Decom_Count = my_Info == null ? 0 : my_Info.int_val - 1;
+        Weapon_.Decom_Count = my_Info == null ? 0 : my_Info.int_val >= 2 ? my_Info.int_val - 1 : 0 ;
 
-        Set_Weapon_Mix_Val();
+        Set_Weapon_Decom_Val();
     }
 
 
     public void Set_Weapon_Decom_Val()
     {
+        int int_grade = Array.FindIndex(grade, i => i == my_data["grade"].ToString());
 
-        int grade_val = grade_decom[Array.FindIndex(grade, i => i == my_data["grade"].ToString())];
+        int grade_val = grade_decom[int_grade];
 
         txt_Weapon_Ea_decom.text = string.Format("{0}(-{1})", my_Info == null ? 0 : my_Info.int_val, Weapon_.Decom_Count);
-        txt_Decom_Ea_decom.text = string.Format("{0}(+{1})", next_Info == null ? 0 : 
-            BackEndDataManager.instance.Get_Item(Item_Type.ss), Weapon_.Decom_Count * grade_val);
+        txt_Decom_Ea_decom.text = string.Format("{0}(+{1})", 
+            BackEndDataManager.instance.Get_Item(Item_Type.weapon_limit_stone_d + int_grade), Weapon_.Decom_Count * grade_val);
 
-        txt_Mix_val.text = Weapon_.Mix_Count.ToString();
+        txt_Decom_val.text = Weapon_.Decom_Count.ToString();
 
-        txt_Mix_Stone.text = ((int)my_data["mix"] * Weapon_.Mix_Count).ToString();
-
-        btn_Mix.interactable = my_Info != null && my_Info.int_val >= 10
-            && BackEndDataManager.instance.Get_Item((Item_Type)my_data["upgrade_type"]) >= (int)my_data["mix"];
+        btn_Decom.interactable = my_Info != null && my_Info.int_val >= 2;
 
     }
 
@@ -3124,22 +3152,26 @@ public class UiManager : MonoBehaviour
         if (my_Info == null)
             return;
 
+        Debug.Log(calculate_Type);
+
         switch (calculate_Type)
         {
             case Calculate_Type.plus:
-                Weapon_.Mix_Count += 1;
+                Weapon_.Decom_Count += 1;
 
-                if (Weapon_.Mix_Count > my_Info.int_val / 10)
-                    Weapon_.Mix_Count = my_Info.int_val / 10;
+                if (my_Info.int_val >= 2 && Weapon_.Decom_Count > my_Info.int_val - 1)
+                    Weapon_.Decom_Count = my_Info.int_val - 1;
+                else if (my_Info.int_val < 2)
+                    Weapon_.Decom_Count = 0;
 
                 break;
             case Calculate_Type.mius:
-                Weapon_.Mix_Count -= 1;
+                Weapon_.Decom_Count -= 1;
 
-                if (my_Info.int_val / 10 >= 1 && Weapon_.Mix_Count <= 1)
-                    Weapon_.Mix_Count = 1;
-                else if (my_Info.int_val / 10 < 1)
-                    Weapon_.Mix_Count = 0;
+                if (my_Info.int_val >= 2 && Weapon_.Decom_Count < 1)
+                    Weapon_.Decom_Count = 1;
+                else if(my_Info.int_val < 2)
+                    Weapon_.Decom_Count = 0;
 
                 break;
             default:
@@ -3148,36 +3180,20 @@ public class UiManager : MonoBehaviour
 
 
 
-        Set_Weapon_Mix_Val();
+        Set_Weapon_Decom_Val();
     }
 
     public void Weapon_Decom()
     {
-        BackEndDataManager.instance.Set_Item((Item_Type)my_data["upgrade_type"],
-            (int)my_data["mix"] * Weapon_.Mix_Count, Calculate_Type.mius);
+        int int_grade = Array.FindIndex(grade, i => i == my_data["grade"].ToString());
 
-        my_Info.int_val -= Weapon_.Mix_Count * 10;
-
-        if (next_Info == null)
-        {
-            Weapon_info weapon_Info = new Weapon_info
-            {
-                int_num = Weapon_.Select_Weapon + 1,
-                enum_weapon = Weapon_.Weapon_Content,
-                int_val = Weapon_.Mix_Count,
-                int_lv = 1,
-                int_upgread = 0,
-                int_limit = 0
-            };
-
-            BackEndDataManager.instance.Weapon_Data.weapon_Info.Add(weapon_Info);
+        int grade_val = grade_decom[int_grade];
 
 
-        }
-        else
-        {
-            next_Info.int_val = Weapon_.Mix_Count;
-        }
+        BackEndDataManager.instance.Set_Item(Item_Type.weapon_limit_stone_d + int_grade,
+                    Weapon_.Decom_Count * grade_val, Calculate_Type.plus);
+
+        my_Info.int_val -= Weapon_.Decom_Count;
 
         List<Weapon_Panel> weapon_s = new List<Weapon_Panel>();
 
@@ -3198,14 +3214,37 @@ public class UiManager : MonoBehaviour
                 break;
         }
 
-        weapon_s.Find(x => x.item_num.Equals(Weapon_.Select_Weapon + 1)).Set_Weapon_Lv();
+        weapon_s.Find(x => x.item_num.Equals(Weapon_.Select_Weapon)).Set_Weapon_Val();
 
         BackEndDataManager.instance.Save_Weapon_Data();
 
-        Set_Weapon_Mix();
+        Set_Weapon_Decom();
 
     }
-   
+
+    #endregion
+
+    #region Job
+
+    public void Set_Job_Panel()
+    {
+        foreach (var item in BackEndDataManager.instance.job_csv_data)
+        {
+            Job_Panel job = Instantiate(Job_Panel, scroll_Job.transform
+          .Find("Viewport/Content")).GetComponent<Job_Panel>();
+
+            job.Find_obj(item);
+            job_Panels.Add(job);
+        }
+    }
+
+    public void Change_Job_Lv(Character_Lv _Lv)
+    {
+        foreach (var item in job_Panels)
+        {
+            item.Set_Item_Upgrade(_Lv);
+        }
+    }
     #endregion
 
 }
