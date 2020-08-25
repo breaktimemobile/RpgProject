@@ -38,7 +38,7 @@ public class UiManager : MonoBehaviour
     private GameObject Content_Pet;
     private GameObject Content_Weapon;
     private GameObject Content_Job;
-    private GameObject Content_Relics;
+    private GameObject Content_Totem;
     private GameObject Content_Shop;
 
     #region obj_Top
@@ -535,6 +535,18 @@ public class UiManager : MonoBehaviour
 
     #endregion
 
+    #region Content_Totem
+
+    Transform scroll_Totem;
+
+    List<Totem_Panel> totem_Panels = new List<Totem_Panel>();
+
+    Button btn_Totem_Lv1;
+    Button btn_Totem_Lv10;
+    Button btn_Totem_Lv100;
+
+    #endregion
+
     #region Prefabs
 
     public GameObject txt_Damege;
@@ -549,6 +561,7 @@ public class UiManager : MonoBehaviour
     public GameObject Pet_Panel;
     public GameObject pef_roon;
     public GameObject Job_Panel;
+    public GameObject totem_Panel;
 
     #endregion
 
@@ -643,7 +656,7 @@ public class UiManager : MonoBehaviour
         Content_Pet = obj_Content.transform.Find("Content_Pet").gameObject;
         Content_Weapon = obj_Content.transform.Find("Content_Weapon").gameObject;
         Content_Job = obj_Content.transform.Find("Content_Job").gameObject;
-        Content_Relics = obj_Content.transform.Find("Content_Relics").gameObject;
+        Content_Totem = obj_Content.transform.Find("Content_Totem").gameObject;
         Content_Shop = obj_Content.transform.Find("Content_Shop").gameObject;
 
         #endregion
@@ -1108,6 +1121,17 @@ public class UiManager : MonoBehaviour
         btn_Job_Lv100 = Content_Job.transform.Find("btn_Job_Lv100").GetComponent<Button>();
 
         #endregion
+
+
+        #region Content_Totem
+
+        scroll_Totem = Content_Totem.transform.Find("scroll_Totem");
+
+        btn_Totem_Lv1 = Content_Totem.transform.Find("btn_Totem_Lv1").GetComponent<Button>();
+        btn_Totem_Lv10 = Content_Totem.transform.Find("btn_Totem_Lv10").GetComponent<Button>();
+        btn_Totem_Lv100 = Content_Totem.transform.Find("btn_Totem_Lv100").GetComponent<Button>();
+
+        #endregion
     }
 
     private void AddListener()
@@ -1146,7 +1170,7 @@ public class UiManager : MonoBehaviour
         btn_Icon_Pet.onClick.AddListener(() => Change_Icon_Content(Icon_Content.Pet));
         btn_Icon_Weapon.onClick.AddListener(() => Change_Icon_Content(Icon_Content.Weapon));
         btn_Icon_Job.onClick.AddListener(() => Change_Icon_Content(Icon_Content.Job));
-        btn_Icon_Relics.onClick.AddListener(() => Change_Icon_Content(Icon_Content.Relics));
+        btn_Icon_Relics.onClick.AddListener(() => Change_Icon_Content(Icon_Content.Totem));
         btn_Icon_Shop.onClick.AddListener(() => Change_Icon_Content(Icon_Content.Shop));
 
         btn_Invantory_Close.onClick.AddListener(() => PopupManager.Close_Popup());
@@ -1405,6 +1429,7 @@ public class UiManager : MonoBehaviour
         Set_Hell_Panel();
         Set_Pet_Panel();
         Set_Job_Panel();
+        Set_Totem_Panel();
 
         Pet_Init();
         Set_MyRoon();
@@ -1591,15 +1616,18 @@ public class UiManager : MonoBehaviour
     #endregion
 
     #region Popup 
+    Icon_Content icon_Content = Icon_Content.Character;
 
     public void Change_Icon_Content(Icon_Content popup)
     {
+        icon_Content = popup;
+
         Content_Content.SetActive(popup.Equals(Icon_Content.Content));
         Content_Character.SetActive(popup.Equals(Icon_Content.Character));
         Content_Pet.SetActive(popup.Equals(Icon_Content.Pet));
         Content_Weapon.SetActive(popup.Equals(Icon_Content.Weapon));
         Content_Job.SetActive(popup.Equals(Icon_Content.Job));
-        Content_Relics.SetActive(popup.Equals(Icon_Content.Relics));
+        Content_Totem.SetActive(popup.Equals(Icon_Content.Totem));
         Content_Shop.SetActive(popup.Equals(Icon_Content.Shop));
 
     }
@@ -3236,15 +3264,92 @@ public class UiManager : MonoBehaviour
             job.Find_obj(item);
             job_Panels.Add(job);
         }
+
+        Job_.Job_Lv = Character_Lv.lv_1;
+
+        StartCoroutine("Check_Job");
     }
 
     public void Change_Job_Lv(Character_Lv _Lv)
     {
+        Job_.Job_Lv = _Lv;
+
         foreach (var item in job_Panels)
         {
             item.Set_Item_Upgrade(_Lv);
         }
     }
+
+    public void Check_Btn()
+    {
+        if (icon_Content.Equals(Icon_Content.Job))
+        {
+            foreach (var item in job_Panels)
+            {
+                item.Set_Btn();
+            }
+        }
+
+    }
+
+
+    IEnumerator Check_Job()
+    {
+        while (true)
+        {
+            foreach (var job_ in BackEndDataManager.instance.Job_Data.job_info)
+            {
+                Dictionary<string, object> data = BackEndDataManager.instance.job_csv_data[job_.int_num];
+
+                int job_time = (int)data["job_time"];
+
+                if (job_.str_time == "")
+                {
+                    job_.str_time = DateTime.Now.AddSeconds(job_time + 1).ToString();
+                    BackEndDataManager.instance.Save_Job_Data();
+                }
+
+                DateTime GiftTime = DateTime.Parse(job_.str_time);
+
+                TimeSpan LateTime = GiftTime - DateTime.Now;
+
+                if (LateTime.TotalSeconds < 1)
+                {
+                    job_.str_time = DateTime.Now.AddSeconds(job_time + 1).ToString();
+                    BackEndDataManager.instance.Save_Job_Data();
+
+                    GiftTime = DateTime.Parse(job_.str_time);
+
+                    double reweard_val = (LateTime.TotalSeconds /job_time);
+
+                    BackEndDataManager.instance.Set_Item((Item_Type)data["reward_0"], Job_.Get_Reward(job_.int_num) * (int)(Math.Abs(reweard_val) + 1), Calculate_Type.plus);
+
+                }
+            }
+
+            yield return new WaitForSeconds(0.2f);
+
+        }
+    }
+
+
+    #endregion
+
+    #region Totem
+
+    public void Set_Totem_Panel()
+    {
+        foreach (var item in BackEndDataManager.instance.totem_csv_data)
+        {
+            Totem_Panel Totem = Instantiate(totem_Panel, scroll_Totem.transform
+          .Find("Viewport/Content")).GetComponent<Totem_Panel>();
+
+            Totem.Find_obj(item);
+            totem_Panels.Add(Totem);
+        }
+
+    }
+
     #endregion
 
 }

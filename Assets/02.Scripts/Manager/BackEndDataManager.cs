@@ -240,6 +240,7 @@ public class BackEndDataManager : MonoBehaviour
     public List<Dictionary<string, object>> pet_csv_data;         //던전 정보
     public List<Dictionary<string, object>> roon_csv_data;         //던전 정보
     public List<Dictionary<string, object>> job_csv_data;         //던전 정보
+    public List<Dictionary<string, object>> totem_csv_data;         //던전 정보
 
     public Item_s underground_item_ = new Item_s();         //던전 정보
 
@@ -298,7 +299,7 @@ public class BackEndDataManager : MonoBehaviour
         ability_csv_data = CSVReader.Read("ability");
         roon_csv_data = CSVReader.Read("roon");
         job_csv_data = CSVReader.Read("job");
-
+        totem_csv_data = CSVReader.Read("totem");
         foreach (var data in skill_csv_data)
         {
             Skill skill = new Skill
@@ -1323,8 +1324,10 @@ public class BackEndDataManager : MonoBehaviour
                 UiManager.instance.Set_Txt_Crystal();
                 break;
             case Item_Type.coin:
+
                 UiManager.instance.Set_Txt_Coin();
                 UiManager.instance.Set_Buy_Lv();
+                UiManager.instance.Check_Btn();
 
                 break;
             case Item_Type.upgrade_stone:

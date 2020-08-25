@@ -65,7 +65,7 @@ public enum Icon_Content
     Pet,
     Weapon,
     Job,
-    Relics,
+    Totem,
     Shop
 
 }
@@ -297,7 +297,8 @@ public class Calculate
 
         for (int i = lv; i < lv + end_lv; i++)
         {
-            total += base_price + ((base_price * percent / 100) * i);
+            total += base_price + (base_price * percent / 100) * i;
+           // Debug.Log(base_price * percent / 100 + " " +total);
         }
 
         return total;
@@ -698,6 +699,109 @@ public class Weapon_
 
     public static Roon_Info roon_Info;
     
+}
+
+public class Job_
+{
+    public static Character_Lv Job_Lv = Character_Lv.lv_1;
+
+    public static string Get_Time(int num)
+    {
+        Dictionary<string, object> data = BackEndDataManager.instance.job_csv_data[num];
+
+        int d_time = (int)data["job_time"];
+
+        return string.Format("{0:00}:{1:00}:{2:00}"
+            , d_time / 3600, (d_time % 3600) / 60, (d_time % 3600) % 60);
+
+    }
+
+    public static BigInteger Get_Reward(int num)
+    {
+        Dictionary<string, object> data = BackEndDataManager.instance.job_csv_data[num];
+
+        Job_info job_ = BackEndDataManager.instance.Job_Data.job_info.Find(x => x.int_num.Equals(num));
+
+
+        if (job_ != null)
+        {
+            BigInteger big = BigInteger.Parse(data["reward_val_0"].ToString(), System.Globalization.NumberStyles.Float);
+
+            float percnet = (float)data["reward_add"] * 100;
+
+            BigInteger total = big;
+
+            for (int i = 0; i < job_.int_lv - 1; i++)
+            {
+                BigInteger add = (total * (int)percnet / 100);
+                total = total + add;
+
+            }
+
+            return total;
+
+        }
+        else
+        {
+            return 0;
+
+        }
+
+
+    }
+
+    public static BigInteger Get_Add_Reward(int num)
+    {
+        Dictionary<string, object> data = BackEndDataManager.instance.job_csv_data[num];
+
+        Job_info job_ = BackEndDataManager.instance.Job_Data.job_info.Find(x => x.int_num.Equals((int)data["num"]));
+
+        BigInteger big = BigInteger.Parse(data["reward_val_0"].ToString(), System.Globalization.NumberStyles.Float);
+
+        float percnet = (float)data["reward_add"] * 100;
+
+        BigInteger total = Get_Reward(num);
+
+        BigInteger add = (total * (int)percnet / 100);
+        Debug.Log("add " + total +"  "+(int)percnet);
+
+        if (job_ != null)
+        {
+            for (int i = 0; i < (int)Job_Lv - 1; i++)
+            {
+                total = total + (total * (int)percnet / 100);
+                add += (total * (int)percnet / 100);
+
+            }
+
+            Debug.Log("total "+add);
+
+            return add;
+
+        }
+        else
+        {
+            return big;
+
+        }
+
+
+    }
+
+    public static BigInteger Get_Price(int num)
+    {
+        Dictionary<string, object> data = BackEndDataManager.instance.job_csv_data[num];
+
+        Job_info job_ = BackEndDataManager.instance.Job_Data.job_info.Find(x => x.int_num.Equals(num));
+
+        BigInteger price = BigInteger.Parse(data["price_val"].ToString(), System.Globalization.NumberStyles.Float);
+
+        float percnet = (float)data["price_percent"] * 100;
+
+        BigInteger total = job_ == null ? price : Calculate.Price(price, (int)percnet, job_.int_lv - 1, (int)Job_Lv);
+
+        return total;
+    }
 }
 
 public class Utill
