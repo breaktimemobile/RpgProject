@@ -42,7 +42,7 @@ public class Skill_Panel : MonoBehaviour
 
         img_Skill_Upgrade.sprite = Utill.Get_Item_Sp((Item_Type)skill.price_type);
 
-        img_Skill.sprite = Resources.Load<Sprite>("Skill/S_skill_" + skill.ability_type);
+        img_Skill.sprite = Utill.Get_Skill_Sp(skill.ability_type);
         txt_Skill_Name.text = skill.name;
         
         obj_Lock.SetActive(false);
@@ -135,6 +135,25 @@ public class Skill_Panel : MonoBehaviour
             Player_stat.Set_Player_Stat((Ability_Type)skill.ability_type);
             BackEndDataManager.instance.Save_Skill_Data();
             Set_Sub_Txt();
+
+            UiManager.instance.Check_Skill();
+
+            switch (skill.num)
+            {
+                case 0:
+                    PlayManager.instance.Start_Skill_0();
+                    break;
+                case 1:
+                    PlayManager.instance.Start_Skill_1();
+
+                    break;
+                case 2:
+                    PlayManager.instance.Start_Skill_2();
+
+                    break;
+                default:
+                    break;
+            }
 
         }
 

@@ -20,7 +20,9 @@ public class Player_stat
     public static float int_Top_Scroll_Speed;
     public static float int_Btm_Scroll_Speed;
 
-    public static bool Use_skill = false;
+    public static bool Use_skill_0 = false; //반격 공격력
+    public static bool Use_skill_1 = false; //맹공 공속
+    public static bool Use_skill_2 = false; //질주 이속
 
     public static void Set_Player_Stat()
     {
@@ -30,7 +32,7 @@ public class Player_stat
 
         int_Lv = BackEndDataManager.instance.Character_Data.int_character_Lv + (int)Skill_s.Get_Skill_Val(Ability_Type.add_level);
 
-        float skill_atk = Use_skill ? Skill_s.Get_Skill_Val(Ability_Type.skill_atk) : 0;
+        float skill_atk = Use_skill_0 ? Skill_s.Get_Skill_Val(Ability_Type.skill_atk) : 0;
 
         int_Base_Atk = 100 + (100 / 20) * (int_Lv - 1);
         BigInteger int_Upgrade = int_Base_Atk * (BackEndDataManager.instance.Character_Data.Int_Upgrade_Lv * 5) / 100;
@@ -39,14 +41,14 @@ public class Player_stat
         int_Hp = 2000 + (2000 / 20) * (int_Lv - 1);
 
         int_Atk_Speed = 100 + Skill_s.Get_Skill_Val(Ability_Type.add_atk_speed)
-            + (Use_skill ? (int)Skill_s.Get_Skill_Val(Ability_Type.skill_atk_speed) : 0);
+            + (Use_skill_1 ? (int)Skill_s.Get_Skill_Val(Ability_Type.skill_atk_speed) : 0);
 
         int_Critical_Damege = 5 + Skill_s.Get_Skill_Val(Ability_Type.add_critical_damege);
 
         int_Critical_Percent = 1 + Skill_s.Get_Skill_Val(Ability_Type.add_critical_percent);
 
         int_Speed = 100 + Skill_s.Get_Skill_Val(Ability_Type.add_speed)
-            + (Use_skill ? (int)Skill_s.Get_Skill_Val(Ability_Type.skill_speed) : 0);
+            + (Use_skill_2 ? (int)Skill_s.Get_Skill_Val(Ability_Type.skill_speed) : 0);
 
         int_Top_Scroll_Speed = -int_Speed / 90.0f;
         int_Btm_Scroll_Speed = -int_Speed / 60.0f;
@@ -62,12 +64,12 @@ public class Player_stat
 
             case Ability_Type.add_atk_speed:
                 int_Atk_Speed = 100 + Skill_s.Get_Skill_Val(Ability_Type.add_atk_speed)
-                    + (Use_skill ? (int)Skill_s.Get_Skill_Val(Ability_Type.skill_atk_speed) : 0);
+                    + (Use_skill_1 ? (int)Skill_s.Get_Skill_Val(Ability_Type.skill_atk_speed) : 0);
                 break;
 
             case Ability_Type.add_speed:
                 int_Speed = 100 + Skill_s.Get_Skill_Val(Ability_Type.add_speed)
-                    + (Use_skill ? (int)Skill_s.Get_Skill_Val(Ability_Type.skill_speed) : 0);
+                    + (Use_skill_2 ? (int)Skill_s.Get_Skill_Val(Ability_Type.skill_speed) : 0);
 
                 int_Top_Scroll_Speed = -int_Speed / 90.0f;
                 int_Btm_Scroll_Speed = -int_Speed / 60.0f;
@@ -87,7 +89,7 @@ public class Player_stat
             case Ability_Type.add_level:
                 int_Lv = BackEndDataManager.instance.Character_Data.int_character_Lv + (int)Skill_s.Get_Skill_Val(Ability_Type.add_level);
 
-                float skill_atk = Use_skill ? Skill_s.Get_Skill_Val(Ability_Type.skill_atk) : 0;
+                float skill_atk = Use_skill_0 ? Skill_s.Get_Skill_Val(Ability_Type.skill_atk) : 0;
 
 
                 int_Base_Atk = 100 + (100 / 20) * (int_Lv - 1);
@@ -101,7 +103,7 @@ public class Player_stat
 
             case Ability_Type.add_atk:
 
-                skill_atk = Use_skill ? Skill_s.Get_Skill_Val(Ability_Type.skill_atk) : 0;
+                skill_atk = Use_skill_0 ? Skill_s.Get_Skill_Val(Ability_Type.skill_atk) : 0;
 
 
                 int_Base_Atk = 100 + (100 / 20) * (int_Lv - 1);
@@ -122,7 +124,7 @@ public class Player_stat
     {
         Set_Player_Stat(Ability_Type.add_atk_speed);
         Set_Player_Stat(Ability_Type.add_atk);
-        Set_Player_Stat(Ability_Type.skill_speed);
+        Set_Player_Stat(Ability_Type.add_speed);
     }
 
     public static void Add_Lv(int lv)
@@ -149,7 +151,10 @@ public class Player : MonoBehaviour
     public void Init()
     {
         anim_Player = GetComponent<Animator>();
-        PlayManager.instance.Start_Skill();
+        UiManager.instance.Check_Skill();
+        PlayManager.instance.Start_Skill_0();
+        PlayManager.instance.Start_Skill_1();
+        PlayManager.instance.Start_Skill_2();
     }
 
     public void Start_Run()

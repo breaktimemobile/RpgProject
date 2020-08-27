@@ -22,7 +22,7 @@ public class Inventory_Panel : MonoBehaviour
 
         Item_Type = _Type;
         txt_Inventory_Val.text = UiManager.instance.GetGoldString(_val);
-        img_Inventory.sprite = Utill.Get_Item_Sp(Item_Type);
+        img_Inventory.sprite = Utill.Get_Item_Sp((Item_Type)Item_Type);
 
 
     }

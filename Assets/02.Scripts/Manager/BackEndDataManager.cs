@@ -128,6 +128,17 @@ public class Job_Data
     public List<Job_info> job_info { get; set; }
 
 }
+
+[DynamoDBTable("totem_info")]
+public class Totem_Data
+{
+    [DynamoDBHashKey] // Hash key.
+    public string id { get; set; }
+    [DynamoDBProperty("totem_info")]
+    public List<Totem_info> totem_info { get; set; }
+
+}
+
 public class Item_Info
 {
     public int type { get; set; }
@@ -196,6 +207,14 @@ public class Job_info
     public string str_time { get; set; }
 }
 
+public class Totem_info
+{
+    public int int_num { get; set; }
+    public int int_lv { get; set; }
+
+}
+
+
 public class BackEndDataManager : MonoBehaviour
 {
     public static BackEndDataManager instance = null;
@@ -209,6 +228,7 @@ public class BackEndDataManager : MonoBehaviour
     Content_Data content_Data = new Content_Data();
     Pet_Data pet_Data = new Pet_Data();
     Job_Data job_Data = new Job_Data();
+    Totem_Data totem_Data = new Totem_Data();
 
     DynamoDBContext context;
     AmazonDynamoDBClient DBclient;
@@ -223,6 +243,7 @@ public class BackEndDataManager : MonoBehaviour
     public Content_Data Content_Data { get => content_Data; }
     public Pet_Data Pet_Data { get => pet_Data; }
     public Job_Data Job_Data { get => job_Data; }
+    public Totem_Data Totem_Data { get => totem_Data; }
 
     public BigInteger Int_exp { get => int_exp; }
 
@@ -433,6 +454,7 @@ public class BackEndDataManager : MonoBehaviour
         Check_Content_Data();
         Check_Pet_Data();
         Check_Job_Data();
+        Check_Totem_Data();
 
     }
 
@@ -782,6 +804,39 @@ public class BackEndDataManager : MonoBehaviour
         });
     }
 
+    public void Check_Totem_Data()
+    {
+        ScanRequest request = new ScanRequest()
+        {
+            TableName = "totem_info"
+        };
+
+        DBclient.ScanAsync(request, (result) =>
+        {
+
+            Dictionary<string, AttributeValue> t =
+              result.Response.Items.Find(x => x["id"].S.Equals(BackEndAuthManager.Get_UserId()));
+
+            Debug.Log(t == null ? "totem 없음" : "totem 있음");
+
+            if (t == null)
+            {
+                totem_Data = new Totem_Data
+                {
+                    id = BackEndAuthManager.Get_UserId(),
+                    totem_info = new List<Totem_info>()
+                };
+
+                Save_Totem_Data();
+            }
+            else
+            {
+                Get_Totem_Data();
+            }
+
+        });
+    }
+
     #endregion
 
     #region Get_Data
@@ -992,6 +1047,29 @@ public class BackEndDataManager : MonoBehaviour
         }, null);
     }
 
+    public void Get_Totem_Data() //DB에서 캐릭터 정보 받기
+    {
+
+
+        Debug.Log("Get_Totem_Data");
+
+        context.LoadAsync(BackEndAuthManager.Get_UserId(), (AmazonDynamoDBResult<Totem_Data> result) =>
+        {
+            // id가 abcd인 캐릭터 정보를 DB에서 받아옴
+            if (result.Exception != null)
+            {
+                Debug.Log(result.Exception);
+                return;
+            }
+
+            totem_Data = result.Result;
+
+            Sucess_Data(Data_Type.totem_info);
+
+
+        }, null);
+    }
+
     #endregion
 
     #region Save_Data
@@ -1002,7 +1080,6 @@ public class BackEndDataManager : MonoBehaviour
         {
             if (result.Exception == null)
             {
-                Debug.Log(" player_Data Save");
                 Sucess_Data(Data_Type.player_info);
             }
             else
@@ -1016,7 +1093,6 @@ public class BackEndDataManager : MonoBehaviour
         {
             if (result.Exception == null)
             {
-                Debug.Log(" character Save");
                 Sucess_Data(Data_Type.character_info);
 
             }
@@ -1031,7 +1107,6 @@ public class BackEndDataManager : MonoBehaviour
         {
             if (result.Exception == null)
             {
-                Debug.Log(" stage_Data Save");
                 Sucess_Data(Data_Type.stage_info);
 
             }
@@ -1046,7 +1121,6 @@ public class BackEndDataManager : MonoBehaviour
         {
             if (result.Exception == null)
             {
-                Debug.Log(" item_Data Save");
                 Sucess_Data(Data_Type.item_info);
 
             }
@@ -1061,7 +1135,6 @@ public class BackEndDataManager : MonoBehaviour
         {
             if (result.Exception == null)
             {
-                Debug.Log(" item_Data Save");
                 Sucess_Data(Data_Type.weapon_info);
 
             }
@@ -1076,7 +1149,6 @@ public class BackEndDataManager : MonoBehaviour
         {
             if (result.Exception == null)
             {
-                Debug.Log(" skill_Data Save");
                 Sucess_Data(Data_Type.skill_info);
 
             }
@@ -1091,7 +1163,6 @@ public class BackEndDataManager : MonoBehaviour
         {
             if (result.Exception == null)
             {
-                Debug.Log("content_Data Save");
                 Sucess_Data(Data_Type.content_info);
 
             }
@@ -1106,7 +1177,6 @@ public class BackEndDataManager : MonoBehaviour
         {
             if (result.Exception == null)
             {
-                Debug.Log("pet_Data Save");
                 Sucess_Data(Data_Type.pet_info);
 
             }
@@ -1122,7 +1192,6 @@ public class BackEndDataManager : MonoBehaviour
         {
             if (result.Exception == null)
             {
-                Debug.Log("job_Data Save");
                 Sucess_Data(Data_Type.job_info);
 
             }
@@ -1131,7 +1200,19 @@ public class BackEndDataManager : MonoBehaviour
         });
     }
 
-    
+    public void Save_Totem_Data() //DB에서 캐릭터 정보 받기
+    {
+        context.SaveAsync(totem_Data, (result) =>
+        {
+            if (result.Exception == null)
+            {
+                Sucess_Data(Data_Type.totem_info);
+
+            }
+            else
+                Debug.Log(result.Exception);
+        });
+    }
 
     #endregion
 
@@ -1244,8 +1325,6 @@ public class BackEndDataManager : MonoBehaviour
     public void Monster_Reward(Item_Type i, BigInteger val, bool boss)
     {
 
-        Debug.Log(i + "  " + val);
-
         BigInteger a = (val * (boss ? 2 : 1));
         Set_Item(i, a, Calculate_Type.plus);
 
@@ -1299,7 +1378,6 @@ public class BackEndDataManager : MonoBehaviour
         else
         {
             BigInteger total = Get_Item(type);
-            Debug.Log(val);
             switch (calculate)
             {
                 case Calculate_Type.plus:
@@ -1320,8 +1398,10 @@ public class BackEndDataManager : MonoBehaviour
 
         switch (type)
         {
-            case Item_Type.crystal:
+            case Item_Type.dia:
                 UiManager.instance.Set_Txt_Crystal();
+                UiManager.instance.Check_Totem_buy();
+
                 break;
             case Item_Type.coin:
 
@@ -1429,6 +1509,7 @@ public class BackEndDataManager : MonoBehaviour
             case Item_Type.heart:
                 break;
             case Item_Type.guild_coin:
+               UiManager.instance.Set_Txt_Guild_Coin();
                 break;
             case Item_Type.weapon_limit_stone_d:
                 break;
@@ -1442,7 +1523,10 @@ public class BackEndDataManager : MonoBehaviour
                 break;
             case Item_Type.weapon_limit_stone_ss:
                 break;
-           
+            case Item_Type.mileage:
+                UiManager.instance.Set_Txt_Mileage();
+
+                break;
             default:
                 break;
         }

@@ -426,37 +426,41 @@ public class PlayManager : MonoBehaviour
 
     }
 
-    public void Start_Skill()
+    #region skill_0
+
+    bool is_skill_0 = false;
+
+    public void Start_Skill_0()
     {
 
-        if (is_skill)
+        if (is_skill_0)
             return;
 
-        Skill_info skill_Info = BackEndDataManager.instance.Skill_Data.skill_Info.Find(x => x.int_num.Equals((int)Ability_Type.skill_atk));
+        Skill skill = Skill_s.skills.Find(x => x.ability_type.Equals((int)Ability_Type.skill_atk));
+
+        Skill_info skill_Info = BackEndDataManager.instance.Skill_Data.skill_Info.Find(x => x.int_num.Equals(skill.num));
 
         if(skill_Info != null)
         {
             if (skill_Info.int_lv >= 1)
             {
-                StartCoroutine("Co_Start_Skill");
+                StartCoroutine("Co_Start_Skill_0");
 
             }
         }
  
     }
 
-    bool is_skill = false;
-
-    IEnumerator Co_Start_Skill()
+    IEnumerator Co_Start_Skill_0()
     {
 
-        is_skill = true;
+        is_skill_0 = true;
 
         Skill skill = Skill_s.Get_Skill(Ability_Type.skill_atk);
 
         float skill_time = skill.skill_time;
 
-        Player_stat.Use_skill = true;
+        Player_stat.Use_skill_0 = true;
         Player_stat.Set_Skill_Stat();
         UiManager.instance.Set_Skill_0_Bg();
 
@@ -471,13 +475,13 @@ public class PlayManager : MonoBehaviour
         }
 
 
-        Player_stat.Use_skill = false;
+        Player_stat.Use_skill_0 = false;
         Player_stat.Set_Skill_Stat();
 
-        StartCoroutine("Co_Cool_Skill");
+        StartCoroutine("Co_Cool_Skill_0");
     }
 
-    IEnumerator Co_Cool_Skill()
+    IEnumerator Co_Cool_Skill_0()
     {
 
         Skill skill = Skill_s.Get_Skill(Ability_Type.skill_atk);
@@ -495,10 +499,176 @@ public class PlayManager : MonoBehaviour
 
         }
 
-        is_skill = false;
-        Start_Skill();
+        is_skill_0 = false;
+        StartCoroutine("Co_Start_Skill_0");
 
 
     }
+
+    #endregion
+
+
+    #region skill_1
+
+    bool is_skill_1 = false;
+
+    public void Start_Skill_1()
+    {
+
+        if (is_skill_1)
+            return;
+
+        Skill skill = Skill_s.skills.Find(x => x.ability_type.Equals((int)Ability_Type.skill_atk_speed));
+
+        Skill_info skill_Info = BackEndDataManager.instance.Skill_Data.skill_Info.Find(x => x.int_num.Equals(skill.num));
+        if (skill_Info != null)
+        {
+            if (skill_Info.int_lv >= 1)
+            {
+                StartCoroutine("Co_Start_Skill_1");
+
+            }
+        }
+
+    }
+
+    IEnumerator Co_Start_Skill_1()
+    {
+
+        is_skill_1 = true;
+
+        Skill skill = Skill_s.Get_Skill(Ability_Type.skill_atk_speed);
+
+        float skill_time = skill.skill_time;
+
+        Player_stat.Use_skill_1 = true;
+        Player_stat.Set_Skill_Stat();
+        UiManager.instance.Set_Skill_1_Bg();
+
+        while (skill_time >= 0)
+        {
+
+            skill_time -= 0.1f;
+            UiManager.instance.Set_Skill_1_txt(0, (int)skill_time);
+
+            yield return new WaitForSeconds(0.1f);
+
+        }
+
+
+        Player_stat.Use_skill_1 = false;
+        Player_stat.Set_Skill_Stat();
+
+        StartCoroutine("Co_Cool_Skill_1");
+    }
+
+    IEnumerator Co_Cool_Skill_1()
+    {
+
+        Skill skill = Skill_s.Get_Skill(Ability_Type.skill_atk_speed);
+
+        float skill_time = skill.cool_time;
+        UiManager.instance.Set_Skill_1_Bg();
+
+        while (skill_time >= 0)
+        {
+
+            skill_time -= 0.1f;
+            UiManager.instance.Set_Skill_1_txt(skill_time / skill.cool_time, (int)skill_time);
+
+            yield return new WaitForSeconds(0.1f);
+
+        }
+
+        is_skill_1 = false;
+        StartCoroutine("Co_Start_Skill_1");
+
+
+    }
+
+    #endregion
+
+    #region skill_2
+
+    bool is_skill_2 = false;
+
+    public void Start_Skill_2()
+    {
+        Debug.Log("스킬 시작 " +is_skill_2);
+
+        if (is_skill_2)
+            return;
+
+        Skill skill = Skill_s.skills.Find(x => x.ability_type.Equals((int)Ability_Type.skill_speed));
+
+        Skill_info skill_Info = BackEndDataManager.instance.Skill_Data.skill_Info.Find(x => x.int_num.Equals(skill.num));
+        if (skill_Info != null)
+        {
+            if (skill_Info.int_lv >= 1)
+            {
+                StartCoroutine("Co_Start_Skill_2");
+
+            }
+        }
+
+    }
+
+    IEnumerator Co_Start_Skill_2()
+    {
+
+        is_skill_2 = true;
+
+        Skill skill = Skill_s.Get_Skill(Ability_Type.skill_speed);
+
+        float skill_time = skill.skill_time;
+
+        Player_stat.Use_skill_2 = true;
+        Player_stat.Set_Skill_Stat();
+        UiManager.instance.Set_Skill_2_Bg();
+
+        while (skill_time >= 0)
+        {
+
+            skill_time -= 0.1f;
+            UiManager.instance.Set_Skill_2_txt(0, (int)skill_time);
+
+            yield return new WaitForSeconds(0.1f);
+
+        }
+
+
+        Player_stat.Use_skill_2 = false;
+        Player_stat.Set_Skill_Stat();
+
+        StartCoroutine("Co_Cool_Skill_2");
+    }
+
+    IEnumerator Co_Cool_Skill_2()
+    {
+
+        Skill skill = Skill_s.Get_Skill(Ability_Type.skill_speed);
+
+        float skill_time = skill.cool_time;
+        UiManager.instance.Set_Skill_2_Bg();
+
+        while (skill_time >= 0)
+        {
+
+            skill_time -= 0.1f;
+            UiManager.instance.Set_Skill_2_txt(skill_time / skill.cool_time, (int)skill_time);
+
+            yield return new WaitForSeconds(0.1f);
+
+        }
+
+        Debug.Log("스킬 끝 " + skill_time);
+
+        is_skill_2 = false;
+        StartCoroutine("Co_Start_Skill_2");
+
+
+    }
+
+    #endregion
 
 }

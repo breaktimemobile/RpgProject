@@ -63,16 +63,8 @@ public class Weapon_Panel : MonoBehaviour
 
         Weapon_info weapon_Info = BackEndDataManager.instance.Weapon_Data.weapon_Info.Find(x => x.int_num.Equals((int)data["num"]) && x.enum_weapon.Equals(Weapon_.Weapon_Content));
 
-        if (weapon_Info == null)
-        {
-            txt_Weapon_Lv.text = "Lv.0";
+        txt_Weapon_Lv.text = string.Format("{0}.{1}","Lv", weapon_Info == null?0: weapon_Info.int_lv);
 
-        }
-        else
-        {
-            txt_Weapon_Lv.text = string.Format("Lv.{0}", weapon_Info.int_lv);
-
-        }
     }
 
     public void Set_Weapon_Val()

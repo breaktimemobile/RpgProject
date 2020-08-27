@@ -25,6 +25,9 @@ public class UiManager : MonoBehaviour
     public GameObject HellDungeon;
     public GameObject HellRewardPopup;
     public GameObject PetPopup;
+    public GameObject ShopPopup;
+    public GameObject GoodsPopup;
+    public GameObject SettingPopup;
 
     private GameObject obj_Top;
     public GameObject obj_Stage;
@@ -48,9 +51,15 @@ public class UiManager : MonoBehaviour
     private Text txt_NickName;
     private Slider slider_Exp;
 
+    private Image img_top_steel;
+    private Image img_top_coin;
+    private Image img_top_dia;
+
     private Text txt_Steel_Val;
     private Text txt_Coin_Val;
     private Text txt_Dia_Val;
+
+    private Button Btn_Goods_All;
 
     #endregion
 
@@ -70,11 +79,22 @@ public class UiManager : MonoBehaviour
     private Button btn_Boss;
     private Button btn_Boss_Exit;
     private Button btn_Inventory;
+    private Button btn_setting;
 
     private Image img_Skill_0;
     private Image img_Skill_0_bg;
     private Text txt_Skill_0;
+    private Image img_Skill_0_lock;
 
+    private Image img_Skill_1;
+    private Image img_Skill_1_bg;
+    private Text txt_Skill_1;
+    private Image img_Skill_1_lock;
+
+    private Image img_Skill_2;
+    private Image img_Skill_2_bg;
+    private Text txt_Skill_2;
+    private Image img_Skill_2_lock;
 
     #endregion
 
@@ -140,6 +160,10 @@ public class UiManager : MonoBehaviour
     private Button btn_Lv_10;
     private Button btn_Lv_100;
 
+    private Image img_Lv_1_Coin;
+    private Image img_Lv_10_Coin;
+    private Image img_Lv_100_Coin;
+
     private Text txt_Lv_1_Val;
     private Text txt_Lv_10_Val;
     private Text txt_Lv_100_Val;
@@ -157,6 +181,8 @@ public class UiManager : MonoBehaviour
 
     List<Skill_Panel> skill_Panels = new List<Skill_Panel>();
 
+    private Image img_Skill_Soul;
+
     private Button btn_Skill_Lv1;
     private Button btn_Skill_Lv10;
     private Button btn_Skill_Lv100;
@@ -166,6 +192,8 @@ public class UiManager : MonoBehaviour
     #endregion
 
     #region popup_Upgrade
+
+    private Image img_Upgrade_Soul_Stone;
 
     private Text txt_Upgrade_Soul_Stone_Val;
 
@@ -178,6 +206,10 @@ public class UiManager : MonoBehaviour
     private Button btn_Upgrade_1;
     private Button btn_Upgrade_10;
     private Button btn_Upgrade_100;
+
+    private Image img_Upgrade_1_Soul_stone;
+    private Image img_Upgrade_10_Soul_stone;
+    private Image img_Upgrade_100_Soul_stone;
 
     private Text txt_Upgrade_1_Val;
     private Text txt_Upgrade_10_Val;
@@ -547,6 +579,87 @@ public class UiManager : MonoBehaviour
 
     #endregion
 
+    #region ShopPopup
+
+    private Button btn_shop_event;
+    private Button btn_shop_gacha;
+    private Button btn_shop_goods;
+    private Button btn_shop_mileage;
+    private Button btn_shop_other;
+
+    private GameObject Content_Event;
+    private GameObject Content_Gacha;
+    private GameObject Content_Goods;
+    private GameObject Content_Mileage;
+    private GameObject Content_Other;
+
+    private Button btn_shop_close;
+
+    #endregion
+
+    #region GoodsPopup
+
+    Image img_goods_upgrade;
+    Text txt_goods_upgrade;
+    Button btn_goods_upgrade;
+
+    Image img_goods_soul_stone;
+    Text txt_goods_soul_stone;
+    Button btn_goods_soul_stone;
+
+    Image img_goods_black_stone;
+    Text txt_goods_black_stone;
+    Button btn_goods_black_stone;
+
+    Image img_goods_steel;
+    Text txt_goods_steel;
+    Button btn_goods_steel;
+
+    Image img_goods_mileage;
+    Text txt_goods_mileage;
+    Button btn_goods_mileage;
+
+    Image img_goods_guild_coin;
+    Text txt_goods_guild_coin;
+    Button btn_goods_guild_coin;
+
+    #endregion
+
+    #region SettingPopup
+
+    Button btn_setting_close;
+    Button btn_setting_repaer;
+    Button btn_setting_language;
+    Button btn_setting_cupon;
+    Button btn_setting_power;
+    Button btn_setting_music;
+    Text txt_setting_music_on;
+    Text txt_setting_music_off;
+    Button btn_setting_effect;
+    Text txt_setting_effect_on;
+    Text txt_setting_effect_off;
+    Button btn_setting_push;
+    Text txt_setting_push_on;
+    Text txt_setting_push_off;
+    Button btn_setting_grapic;
+    Text txt_setting_grapic_on;
+    Text txt_setting_grapic_off;
+    Button btn_setting_google;
+    Text txt_setting_google_login;
+    Text txt_setting_google_logout;
+    Button btn_setting_gameCenter;
+    Text txt_setting_gamecenter_login;
+    Text txt_setting_gamecenter_logout;
+    Button btn_setting_terms;
+    Button btn_setting_privacy;
+    Button btn_setting_mail;
+    Button btn_setting_exit;
+    Button btn_setting_help;
+    Button btn_setting_logout;
+    Text txt_setting_version;
+
+    #endregion
+
     #region Prefabs
 
     public GameObject txt_Damege;
@@ -595,6 +708,9 @@ public class UiManager : MonoBehaviour
         HellDungeon = Popup.Find("HellDungeon").gameObject;
         HellRewardPopup = Popup.Find("HellRewardPopup").gameObject;
         PetPopup = Popup.Find("PetPopup").gameObject;
+        ShopPopup = Popup.Find("ShopPopup").gameObject;
+        GoodsPopup = Popup.Find("GoodsPopup").gameObject;
+        SettingPopup = Popup.Find("SettingPopup").gameObject;
 
         obj_Top = Game.Find("obj_Top").gameObject;
         obj_Stage = Game.Find("obj_Stage").gameObject;
@@ -609,9 +725,16 @@ public class UiManager : MonoBehaviour
         txt_NickName = obj_Top.transform.Find("Profil/txt_NickName").GetComponent<Text>();
         slider_Exp = obj_Top.transform.Find("Profil/slider_Exp").GetComponent<Slider>();
 
+
+        img_top_steel = obj_Top.transform.Find("Goods/Steel/img_top_steel").GetComponent<Image>();
+        img_top_coin = obj_Top.transform.Find("Goods/Coin/img_top_coin").GetComponent<Image>();
+        img_top_dia = obj_Top.transform.Find("Goods/Dia/img_top_dia").GetComponent<Image>();
+
         txt_Steel_Val = obj_Top.transform.Find("Goods/Steel/txt_Steel_Val").GetComponent<Text>();
         txt_Coin_Val = obj_Top.transform.Find("Goods/Coin/txt_Coin_Val").GetComponent<Text>();
         txt_Dia_Val = obj_Top.transform.Find("Goods/Dia/txt_Dia_Val").GetComponent<Text>();
+
+        Btn_Goods_All = obj_Top.transform.Find("Goods/Btn_Goods_All").GetComponent<Button>();
 
         #endregion
 
@@ -637,17 +760,25 @@ public class UiManager : MonoBehaviour
         btn_Boss = obj_Btns.transform.Find("btn_Boss").GetComponent<Button>();
         btn_Boss_Exit = obj_Btns.transform.Find("btn_Boss_Exit").GetComponent<Button>();
         btn_Inventory = obj_Btns.transform.Find("btn_Inventory").GetComponent<Button>();
-
-
+        btn_setting = obj_Btns.transform.Find("btn_setting").GetComponent<Button>();
 
         img_Skill_0 = obj_Btns.transform.Find("img_Skill_0").GetComponent<Image>();
         img_Skill_0_bg = img_Skill_0.transform.Find("img_Skill_0_bg").GetComponent<Image>();
         txt_Skill_0 = img_Skill_0.transform.Find("txt_Skill_0").GetComponent<Text>();
+        img_Skill_0_lock = img_Skill_0.transform.Find("img_Skill_0_lock").GetComponent<Image>();
 
+        img_Skill_1 = obj_Btns.transform.Find("img_Skill_1").GetComponent<Image>();
+        img_Skill_1_bg = img_Skill_1.transform.Find("img_Skill_1_bg").GetComponent<Image>();
+        txt_Skill_1 = img_Skill_1.transform.Find("txt_Skill_1").GetComponent<Text>();
+        img_Skill_1_lock = img_Skill_1.transform.Find("img_Skill_1_lock").GetComponent<Image>();
+
+
+        img_Skill_2 = obj_Btns.transform.Find("img_Skill_2").GetComponent<Image>();
+        img_Skill_2_bg = img_Skill_2.transform.Find("img_Skill_2_bg").GetComponent<Image>();
+        txt_Skill_2 = img_Skill_2.transform.Find("txt_Skill_2").GetComponent<Text>();
+        img_Skill_2_lock = img_Skill_2.transform.Find("img_Skill_2_lock").GetComponent<Image>();
 
         #endregion
-
-
 
         #region obj_Content
 
@@ -722,6 +853,10 @@ public class UiManager : MonoBehaviour
         btn_Lv_10 = popup_State.transform.Find("lv_Ups/btn_Lv_10").GetComponent<Button>();
         btn_Lv_100 = popup_State.transform.Find("lv_Ups/btn_Lv_100").GetComponent<Button>();
 
+        img_Lv_1_Coin = btn_Lv_1.transform.Find("img_Lv_1_Coin").GetComponent<Image>();
+        img_Lv_10_Coin = btn_Lv_10.transform.Find("img_Lv_10_Coin").GetComponent<Image>();
+        img_Lv_100_Coin = btn_Lv_100.transform.Find("img_Lv_100_Coin").GetComponent<Image>();
+
         txt_Lv_1_Val = btn_Lv_1.transform.Find("txt_Lv_1_Val").GetComponent<Text>();
         txt_Lv_10_Val = btn_Lv_10.transform.Find("txt_Lv_10_Val").GetComponent<Text>();
         txt_Lv_100_Val = btn_Lv_100.transform.Find("txt_Lv_100_Val").GetComponent<Text>();
@@ -737,6 +872,8 @@ public class UiManager : MonoBehaviour
 
         #region popup_Skill
 
+        img_Skill_Soul = popup_Skill.transform.Find("Soul_stone/img_Skill_Soul").GetComponent<Image>();
+
         btn_Skill_Lv1 = popup_Skill.transform.Find("btn_Skill_Lv1").GetComponent<Button>();
         btn_Skill_Lv10 = popup_Skill.transform.Find("btn_Skill_Lv10").GetComponent<Button>();
         btn_Skill_Lv100 = popup_Skill.transform.Find("btn_Skill_Lv100").GetComponent<Button>();
@@ -746,6 +883,8 @@ public class UiManager : MonoBehaviour
         #endregion
 
         #region popup_Upgrade
+
+        img_Upgrade_Soul_Stone = popup_Upgrade.transform.Find("Soul_Stone/img_Upgrade_Soul_Stone").GetComponent<Image>();
 
         txt_Upgrade_Soul_Stone_Val = popup_Upgrade.transform.Find("Soul_Stone/txt_Upgrade_Soul_Stone_Val").GetComponent<Text>();
 
@@ -758,6 +897,12 @@ public class UiManager : MonoBehaviour
         btn_Upgrade_1 = popup_Upgrade.transform.Find("Upgrade_Btn/btn_Upgrade_1").GetComponent<Button>();
         btn_Upgrade_10 = popup_Upgrade.transform.Find("Upgrade_Btn/btn_Upgrade_10").GetComponent<Button>();
         btn_Upgrade_100 = popup_Upgrade.transform.Find("Upgrade_Btn/btn_Upgrade_100").GetComponent<Button>();
+
+
+        img_Upgrade_1_Soul_stone = btn_Upgrade_1.transform.Find("img_Upgrade_1_Soul_stone").GetComponent<Image>();
+        img_Upgrade_10_Soul_stone = btn_Upgrade_10.transform.Find("img_Upgrade_10_Soul_stone").GetComponent<Image>();
+        img_Upgrade_100_Soul_stone = btn_Upgrade_100.transform.Find("img_Upgrade_100_Soul_stone").GetComponent<Image>();
+
 
         txt_Upgrade_1_Val = btn_Upgrade_1.transform.Find("txt_Upgrade_1_Val").GetComponent<Text>();
         txt_Upgrade_10_Val = btn_Upgrade_10.transform.Find("txt_Upgrade_10_Val").GetComponent<Text>();
@@ -892,7 +1037,6 @@ public class UiManager : MonoBehaviour
         btn_Mix = content_Weapon_Mix.transform.Find("Obj_Mix/btn_Mix").GetComponent<Button>();
 
         #endregion
-
 
         #region content_Weapon_Roon
 
@@ -1116,12 +1260,11 @@ public class UiManager : MonoBehaviour
         scroll_Job = Content_Job.transform.Find("scroll_Job");
 
 
-       btn_Job_Lv1 = Content_Job.transform.Find("btn_Job_Lv1").GetComponent<Button>();
-       btn_Job_Lv10 = Content_Job.transform.Find("btn_Job_Lv10").GetComponent<Button>();
+        btn_Job_Lv1 = Content_Job.transform.Find("btn_Job_Lv1").GetComponent<Button>();
+        btn_Job_Lv10 = Content_Job.transform.Find("btn_Job_Lv10").GetComponent<Button>();
         btn_Job_Lv100 = Content_Job.transform.Find("btn_Job_Lv100").GetComponent<Button>();
 
         #endregion
-
 
         #region Content_Totem
 
@@ -1132,11 +1275,107 @@ public class UiManager : MonoBehaviour
         btn_Totem_Lv100 = Content_Totem.transform.Find("btn_Totem_Lv100").GetComponent<Button>();
 
         #endregion
+
+        #region ShopPopup
+
+        btn_shop_event = ShopPopup.transform.Find("btn_grids/btn_shop_event").GetComponent<Button>();
+        btn_shop_gacha = ShopPopup.transform.Find("btn_grids/btn_shop_gacha").GetComponent<Button>();
+        btn_shop_goods = ShopPopup.transform.Find("btn_grids/btn_shop_goods").GetComponent<Button>();
+        btn_shop_mileage = ShopPopup.transform.Find("btn_grids/btn_shop_mileage").GetComponent<Button>();
+        btn_shop_other = ShopPopup.transform.Find("btn_grids/btn_shop_other").GetComponent<Button>();
+
+        Content_Event = ShopPopup.transform.Find("contents/Content_Event").gameObject;
+        Content_Gacha = ShopPopup.transform.Find("contents/Content_Gacha").gameObject;
+        Content_Goods = ShopPopup.transform.Find("contents/Content_Goods").gameObject;
+        Content_Mileage = ShopPopup.transform.Find("contents/Content_Mileage").gameObject;
+        Content_Other = ShopPopup.transform.Find("contents/Content_Other").gameObject;
+
+        btn_shop_close = ShopPopup.transform.Find("btn_shop_close").GetComponent<Button>();
+
+        #endregion
+
+        #region GoodsPopup
+
+        img_goods_upgrade = GoodsPopup.transform.Find("content_grid/Goods_Upgrade/img_goods_upgrade").GetComponent<Image>();
+        txt_goods_upgrade = GoodsPopup.transform.Find("content_grid/Goods_Upgrade/txt_goods_upgrade").GetComponent<Text>();
+        btn_goods_upgrade = GoodsPopup.transform.Find("content_grid/Goods_Upgrade/btn_goods_upgrade").GetComponent<Button>();
+
+        img_goods_soul_stone = GoodsPopup.transform.Find("content_grid/Goods_Soul_Stone/img_goods_soul_stone").GetComponent<Image>();
+        txt_goods_soul_stone = GoodsPopup.transform.Find("content_grid/Goods_Soul_Stone/txt_goods_soul_stone").GetComponent<Text>();
+        btn_goods_soul_stone = GoodsPopup.transform.Find("content_grid/Goods_Soul_Stone/btn_goods_soul_stone").GetComponent<Button>();
+
+        img_goods_black_stone = GoodsPopup.transform.Find("content_grid/Goods_Black_Stone/img_goods_black_stone").GetComponent<Image>();
+        txt_goods_black_stone = GoodsPopup.transform.Find("content_grid/Goods_Black_Stone/txt_goods_black_stone").GetComponent<Text>();
+        btn_goods_black_stone = GoodsPopup.transform.Find("content_grid/Goods_Black_Stone/btn_goods_black_stone").GetComponent<Button>();
+
+        img_goods_steel = GoodsPopup.transform.Find("content_grid/Goods_Steel/img_goods_steel").GetComponent<Image>();
+        txt_goods_steel = GoodsPopup.transform.Find("content_grid/Goods_Steel/txt_goods_steel").GetComponent<Text>();
+        btn_goods_steel = GoodsPopup.transform.Find("content_grid/Goods_Steel/btn_goods_steel").GetComponent<Button>();
+
+        img_goods_mileage = GoodsPopup.transform.Find("content_grid/Goods_Mileage/img_goods_mileage").GetComponent<Image>();
+        txt_goods_mileage = GoodsPopup.transform.Find("content_grid/Goods_Mileage/txt_goods_mileage").GetComponent<Text>();
+        btn_goods_mileage = GoodsPopup.transform.Find("content_grid/Goods_Mileage/btn_goods_mileage").GetComponent<Button>();
+
+        img_goods_guild_coin = GoodsPopup.transform.Find("content_grid/Goods_Guild_Coin/img_goods_guild_coin").GetComponent<Image>();
+        txt_goods_guild_coin = GoodsPopup.transform.Find("content_grid/Goods_Guild_Coin/txt_goods_guild_coin").GetComponent<Text>();
+        btn_goods_guild_coin = GoodsPopup.transform.Find("content_grid/Goods_Guild_Coin/btn_goods_guild_coin").GetComponent<Button>();
+
+        #endregion
+
+        #region SettingPopup
+
+        btn_setting_close = SettingPopup.transform.Find("btn_setting_close").GetComponent<Button>();
+        btn_setting_repaer = SettingPopup.transform.Find("btn_setting_repaer").GetComponent<Button>();
+        btn_setting_language = SettingPopup.transform.Find("btn_setting_language").GetComponent<Button>();
+        btn_setting_cupon = SettingPopup.transform.Find("btn_setting_cupon").GetComponent<Button>();
+        btn_setting_power = SettingPopup.transform.Find("btn_setting_power").GetComponent<Button>();
+        btn_setting_music = SettingPopup.transform.Find("btn_setting_music").GetComponent<Button>();
+        txt_setting_music_on = btn_setting_music.transform.Find("txt_setting_music_on").GetComponent<Text>();
+        txt_setting_music_off = btn_setting_music.transform.Find("txt_setting_music_off").GetComponent<Text>();
+        btn_setting_effect = SettingPopup.transform.Find("btn_setting_effect").GetComponent<Button>();
+        txt_setting_effect_on = btn_setting_effect.transform.Find("txt_setting_effect_on").GetComponent<Text>();
+        txt_setting_effect_off = btn_setting_effect.transform.Find("txt_setting_effect_off").GetComponent<Text>();
+        btn_setting_push = SettingPopup.transform.Find("btn_setting_push").GetComponent<Button>();
+        txt_setting_push_on = btn_setting_push.transform.Find("txt_setting_push_on").GetComponent<Text>();
+        txt_setting_push_off = btn_setting_push.transform.Find("txt_setting_push_off").GetComponent<Text>();
+        btn_setting_grapic = SettingPopup.transform.Find("btn_setting_grapic").GetComponent<Button>();
+        txt_setting_grapic_on = btn_setting_grapic.transform.Find("txt_setting_grapic_on").GetComponent<Text>();
+        txt_setting_grapic_off = btn_setting_grapic.transform.Find("txt_setting_grapic_off").GetComponent<Text>();
+        btn_setting_google = SettingPopup.transform.Find("btn_setting_google").GetComponent<Button>();
+        txt_setting_google_login = btn_setting_google.transform.Find("txt_setting_google_login").GetComponent<Text>();
+        txt_setting_google_logout = btn_setting_google.transform.Find("txt_setting_google_logout").GetComponent<Text>();
+        btn_setting_gameCenter = SettingPopup.transform.Find("btn_setting_gameCenter").GetComponent<Button>();
+        txt_setting_gamecenter_login = btn_setting_gameCenter.transform.Find("txt_setting_gamecenter_login").GetComponent<Text>();
+        txt_setting_gamecenter_logout = btn_setting_gameCenter.transform.Find("txt_setting_gamecenter_logout").GetComponent<Text>();
+        btn_setting_terms = SettingPopup.transform.Find("btn_setting_terms").GetComponent<Button>();
+        btn_setting_privacy = SettingPopup.transform.Find("btn_setting_privacy").GetComponent<Button>();
+        btn_setting_mail = SettingPopup.transform.Find("btn_setting_mail").GetComponent<Button>();
+        btn_setting_exit = SettingPopup.transform.Find("btn_setting_exit").GetComponent<Button>();
+        btn_setting_help = SettingPopup.transform.Find("btn_setting_help").GetComponent<Button>();
+        btn_setting_logout = SettingPopup.transform.Find("btn_setting_logout").GetComponent<Button>();
+        txt_setting_version = SettingPopup.transform.Find("txt_setting_version").GetComponent<Text>();
+
+        #endregion
+
+    }
+
+    private void Check_Popup(GameObject Popup)
+    {
+        if (Popup.activeSelf)
+            PopupManager.Close_Popup();
+        else
+        {
+            PopupManager.Open_Popup(Popup);
+        }
     }
 
     private void AddListener()
     {
         btn_NickName_Ok.onClick.AddListener(() => Check_Nickname());
+
+        Btn_Goods_All.onClick.AddListener(() => Check_Popup(GoodsPopup));
+
+
 
         #region Content_Character
 
@@ -1171,7 +1410,7 @@ public class UiManager : MonoBehaviour
         btn_Icon_Weapon.onClick.AddListener(() => Change_Icon_Content(Icon_Content.Weapon));
         btn_Icon_Job.onClick.AddListener(() => Change_Icon_Content(Icon_Content.Job));
         btn_Icon_Relics.onClick.AddListener(() => Change_Icon_Content(Icon_Content.Totem));
-        btn_Icon_Shop.onClick.AddListener(() => Change_Icon_Content(Icon_Content.Shop));
+        btn_Icon_Shop.onClick.AddListener(() => PopupManager.Open_Popup(ShopPopup));
 
         btn_Invantory_Close.onClick.AddListener(() => PopupManager.Close_Popup());
 
@@ -1201,7 +1440,7 @@ public class UiManager : MonoBehaviour
         btn_Boss.onClick.AddListener(() => PlayManager.instance.Start_Boss_Stage());
         btn_Boss_Exit.onClick.AddListener(() => PlayManager.instance.Stop_Boss_Timer(true));
         btn_Inventory.onClick.AddListener(() => PopupManager.Open_Popup(InventoryPopup));
-
+        btn_setting.onClick.AddListener(() => PopupManager.Open_Popup(SettingPopup));
 
         #endregion
 
@@ -1248,12 +1487,35 @@ public class UiManager : MonoBehaviour
 
         #endregion
 
+        #region content_Weapon_Decom
 
         btn_Decom.onClick.AddListener(() => Weapon_Decom());
 
         btn_Decom_Mius.onClick.AddListener(() => Decom_Plus_Mius(Calculate_Type.mius));
         btn_Decom_Plus.onClick.AddListener(() => Decom_Plus_Mius(Calculate_Type.plus));
 
+        #endregion
+
+        #region SettingPopup
+
+        btn_setting_close.onClick.AddListener(() => PopupManager.Close_Popup());
+        btn_setting_repaer.onClick.AddListener(() => Setting_Repear());
+        btn_setting_language.onClick.AddListener(() => Setting_Language());
+        btn_setting_cupon.onClick.AddListener(() => Setting_Cupon());
+        btn_setting_power.onClick.AddListener(() => Setting_Power());
+        btn_setting_music.onClick.AddListener(() => Setting_Music());
+        btn_setting_effect.onClick.AddListener(() => Setting_Effect());
+        btn_setting_push.onClick.AddListener(() => Setting_Push());
+        btn_setting_grapic.onClick.AddListener(() => Setting_Grapic());
+        btn_setting_google.onClick.AddListener(() => Setting_Google_Login());
+        btn_setting_gameCenter.onClick.AddListener(() => Setting_Gamecenter_Login());
+        btn_setting_terms.onClick.AddListener(() => Setting_Terms());
+        btn_setting_privacy.onClick.AddListener(() => Setting_Privacy());
+        btn_setting_mail.onClick.AddListener(() => Setting_Mail());
+        btn_setting_exit.onClick.AddListener(() => Setting_Exit());
+        btn_setting_help.onClick.AddListener(() => Setting_Help());
+
+        #endregion
 
         #endregion
 
@@ -1317,12 +1579,45 @@ public class UiManager : MonoBehaviour
         btn_Job_Lv100.onClick.AddListener(() => Change_Job_Lv(Character_Lv.lv_100));
 
         #endregion
+
+        #region Content_Totem
+
+        btn_Totem_Lv1.onClick.AddListener(() => Check_Totem_Item(Character_Lv.lv_1));
+        btn_Totem_Lv10.onClick.AddListener(() => Check_Totem_Item(Character_Lv.lv_10));
+        btn_Totem_Lv100.onClick.AddListener(() => Check_Totem_Item(Character_Lv.lv_100));
+
+        #endregion
+
+        #region ShopPopup
+
+        btn_shop_event.onClick.AddListener(() => Change_Shop_Contnet(Shop_Content.Event));
+        btn_shop_gacha.onClick.AddListener(() => Change_Shop_Contnet(Shop_Content.Gacha));
+        btn_shop_goods.onClick.AddListener(() => Change_Shop_Contnet(Shop_Content.Goods));
+        btn_shop_mileage.onClick.AddListener(() => Change_Shop_Contnet(Shop_Content.Mileage));
+        btn_shop_other.onClick.AddListener(() => Change_Shop_Contnet(Shop_Content.Other));
+
+        btn_shop_close.onClick.AddListener(() => PopupManager.Close_Popup());
+
+        #endregion
+
+        #region GoodsPopup
+
+        btn_goods_upgrade.onClick.AddListener(() => Change_Goods_Contnet(Item_Type.upgrade_stone));
+        btn_goods_soul_stone.onClick.AddListener(() => Change_Goods_Contnet(Item_Type.soul_stone));
+        btn_goods_black_stone.onClick.AddListener(() => Change_Goods_Contnet(Item_Type.black_stone));
+        btn_goods_steel.onClick.AddListener(() => Change_Goods_Contnet(Item_Type.steel));
+        btn_goods_mileage.onClick.AddListener(() => Change_Goods_Contnet(Item_Type.mileage));
+        btn_goods_guild_coin.onClick.AddListener(() => Change_Goods_Contnet(Item_Type.guild_coin));
+
+        #endregion
     }
 
     private void Start()
     {
         Check_Nick_Popup();
         Change_Icon_Content(Icon_Content.Character);
+        Change_Content_Content(Character_Contnet.State);
+
     }
 
     #region 닉네임 체크
@@ -1393,6 +1688,7 @@ public class UiManager : MonoBehaviour
 
     public void Set_Ui()
     {
+        Set_Item_Img();
 
         Set_Img_Character();
         Set_Txt_Lv();
@@ -1410,6 +1706,8 @@ public class UiManager : MonoBehaviour
         Set_Txt_Upgrade_Ticket();
         Set_Txt_Black_Stone();
         Set_Txt_Hell_Ticket();
+        Set_Txt_Mileage();
+        Set_Txt_Guild_Coin();
 
         Set_Character_Name();
         Set_Character_Lv();
@@ -1437,9 +1735,34 @@ public class UiManager : MonoBehaviour
 
     #region PlayerUI 세팅
 
+    public void Set_Item_Img()
+    {
+
+        img_Skill_0.sprite = Utill.Get_Skill_Sp((int)Ability_Type.skill_atk);
+        img_Skill_1.sprite = Utill.Get_Skill_Sp((int)Ability_Type.skill_atk_speed);
+        img_Skill_2.sprite = Utill.Get_Skill_Sp((int)Ability_Type.skill_speed);
+
+        img_top_steel.sprite = Utill.Get_Item_Sp(Item_Type.steel);
+        img_top_dia.sprite = Utill.Get_Item_Sp(Item_Type.dia);
+
+        img_goods_upgrade.sprite = Utill.Get_Item_Sp(Item_Type.upgrade_stone);
+        img_goods_black_stone.sprite = Utill.Get_Item_Sp(Item_Type.black_stone);
+        img_goods_steel.sprite = Utill.Get_Item_Sp(Item_Type.steel);
+        img_goods_mileage.sprite = Utill.Get_Item_Sp(Item_Type.mileage);
+        img_goods_guild_coin.sprite = Utill.Get_Item_Sp(Item_Type.guild_coin);
+
+        img_Lv_1_Coin.sprite = img_Lv_10_Coin.sprite = img_Lv_100_Coin.sprite = img_top_coin.sprite
+            = Utill.Get_Item_Sp(Item_Type.coin);
+
+
+        img_Upgrade_1_Soul_stone.sprite = img_Upgrade_10_Soul_stone.sprite = img_Upgrade_100_Soul_stone.sprite =
+        img_Upgrade_Soul_Stone.sprite = img_Skill_Soul.sprite = img_goods_soul_stone.sprite
+            = Utill.Get_Item_Sp(Item_Type.soul_stone);
+    }
+
     public void Set_Img_Character()
     {
-        img_Character.sprite = null;
+        img_Character.sprite = Utill.Get_Character_Sp(BackEndDataManager.instance.Character_Data.Int_character_Num);
     }
 
     StringBuilder sb;
@@ -1472,6 +1795,7 @@ public class UiManager : MonoBehaviour
     {
         txt_Steel_Val.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.steel));
         txt_Content_Upgrade_Steel_Val.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.steel));
+        txt_goods_steel.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.steel));
     }
 
     public void Set_Txt_Coin()
@@ -1481,7 +1805,7 @@ public class UiManager : MonoBehaviour
 
     public void Set_Txt_Crystal()
     {
-        txt_Dia_Val.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.crystal));
+        txt_Dia_Val.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.dia));
     }
 
     public void Set_Txt_Upgrade_Stone()
@@ -1491,6 +1815,7 @@ public class UiManager : MonoBehaviour
         txt_Content_Hell_Upgread_Stone_Val.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.upgrade_stone));
         txt_My_Upgrade_Stone.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.upgrade_stone));
         txt_My_Mix_Stone.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.upgrade_stone));
+        txt_goods_upgrade.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.upgrade_stone));
 
     }
 
@@ -1502,7 +1827,6 @@ public class UiManager : MonoBehaviour
     public void Set_Txt_Upgrade_Ticket()
     {
         txt_Content_Upgrade_Ticket_Val.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.upgrade_ticket));
-        Debug.Log(BackEndDataManager.instance.Get_Item(Item_Type.upgrade_ticket));
     }
 
     public void Set_Txt_Soul_Stone()
@@ -1510,12 +1834,27 @@ public class UiManager : MonoBehaviour
         txt_Skill_Soul_Val.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.soul_stone));
         txt_Upgrade_Soul_Stone_Val.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.soul_stone));
         txt_Underground_Soul_Stone_Val.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.soul_stone));
+        txt_goods_soul_stone.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.soul_stone));
 
     }
 
     public void Set_Txt_Black_Stone()
     {
         txt_Content_Hell_Black_Stone_Val.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.black_stone));
+        txt_goods_black_stone.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.black_stone));
+
+    }
+
+    public void Set_Txt_Mileage()
+    {
+        txt_goods_mileage.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.mileage));
+
+    }
+
+    public void Set_Txt_Guild_Coin()
+    {
+        txt_goods_guild_coin.text = GetGoldString(BackEndDataManager.instance.Get_Item(Item_Type.guild_coin));
+
     }
 
     public void Set_Txt_Hell_Ticket()
@@ -1559,10 +1898,28 @@ public class UiManager : MonoBehaviour
         }
     }
 
+    public void Check_Skill()
+    {
+
+
+        Skill skill = Skill_s.skills.Find(x => x.ability_type.Equals((int)Ability_Type.skill_atk));
+        Skill_info skill_Info = BackEndDataManager.instance.Skill_Data.skill_Info.Find(x => x.int_num.Equals(skill.num));
+        img_Skill_0_lock.gameObject.SetActive(skill_Info == null);
+
+        skill = Skill_s.skills.Find(x => x.ability_type.Equals((int)Ability_Type.skill_atk_speed));
+        skill_Info = BackEndDataManager.instance.Skill_Data.skill_Info.Find(x => x.int_num.Equals(skill.num));
+        img_Skill_1_lock.gameObject.SetActive(skill_Info == null);
+
+        skill = Skill_s.skills.Find(x => x.ability_type.Equals((int)Ability_Type.skill_speed));
+        skill_Info = BackEndDataManager.instance.Skill_Data.skill_Info.Find(x => x.int_num.Equals(skill.num));
+        img_Skill_2_lock.gameObject.SetActive(skill_Info == null);
+
+
+    }
+
     public void Set_Skill_0_Bg()
     {
-        img_Skill_0_bg.gameObject.SetActive(!Player_stat.Use_skill);
-
+        img_Skill_0_bg.gameObject.SetActive(!Player_stat.Use_skill_0);
     }
 
     public void Set_Skill_0_txt(float fill, int val)
@@ -1572,6 +1929,34 @@ public class UiManager : MonoBehaviour
         txt_Skill_0.text = val.ToString();
     }
 
+
+
+    public void Set_Skill_1_Bg()
+    {
+        img_Skill_1_bg.gameObject.SetActive(!Player_stat.Use_skill_1);
+
+    }
+
+    public void Set_Skill_1_txt(float fill, int val)
+    {
+
+        img_Skill_1_bg.fillAmount = fill;
+        txt_Skill_1.text = val.ToString();
+    }
+
+
+    public void Set_Skill_2_Bg()
+    {
+        img_Skill_2_bg.gameObject.SetActive(!Player_stat.Use_skill_2);
+
+    }
+
+    public void Set_Skill_2_txt(float fill, int val)
+    {
+
+        img_Skill_2_bg.fillAmount = fill;
+        txt_Skill_2.text = val.ToString();
+    }
     #endregion
 
     #region CharacterUI 세팅
@@ -1601,6 +1986,8 @@ public class UiManager : MonoBehaviour
     {
         int lv = BackEndDataManager.instance.Character_Data.int_character_Lv;
 
+
+
         txt_Lv_1_Val.text = GetGoldString(Calculate.Price(500, 5, lv, 1));
         txt_Lv_10_Val.text = GetGoldString(Calculate.Price(500, 5, lv, 10));
         txt_Lv_100_Val.text = GetGoldString(Calculate.Price(500, 5, lv, 100));
@@ -1628,7 +2015,6 @@ public class UiManager : MonoBehaviour
         Content_Weapon.SetActive(popup.Equals(Icon_Content.Weapon));
         Content_Job.SetActive(popup.Equals(Icon_Content.Job));
         Content_Totem.SetActive(popup.Equals(Icon_Content.Totem));
-        Content_Shop.SetActive(popup.Equals(Icon_Content.Shop));
 
     }
 
@@ -1646,6 +2032,57 @@ public class UiManager : MonoBehaviour
         popup_Shield.SetActive(popup.Equals(Weapon_Content.Shield));
         popup_Accessory.SetActive(popup.Equals(Weapon_Content.Accessory));
         popup_Costume.SetActive(popup.Equals(Weapon_Content.Costume));
+    }
+
+    public void Change_Shop_Contnet(Shop_Content popup)
+    {
+        Content_Event.SetActive(popup.Equals(Shop_Content.Event));
+        Content_Gacha.SetActive(popup.Equals(Shop_Content.Gacha));
+        Content_Goods.SetActive(popup.Equals(Shop_Content.Goods));
+        Content_Mileage.SetActive(popup.Equals(Shop_Content.Mileage));
+        Content_Other.SetActive(popup.Equals(Shop_Content.Other));
+
+    }
+
+    public void Change_Goods_Contnet(Item_Type popup)
+    {
+        PopupManager.Close_Popup();
+
+        switch (popup)
+        {
+
+            case Item_Type.upgrade_stone:
+                Change_Icon_Content(Icon_Content.Weapon);
+                Change_Weapon_Contnet(Weapon_Content.Sword);
+                break;
+            case Item_Type.soul_stone:
+                Change_Icon_Content(Icon_Content.Character);
+                Change_Content_Content(Character_Contnet.Skill);
+                break;
+            case Item_Type.black_stone:
+
+                Change_Icon_Content(Icon_Content.Pet);
+
+                break;
+            case Item_Type.steel:
+                Change_Icon_Content(Icon_Content.Totem);
+
+                break;
+            case Item_Type.mileage:
+
+                PopupManager.Open_Popup(ShopPopup);
+                Change_Shop_Contnet(Shop_Content.Mileage);
+                break;
+            case Item_Type.guild_coin:
+                PopupManager.Open_Popup(ShopPopup);
+                Change_Shop_Contnet(Shop_Content.Other);
+
+                break;
+
+
+            default:
+                break;
+        }
     }
 
     public void Change_Weapon_Popup(Weapon_Popup popup)
@@ -1689,6 +2126,7 @@ public class UiManager : MonoBehaviour
             PopupManager.Close_Popup();
         }
     }
+
     public void Change_Content_Popup(Popup_Type popup_Type)
     {
         switch (popup_Type)
@@ -1715,8 +2153,6 @@ public class UiManager : MonoBehaviour
 
     public void Set_Content_Panel()
     {
-        Debug.Log(BackEndDataManager.instance.content_csv_data.Count);
-
         foreach (var item in BackEndDataManager.instance.content_csv_data)
         {
 
@@ -1791,7 +2227,6 @@ public class UiManager : MonoBehaviour
 
         img_Dungeon_Reward_0.sprite = Underground_.Get_Img_Reward_0();
         img_Dungeon_Reward_1.sprite = Underground_.Get_Img_Reward_1();
-        Debug.Log("lv " + lv);
 
     }
 
@@ -2146,7 +2581,7 @@ public class UiManager : MonoBehaviour
         txt_State_Atk_Speed_Val.text = Player_stat.int_Atk_Speed.ToString();
         txt_State_Critical_Val.text = string.Format("{0}{1}", Player_stat.int_Critical_Damege, "%");
         txt_State_Critical_Percent_Val.text = string.Format("{0}{1}", Player_stat.int_Critical_Percent, "%");
-        txt_State_Speed_Val.text = string.Format("{0}{1}", Player_stat.int_Atk_Speed, "%");
+        txt_State_Speed_Val.text = Player_stat.int_Speed.ToString();
     }
 
     #region Skill
@@ -2276,7 +2711,7 @@ public class UiManager : MonoBehaviour
         int Pet_Ability_type_0 = Pet_.Pet_Ability_type_0();
         int Pet_Ability_type_1 = Pet_.Pet_Ability_type_1();
 
-        Sprite sprite = Utill.Get_Item_Sp(Pet_.Pet_Price_Type());
+        Sprite sprite = Utill.Get_Item_Sp((Item_Type)Pet_.Pet_Price_Type());
 
         img_pet.sprite = Utill.Get_Pet_Sp(num);
         img_pet_buy.sprite = img_pet_lv_1.sprite = img_pet_lv_10.sprite = img_pet_lv_100.sprite = sprite;
@@ -2506,6 +2941,7 @@ public class UiManager : MonoBehaviour
         Change_Weapon_Popup(Weapon_Popup.info);
     }
 
+    #region weapon_info
 
     public void Set_Weapon_Info()
     {
@@ -2667,6 +3103,10 @@ public class UiManager : MonoBehaviour
 
     }
 
+    #endregion
+
+    #region wepon_upgrade
+
     public void Set_Weapon_Upgrade()
     {
 
@@ -2812,6 +3252,10 @@ public class UiManager : MonoBehaviour
         }
 
     }
+
+    #endregion
+
+    #region weapon_mix
 
     public void Set_Weapon_Mix()
     {
@@ -2968,6 +3412,10 @@ public class UiManager : MonoBehaviour
 
     }
 
+    #endregion
+
+    #region weapon_roon
+
     public void Set_Weapon_Roon()
     {
         switch (Weapon_.Weapon_Content)
@@ -3070,7 +3518,7 @@ public class UiManager : MonoBehaviour
         txt_select_roon_stat_val.text = (float)BackEndDataManager.instance.roon_csv_data[Weapon_.roon_Info.type]["ability_val_0"] + Ability_.Ability_Type_Sign(ability_Type);
 
         btn_roon_mount.gameObject.SetActive(isMount);
-        btn_roon_release.gameObject.SetActive(!isMount && BackEndDataManager.instance.Get_Item(Item_Type.crystal) >= 100);
+        btn_roon_release.gameObject.SetActive(!isMount && BackEndDataManager.instance.Get_Item(Item_Type.dia) >= 100);
 
         PopupManager.Open_Popup(Roon_Stat);
 
@@ -3096,9 +3544,9 @@ public class UiManager : MonoBehaviour
 
     public void Roon_Release()
     {
-        if (BackEndDataManager.instance.Get_Item(Item_Type.crystal) >= 100)
+        if (BackEndDataManager.instance.Get_Item(Item_Type.dia) >= 100)
         {
-            BackEndDataManager.instance.Set_Item(Item_Type.crystal, 100, Calculate_Type.mius);
+            BackEndDataManager.instance.Set_Item(Item_Type.dia, 100, Calculate_Type.mius);
 
             Roon_Info _Info = new Roon_Info
             {
@@ -3121,6 +3569,10 @@ public class UiManager : MonoBehaviour
         }
 
     }
+
+    #endregion
+
+    #region wepon_decom
 
     public void Set_Weapon_Decom()
     {
@@ -3147,17 +3599,16 @@ public class UiManager : MonoBehaviour
         }
 
         int int_grade = Array.FindIndex(grade, i => i == my_data["grade"].ToString());
-        img_Decom.sprite = Utill.Get_Item_Sp(Item_Type.weapon_limit_stone_d + int_grade);
+        img_Decom.sprite = Utill.Get_Item_Sp((Item_Type)Item_Type.weapon_limit_stone_d + int_grade);
 
         img_weapon_bg_decom.color = grade_colors[int_grade];
         txt_Weapon_Grade_decom.text = my_data["grade"].ToString();
         txt_Weapon_Lv_decom.text = string.Format("{0}{1}", "Lv", my_Info == null ? 0 : my_Info.int_lv);
 
-        Weapon_.Decom_Count = my_Info == null ? 0 : my_Info.int_val >= 2 ? my_Info.int_val - 1 : 0 ;
+        Weapon_.Decom_Count = my_Info == null ? 0 : my_Info.int_val >= 2 ? my_Info.int_val - 1 : 0;
 
         Set_Weapon_Decom_Val();
     }
-
 
     public void Set_Weapon_Decom_Val()
     {
@@ -3166,7 +3617,7 @@ public class UiManager : MonoBehaviour
         int grade_val = grade_decom[int_grade];
 
         txt_Weapon_Ea_decom.text = string.Format("{0}(-{1})", my_Info == null ? 0 : my_Info.int_val, Weapon_.Decom_Count);
-        txt_Decom_Ea_decom.text = string.Format("{0}(+{1})", 
+        txt_Decom_Ea_decom.text = string.Format("{0}(+{1})",
             BackEndDataManager.instance.Get_Item(Item_Type.weapon_limit_stone_d + int_grade), Weapon_.Decom_Count * grade_val);
 
         txt_Decom_val.text = Weapon_.Decom_Count.ToString();
@@ -3198,7 +3649,7 @@ public class UiManager : MonoBehaviour
 
                 if (my_Info.int_val >= 2 && Weapon_.Decom_Count < 1)
                     Weapon_.Decom_Count = 1;
-                else if(my_Info.int_val < 2)
+                else if (my_Info.int_val < 2)
                     Weapon_.Decom_Count = 0;
 
                 break;
@@ -3249,6 +3700,8 @@ public class UiManager : MonoBehaviour
         Set_Weapon_Decom();
 
     }
+
+    #endregion
 
     #endregion
 
@@ -3320,7 +3773,7 @@ public class UiManager : MonoBehaviour
 
                     GiftTime = DateTime.Parse(job_.str_time);
 
-                    double reweard_val = (LateTime.TotalSeconds /job_time);
+                    double reweard_val = (LateTime.TotalSeconds / job_time);
 
                     BackEndDataManager.instance.Set_Item((Item_Type)data["reward_0"], Job_.Get_Reward(job_.int_num) * (int)(Math.Abs(reweard_val) + 1), Calculate_Type.plus);
 
@@ -3347,6 +3800,140 @@ public class UiManager : MonoBehaviour
             Totem.Find_obj(item);
             totem_Panels.Add(Totem);
         }
+
+        Totem_.totem_Lv = Character_Lv.lv_1;
+
+    }
+
+    public void Check_Totem_buy()
+    {
+        foreach (var item in totem_Panels)
+        {
+            item.Check_Btn();
+        }
+
+    }
+
+    public void Check_Totem_Item(Character_Lv _Lv)
+    {
+        Totem_.totem_Lv = _Lv;
+
+        foreach (var item in totem_Panels)
+        {
+            item.Set_Item();
+        }
+
+    }
+
+    #endregion
+
+    #region SettingPopup
+
+    public void Setting_Repear()
+    {
+
+    }
+
+    public void Setting_Language()
+    {
+
+    }
+
+    public void Setting_Cupon()
+    {
+
+    }
+
+    public void Setting_Power()
+    {
+
+    }
+
+    public void Set_Music()
+    {
+
+    }
+
+    public void Setting_Music()
+    {
+
+    }
+
+    public void Set_Effect()
+    {
+
+    }
+
+
+    public void Setting_Effect()
+    {
+
+    }
+
+
+    public void Set_Push()
+    {
+
+    }
+
+
+    public void Setting_Push()
+    {
+
+    }
+
+
+    public void Set_Grapic()
+    {
+
+    }
+
+    public void Setting_Grapic()
+    {
+
+    }
+
+    public void Setting_Google_Login()
+    {
+
+    }
+
+    public void Setting_Gamecenter_Login()
+    {
+
+    }
+
+    public void Setting_Terms()
+    {
+        if (Application.systemLanguage.Equals(SystemLanguage.Korean))
+            Application.OpenURL("https://breaktimemobile.com/entry/이용약관?category=869827");
+        else
+            Application.OpenURL("https://breaktimemobile.com/entry/TERMS-OF-SERVICE");
+
+    }
+
+    public void Setting_Privacy()
+    {
+        if (Application.systemLanguage.Equals(SystemLanguage.Korean))
+            Application.OpenURL("https://breaktimemobile.com/entry/개인정보-처리방침?category=869827");
+        else
+            Application.OpenURL("https://breaktimemobile.com/entry/Privacy-Policy?category=869827");
+    }
+
+    public void Setting_Mail()
+    {
+        string str = "help.breaktime@gmail.com";
+        string str2 = "Puzzle kingdom";
+        Application.OpenURL("mailto:" + str + "?subject=" + str2);
+    }
+
+    public void Setting_Exit()
+    {
+
+    }
+
+    public void Setting_Help()
+    {
 
     }
 

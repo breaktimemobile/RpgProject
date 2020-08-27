@@ -16,7 +16,8 @@ public enum Data_Type
     skill_info,
     content_info,
     pet_info,
-    job_info
+    job_info,
+    totem_info
 }
 
 public enum Character_Lv
@@ -70,9 +71,18 @@ public enum Icon_Content
 
 }
 
+public enum Shop_Content
+{
+    Event,
+    Gacha,
+    Goods,
+    Mileage,
+    Other
+}
+
 public enum Item_Type
 {
-    crystal,
+    dia,
     coin,
     upgrade_stone,
     limit_stone,
@@ -420,12 +430,12 @@ public class Underground_
 
     public static Sprite Get_Img_Reward_0()
     {
-        return Utill.Get_Item_Sp((Item_Type)(int)BackEndDataManager.instance.underground_dungeon_csv_data[Underground_Lv]["reward_0"]);
+        return Utill.Get_Item_Sp((Item_Type)BackEndDataManager.instance.underground_dungeon_csv_data[Underground_Lv]["reward_0"]);
     }
 
     public static Sprite Get_Img_Reward_1()
     {
-        return Utill.Get_Item_Sp((Item_Type)(int)BackEndDataManager.instance.underground_dungeon_csv_data[Underground_Lv]["reward_1"]);
+        return Utill.Get_Item_Sp((Item_Type)BackEndDataManager.instance.underground_dungeon_csv_data[Underground_Lv]["reward_1"]);
     }
 
     public static void Get_Sweep(int val)
@@ -535,22 +545,22 @@ public class Upgrade_
 
     public static Item_Type Get_Reward_0_Type()
     {
-        return (Item_Type)(int)BackEndDataManager.instance.upgrade_dungeon_csv_data[Upgrade_Lv]["reward_0"];
+        return (Item_Type)BackEndDataManager.instance.upgrade_dungeon_csv_data[Upgrade_Lv]["reward_0"];
     }
 
     public static Item_Type Get_Reward_1_Type()
     {
-        return (Item_Type)(int)BackEndDataManager.instance.upgrade_dungeon_csv_data[Upgrade_Lv]["reward_1"];
+        return (Item_Type)BackEndDataManager.instance.upgrade_dungeon_csv_data[Upgrade_Lv]["reward_1"];
     }
 
     public static Sprite Get_Img_Reward_0()
     {
-        return Utill.Get_Item_Sp((Item_Type)(int)BackEndDataManager.instance.upgrade_dungeon_csv_data[Upgrade_Lv]["reward_0"]);
+        return Utill.Get_Item_Sp(Get_Reward_0_Type());
     }
 
     public static Sprite Get_Img_Reward_1()
     {
-        return Utill.Get_Item_Sp((Item_Type)(int)BackEndDataManager.instance.upgrade_dungeon_csv_data[Upgrade_Lv]["reward_1"]);
+        return Utill.Get_Item_Sp(Get_Reward_1_Type());
     }
 
 }
@@ -580,22 +590,22 @@ public class Hell_
 
     public static Item_Type Get_Reward_0_Type()
     {
-        return (Item_Type)(int)BackEndDataManager.instance.hell_dungeon_csv_data[Hell_Lv]["reward_0"];
+        return (Item_Type)BackEndDataManager.instance.hell_dungeon_csv_data[Hell_Lv]["reward_0"];
     }
 
     public static Item_Type Get_Reward_1_Type()
     {
-        return (Item_Type)(int)BackEndDataManager.instance.hell_dungeon_csv_data[Hell_Lv]["reward_1"];
+        return (Item_Type)BackEndDataManager.instance.hell_dungeon_csv_data[Hell_Lv]["reward_1"];
     }
 
     public static Sprite Get_Img_Reward_0()
     {
-        return Utill.Get_Item_Sp((Item_Type)(int)BackEndDataManager.instance.hell_dungeon_csv_data[Hell_Lv]["reward_0"]);
+        return Utill.Get_Item_Sp(Get_Reward_0_Type());
     }
 
     public static Sprite Get_Img_Reward_1()
     {
-        return Utill.Get_Item_Sp((Item_Type)(int)BackEndDataManager.instance.hell_dungeon_csv_data[Hell_Lv]["reward_1"]);
+        return Utill.Get_Item_Sp(Get_Reward_1_Type());
     }
 
 }
@@ -610,7 +620,6 @@ public class Ability_
     public static string Ability_Type_Sign(int type)
     {
         return Get_Ability_Type(type).Equals(0) ? "%" : "";
-        ;
     }
 
     public static string Get_Ability_Nmae(int type)
@@ -763,7 +772,6 @@ public class Job_
         BigInteger total = Get_Reward(num);
 
         BigInteger add = (total * (int)percnet / 100);
-        Debug.Log("add " + total +"  "+(int)percnet);
 
         if (job_ != null)
         {
@@ -773,8 +781,6 @@ public class Job_
                 add += (total * (int)percnet / 100);
 
             }
-
-            Debug.Log("total "+add);
 
             return add;
 
@@ -804,12 +810,81 @@ public class Job_
     }
 }
 
+public class Totem_
+{
+    public static Character_Lv totem_Lv = Character_Lv.lv_1;
+
+
+    public static float Get_Reward(int num)
+    {
+        Dictionary<string, object> data = BackEndDataManager.instance.totem_csv_data[num];
+
+        Totem_info info_ = BackEndDataManager.instance.Totem_Data.totem_info.Find(x => x.int_num.Equals(num));
+
+        int ability_type = (int)data["ability_type"];
+
+        int _type = Ability_.Get_Ability_Type(ability_type);
+
+        float val = (float)data["base_ability"] * (_type.Equals(0) ? 100 : 1);
+
+        float add = (float)data["ability_add"] * (_type.Equals(0) ? 100 : 1);
+
+        decimal add_result = (decimal)add * (info_ == null ? 0 : info_.int_lv - 1);
+
+        float resultValue = val + (float)add_result;
+
+        Debug.Log(val + "  " + add_result);
+
+        return resultValue;
+
+    }
+
+    public static float Get_Add_Reward(int num)
+    {
+        Dictionary<string, object> data = BackEndDataManager.instance.totem_csv_data[num];
+
+        int ability_type = (int)data["ability_type"];
+
+        int _type = Ability_.Get_Ability_Type(ability_type);
+
+        float add = (float)data["ability_add"] * (_type.Equals(0) ? 100 : 1);
+
+        return add * (int)totem_Lv;
+
+    }
+
+    public static BigInteger Get_Price(int num)
+    {
+        Dictionary<string, object> data = BackEndDataManager.instance.totem_csv_data[num];
+
+        Totem_info info_ = BackEndDataManager.instance.Totem_Data.totem_info.Find(x => x.int_num.Equals(num));
+
+        BigInteger price = BigInteger.Parse(data["price_val"].ToString(), System.Globalization.NumberStyles.Float);
+
+        float percnet = (float)data["price_percent"] * 100;
+
+        BigInteger total = info_ == null ? price : Calculate.Price(price, (int)percnet, info_.int_lv - 1, (int)totem_Lv);
+
+        return total;
+    }
+}
+
+
 public class Utill
 {
-
-    public static Sprite Get_Item_Sp(Item_Type item_Type)
+    public static Sprite Get_Character_Sp(int num)
     {
-        return Resources.Load<Sprite>("Item/icon_" + item_Type.ToString());
+        return Resources.Load<Sprite>("Character/char_" + num.ToString());
+    }
+
+    public static Sprite Get_Skill_Sp(int num)
+    {
+        return Resources.Load<Sprite>("Skill/S_skill_" + num);
+    }
+
+    public static Sprite Get_Item_Sp(Item_Type num)
+    {
+        return Resources.Load<Sprite>("Item/item_" + (int)num);
     }
 
     public static Sprite Get_Pet_Sp(int num)
@@ -843,5 +918,9 @@ public class Utill
         return Resources.Load<Sprite>("Job/job_" + num.ToString());
     }
 
+    public static Sprite Get_Totem_Sp(int num)
+    {
+        return Resources.Load<Sprite>("Totem/totem_" + num.ToString());
+    }
 }
 

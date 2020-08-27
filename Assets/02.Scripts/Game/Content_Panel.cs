@@ -23,8 +23,8 @@ public class Content_Panel : MonoBehaviour
         img_Reward_2 =  transform.Find("img_Reward_2").GetComponent<Image>();
 
         txt_Content_Name.text = data["name"].ToString();
-        img_Reward_0.sprite = Utill.Get_Item_Sp((Item_Type)(int)data["reward_0"]);
-        img_Reward_1.sprite = Utill.Get_Item_Sp((Item_Type)(int)data["reward_1"]);
+        img_Reward_0.sprite = Utill.Get_Item_Sp((Item_Type)data["reward_0"]);
+        img_Reward_1.sprite = Utill.Get_Item_Sp((Item_Type)data["reward_1"]);
 
         btn_content.onClick.AddListener(() => UiManager.instance.Change_Content_Popup((Popup_Type)(int)data["num"]));
     }
