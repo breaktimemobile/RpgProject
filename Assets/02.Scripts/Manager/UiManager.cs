@@ -12,6 +12,10 @@ public class UiManager : MonoBehaviour
 {
     public static UiManager instance;
 
+    Transform Popup;
+
+    #region Popup
+
     private GameObject NickNamePopup;
     private GameObject Content_UndergroundPopup;
     private GameObject Content_UpgradePopup;
@@ -28,6 +32,16 @@ public class UiManager : MonoBehaviour
     public GameObject ShopPopup;
     public GameObject GoodsPopup;
     public GameObject SettingPopup;
+    public GameObject RepaerPopup;
+    public GameObject LanguagePopup;
+    public GameObject CuponPopup;
+    public GameObject PowerPopup;
+    public GameObject LogoutPopup;
+    public GameObject MailPopup;
+    public GameObject ExitPopup;
+    public GameObject HelpPopup;
+
+    #endregion
 
     private GameObject obj_Top;
     public GameObject obj_Stage;
@@ -660,6 +674,58 @@ public class UiManager : MonoBehaviour
 
     #endregion
 
+
+    #region RepaerPopup
+
+    Text txt_repear_success;
+    Text    txt_repear_fail;
+    Button    btn_repaer_ok;
+
+    #endregion
+
+    #region LanguagePopup
+
+    Button btn_Language_Back;
+    List<Button>  btn_Languages = new List<Button>();
+
+    #endregion
+
+    #region CuponPopup
+
+    GameObject cupon;
+    InputField input_cupon;
+    Button btn_cupon_close;
+    Button btn_cupon_ok;
+
+    GameObject cupon_success;
+    Button    btn_cupon_success;
+
+    GameObject cupon_fail;
+    Button btn_cupon_fail;
+    GameObject txt_none_fail;
+     GameObject txt_overlap_fail;
+
+    #endregion
+
+    #region PowerPopup
+
+    Text txt_power_time;
+    Button btn_power_close;
+
+    #endregion
+
+    #region LogoutPopup
+    #endregion
+
+    #region MailPopup
+    #endregion
+
+    #region ExitPopup
+    #endregion
+
+    #region HelpPopup
+    #endregion
+
     #region Prefabs
 
     public GameObject txt_Damege;
@@ -678,7 +744,7 @@ public class UiManager : MonoBehaviour
 
     #endregion
 
-    public Character_Lv skill_lv = Character_Lv.lv_1;
+    private int[] langeuae = new int[] { 23, 10, 22, 40, 41, 15, 21, 34, 14, 20, 28, 39, 37, 36, 30, 99999 };
 
     private void Awake()
     {
@@ -693,7 +759,9 @@ public class UiManager : MonoBehaviour
     {
 
         Transform Game = GameObject.Find("Game").transform;
-        Transform Popup = GameObject.Find("Popup").transform;
+        Popup = GameObject.Find("Popup").transform;
+
+        #region Popup
 
         NickNamePopup = Popup.Find("NickNamePopup").gameObject;
         Content_UndergroundPopup = Popup.Find("Content_UndergroundPopup").gameObject;
@@ -711,8 +779,18 @@ public class UiManager : MonoBehaviour
         ShopPopup = Popup.Find("ShopPopup").gameObject;
         GoodsPopup = Popup.Find("GoodsPopup").gameObject;
         SettingPopup = Popup.Find("SettingPopup").gameObject;
+        RepaerPopup = Popup.Find("RepaerPopup").gameObject;
+        LanguagePopup = Popup.Find("LanguagePopup").gameObject;
+        CuponPopup = Popup.Find("CuponPopup").gameObject;
+        PowerPopup = Popup.Find("PowerPopup").gameObject;
+        LogoutPopup = Popup.Find("LogoutPopup").gameObject;
+        MailPopup = Popup.Find("MailPopup").gameObject;
+        ExitPopup = Popup.Find("ExitPopup").gameObject;
+        HelpPopup = Popup.Find("HelpPopup").gameObject;
 
-        obj_Top = Game.Find("obj_Top").gameObject;
+    #endregion
+
+    obj_Top = Game.Find("obj_Top").gameObject;
         obj_Stage = Game.Find("obj_Stage").gameObject;
         obj_Btns = Game.Find("obj_Btns").gameObject;
         obj_Content = Game.Find("obj_Content").gameObject;
@@ -1357,6 +1435,44 @@ public class UiManager : MonoBehaviour
 
         #endregion
 
+        #region RepaerPopup
+
+        txt_repear_success = RepaerPopup.transform.Find("txt_repear_success").GetComponent<Text>();
+        txt_repear_fail = RepaerPopup.transform.Find("txt_repear_fail").GetComponent<Text>();
+        btn_repaer_ok = RepaerPopup.transform.Find("btn_repaer_ok").GetComponent<Button>();
+
+        #endregion
+
+        #region LanguagePopup
+
+        btn_Language_Back = LanguagePopup.transform.Find("btn_Language_Back").GetComponent<Button>();
+        btn_Languages = LanguagePopup.transform.Find("btn_Languages").GetComponentsInChildren<Button>(true).ToList();
+
+        #endregion
+
+        #region CuponPopup
+
+        cupon = CuponPopup.transform.Find("cupon").gameObject;
+        input_cupon = cupon.transform.Find("input_cupon").GetComponent<InputField>();
+        btn_cupon_close = cupon.transform.Find("btn_cupon_close").GetComponent<Button>();
+        btn_cupon_ok = cupon.transform.Find("btn_cupon_ok").GetComponent<Button>();
+
+        cupon_success = CuponPopup.transform.Find("cupon_success").gameObject;
+        btn_cupon_success = cupon_success.transform.Find("btn_cupon_success").GetComponent<Button>();
+
+        cupon_fail = CuponPopup.transform.Find("cupon_fail").gameObject;
+        btn_cupon_fail = cupon_fail.transform.Find("btn_cupon_fail").GetComponent<Button>();
+        txt_none_fail = cupon_fail.transform.Find("txt_none_fail").gameObject;
+        txt_overlap_fail = cupon_fail.transform.Find("txt_overlap_fail").gameObject;
+
+        #endregion
+
+        #region PowerPopup
+
+        txt_power_time = PowerPopup.transform.Find("txt_power_time").GetComponent<Text>();
+        btn_power_close = PowerPopup.transform.Find("btn_power_close").GetComponent<Button>();
+
+        #endregion
     }
 
     private void Check_Popup(GameObject Popup)
@@ -1502,13 +1618,11 @@ public class UiManager : MonoBehaviour
         btn_setting_repaer.onClick.AddListener(() => Setting_Repear());
         btn_setting_language.onClick.AddListener(() => Setting_Language());
         btn_setting_cupon.onClick.AddListener(() => Setting_Cupon());
-        btn_setting_power.onClick.AddListener(() => Setting_Power());
+        btn_setting_power.onClick.AddListener(() => Setting_Power(true));
         btn_setting_music.onClick.AddListener(() => Setting_Music());
         btn_setting_effect.onClick.AddListener(() => Setting_Effect());
         btn_setting_push.onClick.AddListener(() => Setting_Push());
         btn_setting_grapic.onClick.AddListener(() => Setting_Grapic());
-        btn_setting_google.onClick.AddListener(() => Setting_Google_Login());
-        btn_setting_gameCenter.onClick.AddListener(() => Setting_Gamecenter_Login());
         btn_setting_terms.onClick.AddListener(() => Setting_Terms());
         btn_setting_privacy.onClick.AddListener(() => Setting_Privacy());
         btn_setting_mail.onClick.AddListener(() => Setting_Mail());
@@ -1608,6 +1722,44 @@ public class UiManager : MonoBehaviour
         btn_goods_steel.onClick.AddListener(() => Change_Goods_Contnet(Item_Type.steel));
         btn_goods_mileage.onClick.AddListener(() => Change_Goods_Contnet(Item_Type.mileage));
         btn_goods_guild_coin.onClick.AddListener(() => Change_Goods_Contnet(Item_Type.guild_coin));
+
+        #endregion
+
+
+        #region RepaerPopup
+
+        btn_repaer_ok.onClick.AddListener(() => PopupManager.Close_Popup());
+
+        #endregion
+
+        #region LanguagePopup
+
+        btn_Language_Back.onClick.AddListener(() => PopupManager.Close_Popup());
+
+        for (int i = 0; i < btn_Languages.Count; i++)
+        {
+            SystemLanguage lng = (SystemLanguage)langeuae[i];
+            btn_Languages[i].onClick.AddListener(() => Language.GetInstance().Set(lng));
+
+        }
+
+        #endregion
+
+        #region CuponPopup
+
+        input_cupon = cupon.transform.Find("input_cupon").GetComponent<InputField>();
+        btn_cupon_close.onClick.AddListener(() => PopupManager.Close_Popup());
+        btn_cupon_ok.onClick.AddListener(() => Check_Cupon());
+
+        btn_cupon_success.onClick.AddListener(() => PopupManager.Close_Popup());
+
+        btn_cupon_fail.onClick.AddListener(() => PopupManager.Close_Popup());
+
+        #endregion
+
+        #region PowerPopup
+
+        btn_power_close.onClick.AddListener(() => Setting_Power(false));
 
         #endregion
     }
@@ -1731,6 +1883,11 @@ public class UiManager : MonoBehaviour
 
         Pet_Init();
         Set_MyRoon();
+
+        Set_Music();
+        Set_Effect();
+        Set_Push();
+        Set_Grapic();
     }
 
     #region PlayerUI 세팅
@@ -2620,7 +2777,7 @@ public class UiManager : MonoBehaviour
     {
         foreach (var item in skill_Panels)
         {
-            item.Set_Upgrade(skill_lv);
+            item.Set_Upgrade(Skill_s.skill_lv);
         }
 
     }
@@ -3831,76 +3988,146 @@ public class UiManager : MonoBehaviour
 
     public void Setting_Repear()
     {
+        Check_Repear(true);
+    }
 
+    public void Check_Repear(bool check)
+    {
+        txt_repear_success.gameObject.SetActive(check);
+        txt_repear_fail.gameObject.SetActive(!check);
+
+        PopupManager.Open_Popup(RepaerPopup);
     }
 
     public void Setting_Language()
     {
+        PopupManager.Open_Popup(LanguagePopup);
 
     }
 
     public void Setting_Cupon()
     {
+        cupon.SetActive(true);
+        cupon_success.SetActive(false);
+        cupon_fail.SetActive(false);
+
+        PopupManager.Open_Popup(CuponPopup);
 
     }
 
-    public void Setting_Power()
+
+    public void Check_Cupon()
+    {
+        BackEndDataManager.instance.Check_Cupon(input_cupon.text);
+
+        cupon.SetActive(false);
+    }
+
+    public void Result_Coupon(Cupon_Type cupon_Type)
     {
 
+        switch (cupon_Type)
+        {
+            case Cupon_Type.Sussece:
+                cupon_success.SetActive(true);
+                break;
+            case Cupon_Type.fail:
+                cupon_fail.SetActive(true);
+                txt_none_fail.SetActive(true);
+                txt_overlap_fail.SetActive(false);
+
+                break;
+            case Cupon_Type.overlab:
+                cupon_fail.SetActive(true);
+                txt_none_fail.SetActive(false);
+                txt_overlap_fail.SetActive(true);
+                break;
+
+            default:
+                break;
+
+        }
+    }
+
+    public void Setting_Power(bool Active)
+    {
+
+        obj_Btns.SetActive(!Active);
+        obj_Top.SetActive(!Active);
+        obj_Content.SetActive(!Active);
+        obj_Icon.SetActive(!Active);
+
+        PowerPopup.SetActive(Active);
+
+        if (Active)
+            StartCoroutine("Co_Power_Time");
+        else
+            StopCoroutine("Co_Power_Time");
+    }
+
+    IEnumerator Co_Power_Time()
+    {
+        while (true)
+        {
+            DateTime now = DateTime.Now;
+
+            txt_power_time.text = string.Format("{0:00}:{1:00}",now.Hour,now.Minute);
+
+            yield return new WaitForSeconds(1f);
+        }
     }
 
     public void Set_Music()
     {
-
+        txt_setting_music_off.gameObject.SetActive(PlayerPrefs.GetInt("music", 1) == 0);
+        txt_setting_music_on.gameObject.SetActive(PlayerPrefs.GetInt("music", 1) == 1);
     }
 
     public void Setting_Music()
-    {
-
+    {     
+        PlayerPrefs.SetInt("music", PlayerPrefs.GetInt("music", 1) == 1 ? 0 : 1);
+        Set_Music();
     }
 
     public void Set_Effect()
     {
-
+        txt_setting_effect_off.gameObject.SetActive(PlayerPrefs.GetInt("effect", 1) == 0);
+        txt_setting_effect_on.gameObject.SetActive(PlayerPrefs.GetInt("effect", 1) == 1);
     }
 
 
     public void Setting_Effect()
     {
-
+        PlayerPrefs.SetInt("effect", PlayerPrefs.GetInt("effect", 1) == 1 ? 0 : 1);
+        Set_Effect();
     }
 
 
     public void Set_Push()
     {
-
+        txt_setting_push_off.gameObject.SetActive(PlayerPrefs.GetInt("push", 1) == 0);
+        txt_setting_push_on.gameObject.SetActive(PlayerPrefs.GetInt("push", 1) == 1);
     }
 
 
     public void Setting_Push()
     {
+        PlayerPrefs.SetInt("push", PlayerPrefs.GetInt("push", 1) == 1 ? 0 : 1);
+        Set_Push();
 
     }
 
 
     public void Set_Grapic()
     {
-
+        txt_setting_grapic_off.gameObject.SetActive(PlayerPrefs.GetInt("grapic", 1) == 0);
+        txt_setting_grapic_on.gameObject.SetActive(PlayerPrefs.GetInt("grapic", 1) == 1);
     }
 
     public void Setting_Grapic()
     {
-
-    }
-
-    public void Setting_Google_Login()
-    {
-
-    }
-
-    public void Setting_Gamecenter_Login()
-    {
-
+        PlayerPrefs.SetInt("grapic", PlayerPrefs.GetInt("grapic", 1) == 1 ? 0 : 1);
+        Set_Grapic();
     }
 
     public void Setting_Terms()
@@ -3935,6 +4162,12 @@ public class UiManager : MonoBehaviour
     public void Setting_Help()
     {
 
+    }
+
+
+    public void Set_Version()
+    {
+        txt_setting_version.text = "ver " + Application.version;
     }
 
     #endregion

@@ -139,6 +139,17 @@ public class Totem_Data
 
 }
 
+
+[DynamoDBTable("coupon_info")]
+public class Coupon_Data
+{
+    [DynamoDBHashKey] // Hash key.
+    public string id { get; set; }
+    [DynamoDBProperty("coupon_info")]
+    public List<Coupon_info> coupon_info { get; set; }
+
+}
+
 public class Item_Info
 {
     public int type { get; set; }
@@ -214,6 +225,11 @@ public class Totem_info
 
 }
 
+public class Coupon_info
+{  
+    public string str_coupon { get; set; }
+    public string str_date { get; set; }
+}
 
 public class BackEndDataManager : MonoBehaviour
 {
@@ -229,6 +245,7 @@ public class BackEndDataManager : MonoBehaviour
     Pet_Data pet_Data = new Pet_Data();
     Job_Data job_Data = new Job_Data();
     Totem_Data totem_Data = new Totem_Data();
+    Coupon_Data coupon_Data = new Coupon_Data();
 
     DynamoDBContext context;
     AmazonDynamoDBClient DBclient;
@@ -244,6 +261,7 @@ public class BackEndDataManager : MonoBehaviour
     public Pet_Data Pet_Data { get => pet_Data; }
     public Job_Data Job_Data { get => job_Data; }
     public Totem_Data Totem_Data { get => totem_Data; }
+    public Coupon_Data Coupon_Data { get => coupon_Data; }
 
     public BigInteger Int_exp { get => int_exp; }
 
@@ -418,6 +436,73 @@ public class BackEndDataManager : MonoBehaviour
 
     }
 
+    public void Check_Cupon(string txt)
+    {
+
+        ScanRequest request = new ScanRequest()
+        {
+            TableName = "coupon"
+        };
+
+        Dictionary<string, AttributeValue> t = null;
+
+        DBclient.ScanAsync(request, (result) =>
+        {
+             t = result.Response.Items.Find(x => x["id"].S.Equals(txt));
+
+            if (t == null)
+            {
+                UiManager.instance.Result_Coupon(Cupon_Type.fail);
+
+            }
+            else
+            {
+                Debug.Log(t["date"].S.ToString());
+
+                DateTime GiftTime = DateTime.Parse(t["date"].S.ToString());
+
+                TimeSpan LateTime = GiftTime - DateTime.Now;
+
+                if (LateTime.TotalSeconds <= 0)
+                {
+                    UiManager.instance.Result_Coupon(Cupon_Type.fail);
+
+                }
+                else
+                {
+                    Coupon_info _Info = coupon_Data.coupon_info.Find(x => x.str_coupon.Equals(txt));
+
+                    if (_Info == null)
+                    {
+                        Coupon_info cou = new Coupon_info
+                        {
+                            str_coupon = txt,
+                            str_date = DateTime.Now.ToString()
+                        };
+
+                        coupon_Data.coupon_info.Add(cou);
+                        Save_Coupon_Data();
+
+                        UiManager.instance.Result_Coupon(Cupon_Type.Sussece);
+
+                    }
+                    else
+                    {
+                        UiManager.instance.Result_Coupon(Cupon_Type.overlab);
+
+                    }
+
+                }
+            }
+
+        });
+
+
+      
+
+
+    }
+
     public void Sucess_Data(Data_Type type)
     {
         if (SceneManager.GetActiveScene().name.Equals("Intro"))
@@ -455,6 +540,7 @@ public class BackEndDataManager : MonoBehaviour
         Check_Pet_Data();
         Check_Job_Data();
         Check_Totem_Data();
+        Check_Coupon_Data();
 
     }
 
@@ -837,6 +923,39 @@ public class BackEndDataManager : MonoBehaviour
         });
     }
 
+    public void Check_Coupon_Data()
+    {
+        ScanRequest request = new ScanRequest()
+        {
+            TableName = "coupon_info"
+        };
+
+        DBclient.ScanAsync(request, (result) =>
+        {
+
+            Dictionary<string, AttributeValue> t =
+              result.Response.Items.Find(x => x["id"].S.Equals(BackEndAuthManager.Get_UserId()));
+
+            Debug.Log(t == null ? "coupon 없음" : "coupon 있음");
+
+            if (t == null)
+            {
+                coupon_Data = new Coupon_Data
+                {
+                    id = BackEndAuthManager.Get_UserId(),
+                    coupon_info = new List<Coupon_info>()
+                };
+
+                Save_Coupon_Data();
+            }
+            else
+            {
+                Get_Coupon_Data();
+            }
+
+        });
+    }
+
     #endregion
 
     #region Get_Data
@@ -1070,6 +1189,28 @@ public class BackEndDataManager : MonoBehaviour
         }, null);
     }
 
+    public void Get_Coupon_Data() //DB에서 캐릭터 정보 받기
+    {
+        Debug.Log("Get_Coupon_Data");
+
+        context.LoadAsync(BackEndAuthManager.Get_UserId(), (AmazonDynamoDBResult<Coupon_Data> result) =>
+        {
+            // id가 abcd인 캐릭터 정보를 DB에서 받아옴
+            if (result.Exception != null)
+            {
+                Debug.Log(result.Exception);
+                return;
+            }
+
+            coupon_Data = result.Result;
+
+            Sucess_Data(Data_Type.coupon_info);
+
+
+        }, null);
+    }
+
+
     #endregion
 
     #region Save_Data
@@ -1207,6 +1348,20 @@ public class BackEndDataManager : MonoBehaviour
             if (result.Exception == null)
             {
                 Sucess_Data(Data_Type.totem_info);
+
+            }
+            else
+                Debug.Log(result.Exception);
+        });
+    }
+
+    public void Save_Coupon_Data() //DB에서 캐릭터 정보 받기
+    {
+        context.SaveAsync(coupon_Data, (result) =>
+        {
+            if (result.Exception == null)
+            {
+                Sucess_Data(Data_Type.coupon_info);
 
             }
             else

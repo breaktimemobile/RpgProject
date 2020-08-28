@@ -17,7 +17,8 @@ public enum Data_Type
     content_info,
     pet_info,
     job_info,
-    totem_info
+    totem_info,
+    coupon_info
 }
 
 public enum Character_Lv
@@ -254,8 +255,17 @@ public enum Popup_Type
 
 }
 
+public enum Cupon_Type
+{
+    Sussece,
+    fail,
+    overlab
+}
+
 public class Skill_s
 {
+    public static Character_Lv skill_lv = Character_Lv.lv_1;
+
     public static List<Skill> skills = new List<Skill>();
 
     public static Skill Get_Skill(Ability_Type skill_num)

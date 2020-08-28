@@ -56,7 +56,7 @@ public class Skill_Panel : MonoBehaviour
 
     public void Set_Upgrade(Character_Lv up_lv)
     {
-        UiManager.instance.skill_lv = up_lv;
+        Skill_s.skill_lv = up_lv;
 
         string m_up = UiManager.instance.GetGoldString((int)(skill.ability_add) * (int)up_lv);
         string f_up = string.Format("{0}{1}", (skill.ability_add * 100) * (int)up_lv, "%");
@@ -81,7 +81,7 @@ public class Skill_Panel : MonoBehaviour
         txt_Skill_Lv.text = "Lv."+lv;
 
 
-        total = Calculate.Percent(skill.price_val, skill.price_percent, lv, (int)UiManager.instance.skill_lv);
+        total = Calculate.Percent(skill.price_val, skill.price_percent, lv, (int)Skill_s.skill_lv);
 
         btn_Skill_Upgrade.interactable = BackEndDataManager.instance.Get_Item((Item_Type)skill.price_type) >= total;
     }
@@ -118,14 +118,14 @@ public class Skill_Panel : MonoBehaviour
                 skill_Info = new Skill_info
                 {
                     int_num = skill.num,
-                    int_lv = (int)UiManager.instance.skill_lv
+                    int_lv = (int)Skill_s.skill_lv
                 };
 
                 BackEndDataManager.instance.Skill_Data.skill_Info.Add(skill_Info);
             }
             else
             {
-                skill_Info.int_lv += (int)UiManager.instance.skill_lv;
+                skill_Info.int_lv += (int)Skill_s.skill_lv;
             }
 
             BackEndDataManager.instance.Set_Item((Item_Type)skill.price_type, total,Calculate_Type.mius);
