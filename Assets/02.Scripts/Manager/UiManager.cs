@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DG.Tweening;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,6 +8,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public class UiManager : MonoBehaviour
 {
@@ -40,6 +42,7 @@ public class UiManager : MonoBehaviour
     public GameObject MailPopup;
     public GameObject ExitPopup;
     public GameObject HelpPopup;
+    public GameObject PostPopup;
 
     #endregion
 
@@ -109,6 +112,12 @@ public class UiManager : MonoBehaviour
     private Image img_Skill_2_bg;
     private Text txt_Skill_2;
     private Image img_Skill_2_lock;
+
+    private Button btn_progress_reward;
+    private Text txt_progress_name;
+    private Text txt_progress_val;
+
+    private Button btn_post;
 
     #endregion
 
@@ -678,15 +687,15 @@ public class UiManager : MonoBehaviour
     #region RepaerPopup
 
     Text txt_repear_success;
-    Text    txt_repear_fail;
-    Button    btn_repaer_ok;
+    Text txt_repear_fail;
+    Button btn_repaer_ok;
 
     #endregion
 
     #region LanguagePopup
 
     Button btn_Language_Back;
-    List<Button>  btn_Languages = new List<Button>();
+    List<Button> btn_Languages = new List<Button>();
 
     #endregion
 
@@ -698,12 +707,12 @@ public class UiManager : MonoBehaviour
     Button btn_cupon_ok;
 
     GameObject cupon_success;
-    Button    btn_cupon_success;
+    Button btn_cupon_success;
 
     GameObject cupon_fail;
     Button btn_cupon_fail;
     GameObject txt_none_fail;
-     GameObject txt_overlap_fail;
+    GameObject txt_overlap_fail;
 
     #endregion
 
@@ -714,17 +723,51 @@ public class UiManager : MonoBehaviour
 
     #endregion
 
-    #region LogoutPopup
-    #endregion
-
-    #region MailPopup
-    #endregion
-
     #region ExitPopup
+
+    Button btn_exit_close;
+    Button btn_exit_ok;
+
     #endregion
 
     #region HelpPopup
+
+    Button btn_help_close;
+    Button btn_help_skill;
+    Button btn_help_weapon;
+    Button btn_help_job;
+    Button btn_help_costume;
+    Button btn_help_totem;
+    Button btn_help_roon;
+    Button btn_help_guild;
+    Button btn_help_dungeon;
+    Button btn_help_quest;
+    Button btn_help_pet;
+
+    Button btn_submit_close;
+
+    GameObject submit;
+
+    GameObject submit_skill;
+    GameObject submit_weapon;
+    GameObject submit_job;
+    GameObject submit_costume;
+    GameObject submit_totem;
+    GameObject submit_roon;
+    GameObject submit_guild;
+    GameObject submit_dungeon;
+    GameObject submit_quest;
+    GameObject submit_pet;
+
     #endregion
+
+    #region PostPopup
+
+    Transform scroll_Post;
+    Button btn_Post_Close;
+
+    #endregion
+
 
     #region Prefabs
 
@@ -741,6 +784,7 @@ public class UiManager : MonoBehaviour
     public GameObject pef_roon;
     public GameObject Job_Panel;
     public GameObject totem_Panel;
+    public GameObject Post_Panel;
 
     #endregion
 
@@ -787,10 +831,11 @@ public class UiManager : MonoBehaviour
         MailPopup = Popup.Find("MailPopup").gameObject;
         ExitPopup = Popup.Find("ExitPopup").gameObject;
         HelpPopup = Popup.Find("HelpPopup").gameObject;
+        PostPopup = Popup.Find("PostPopup").gameObject;
 
-    #endregion
+        #endregion
 
-    obj_Top = Game.Find("obj_Top").gameObject;
+        obj_Top = Game.Find("obj_Top").gameObject;
         obj_Stage = Game.Find("obj_Stage").gameObject;
         obj_Btns = Game.Find("obj_Btns").gameObject;
         obj_Content = Game.Find("obj_Content").gameObject;
@@ -856,6 +901,11 @@ public class UiManager : MonoBehaviour
         txt_Skill_2 = img_Skill_2.transform.Find("txt_Skill_2").GetComponent<Text>();
         img_Skill_2_lock = img_Skill_2.transform.Find("img_Skill_2_lock").GetComponent<Image>();
 
+        btn_progress_reward = obj_Btns.transform.Find("btn_progress_reward").GetComponent<Button>();
+        txt_progress_name = btn_progress_reward.transform.Find("txt_progress_name").GetComponent<Text>();
+        txt_progress_val = btn_progress_reward.transform.Find("txt_progress_val").GetComponent<Text>();
+
+        btn_post = obj_Btns.transform.Find("btn_post").GetComponent<Button>();
         #endregion
 
         #region obj_Content
@@ -1473,6 +1523,51 @@ public class UiManager : MonoBehaviour
         btn_power_close = PowerPopup.transform.Find("btn_power_close").GetComponent<Button>();
 
         #endregion
+
+        #region ExitPopup
+
+        btn_exit_close = ExitPopup.transform.Find("btn_exit_close").GetComponent<Button>();
+        btn_exit_ok = ExitPopup.transform.Find("btn_exit_ok").GetComponent<Button>();
+
+        #endregion
+
+        #region HelpPopup
+
+        btn_help_close = HelpPopup.transform.Find("btn_help_close").GetComponent<Button>();
+        btn_help_skill = HelpPopup.transform.Find("btns/btn_help_skill").GetComponent<Button>();
+        btn_help_weapon = HelpPopup.transform.Find("btns/btn_help_weapon").GetComponent<Button>();
+        btn_help_job = HelpPopup.transform.Find("btns/btn_help_job").GetComponent<Button>();
+        btn_help_costume = HelpPopup.transform.Find("btns/btn_help_costume").GetComponent<Button>();
+        btn_help_totem = HelpPopup.transform.Find("btns/btn_help_totem").GetComponent<Button>();
+        btn_help_roon = HelpPopup.transform.Find("btns/btn_help_roon").GetComponent<Button>();
+        btn_help_guild = HelpPopup.transform.Find("btns/btn_help_guild").GetComponent<Button>();
+        btn_help_dungeon = HelpPopup.transform.Find("btns/btn_help_dungeon").GetComponent<Button>();
+        btn_help_quest = HelpPopup.transform.Find("btns/btn_help_quest").GetComponent<Button>();
+        btn_help_pet = HelpPopup.transform.Find("btns/btn_help_pet").GetComponent<Button>();
+
+        submit = HelpPopup.transform.Find("submit").gameObject;
+
+        btn_submit_close = submit.transform.Find("btn_submit_close").GetComponent<Button>();
+
+        submit_skill = submit.transform.Find("submit_skill").gameObject;
+        submit_weapon = submit.transform.Find("submit_weapon").gameObject;
+        submit_job = submit.transform.Find("submit_job").gameObject;
+        submit_costume = submit.transform.Find("submit_costume").gameObject;
+        submit_totem = submit.transform.Find("submit_totem").gameObject;
+        submit_roon = submit.transform.Find("submit_roon").gameObject;
+        submit_guild = submit.transform.Find("submit_guild").gameObject;
+        submit_dungeon = submit.transform.Find("submit_dungeon").gameObject;
+        submit_quest = submit.transform.Find("submit_quest").gameObject;
+        submit_pet = submit.transform.Find("submit_pet").gameObject;
+
+        #endregion
+
+        #region PostPopup
+
+        scroll_Post = PostPopup.transform.Find("scroll_Post");
+        btn_Post_Close = PostPopup.transform.Find("btn_Post_Close").GetComponent<Button>();
+
+        #endregion
     }
 
     private void Check_Popup(GameObject Popup)
@@ -1557,6 +1652,7 @@ public class UiManager : MonoBehaviour
         btn_Boss_Exit.onClick.AddListener(() => PlayManager.instance.Stop_Boss_Timer(true));
         btn_Inventory.onClick.AddListener(() => PopupManager.Open_Popup(InventoryPopup));
         btn_setting.onClick.AddListener(() => PopupManager.Open_Popup(SettingPopup));
+        btn_post.onClick.AddListener(() => PopupManager.Open_Popup(PostPopup));
 
         #endregion
 
@@ -1628,6 +1724,7 @@ public class UiManager : MonoBehaviour
         btn_setting_mail.onClick.AddListener(() => Setting_Mail());
         btn_setting_exit.onClick.AddListener(() => Setting_Exit());
         btn_setting_help.onClick.AddListener(() => Setting_Help());
+
 
         #endregion
 
@@ -1762,6 +1859,34 @@ public class UiManager : MonoBehaviour
         btn_power_close.onClick.AddListener(() => Setting_Power(false));
 
         #endregion
+
+        #region HelpPopup
+
+        btn_help_close.onClick.AddListener(() => PopupManager.Close_Popup());
+
+        btn_help_skill.onClick.AddListener(() => Change_Help_Contnet(Help_Type.skill));
+        btn_help_weapon.onClick.AddListener(() => Change_Help_Contnet(Help_Type.weapom));
+        btn_help_job.onClick.AddListener(() => Change_Help_Contnet(Help_Type.job));
+        btn_help_costume.onClick.AddListener(() => Change_Help_Contnet(Help_Type.costume));
+        btn_help_totem.onClick.AddListener(() => Change_Help_Contnet(Help_Type.totem));
+        btn_help_roon.onClick.AddListener(() => Change_Help_Contnet(Help_Type.roon));
+        btn_help_guild.onClick.AddListener(() => Change_Help_Contnet(Help_Type.guild));
+        btn_help_dungeon.onClick.AddListener(() => Change_Help_Contnet(Help_Type.dungeon));
+        btn_help_quest.onClick.AddListener(() => Change_Help_Contnet(Help_Type.quest));
+        btn_help_pet.onClick.AddListener(() => Change_Help_Contnet(Help_Type.pet));
+
+        btn_submit_close.onClick.AddListener(() => PopupManager.Close_Popup());
+
+        #endregion
+
+        btn_exit_close.onClick.AddListener(() => PopupManager.Close_Popup());
+        btn_exit_ok.onClick.AddListener(() => App_Exit());
+
+        #region PostPopup
+
+        btn_Post_Close.onClick.AddListener(() => PopupManager.Close_Popup());
+
+        #endregion
     }
 
     private void Start()
@@ -1838,6 +1963,39 @@ public class UiManager : MonoBehaviour
         return gold.ToString("n0");
     }
 
+    public void Set_progress_reward()
+    {
+        if (BackEndDataManager.instance.Player_Data.int_progress_reward > 4)
+        {
+            btn_progress_reward.gameObject.SetActive(false);
+
+        }
+        else
+        {
+            btn_progress_reward.gameObject.SetActive(true);
+
+            int ran = Random.Range(0, BackEndDataManager.instance.progress_reward_csv_data.Count);
+            Dictionary<string, object> pairs = BackEndDataManager.instance.progress_reward_csv_data[ran];
+
+            BackEndDataManager.instance.Player_Data.int_progress_reward_type = ran;
+            BackEndDataManager.instance.Player_Data.int_progress_reward_val = 0;
+
+            txt_progress_name.text = pairs["name"].ToString();
+            txt_progress_val.text = string.Format("{0}/{1}", BackEndDataManager.instance.Player_Data.int_progress_reward_val
+                , BackEndDataManager.instance.progress_reward_csv_data[ran]["end"].ToString());
+        }
+    }
+
+    public void Check_progress_reward()
+    {
+
+        btn_progress_reward.interactable = false;
+
+        txt_progress_name.text = "";
+        txt_progress_val.text = "";
+
+    }
+
     public void Set_Ui()
     {
         Set_Item_Img();
@@ -1880,6 +2038,7 @@ public class UiManager : MonoBehaviour
         Set_Pet_Panel();
         Set_Job_Panel();
         Set_Totem_Panel();
+        Set_Post_Panel();
 
         Pet_Init();
         Set_MyRoon();
@@ -2201,6 +2360,24 @@ public class UiManager : MonoBehaviour
 
     }
 
+    public void Change_Help_Contnet(Help_Type popup)
+    {
+         submit_skill.SetActive(popup.Equals(Help_Type.skill));
+         submit_weapon.SetActive(popup.Equals(Help_Type.weapom));
+        submit_job.SetActive(popup.Equals(Help_Type.job));
+        submit_costume.SetActive(popup.Equals(Help_Type.costume));
+        submit_totem.SetActive(popup.Equals(Help_Type.totem));
+        submit_roon.SetActive(popup.Equals(Help_Type.roon));
+        submit_guild.SetActive(popup.Equals(Help_Type.guild));
+        submit_dungeon.SetActive(popup.Equals(Help_Type.dungeon));
+        submit_quest.SetActive(popup.Equals(Help_Type.quest));
+        submit_pet.SetActive(popup.Equals(Help_Type.pet));
+
+        PopupManager.Open_Popup(submit);
+
+    }
+
+    
     public void Change_Goods_Contnet(Item_Type popup)
     {
         PopupManager.Close_Popup();
@@ -2276,12 +2453,24 @@ public class UiManager : MonoBehaviour
 
     }
 
+    bool ispopup = false;
+
     private void Update()
     {
-        if (Input.GetKey(KeyCode.Escape))
+        if (Input.GetKey(KeyCode.Escape) && !ispopup)
         {
+            StartCoroutine("Co_Close_Popop");
             PopupManager.Close_Popup();
         }
+    }
+
+    IEnumerator Co_Close_Popop()
+    {
+        ispopup = true;
+
+        yield return new WaitForSeconds(0.1f);
+
+        ispopup = false;
     }
 
     public void Change_Content_Popup(Popup_Type popup_Type)
@@ -4067,11 +4256,13 @@ public class UiManager : MonoBehaviour
 
     IEnumerator Co_Power_Time()
     {
+        txt_power_time.DOFade(0.5f, 1).SetLoops(-1, LoopType.Yoyo);
+
         while (true)
         {
             DateTime now = DateTime.Now;
 
-            txt_power_time.text = string.Format("{0:00}:{1:00}",now.Hour,now.Minute);
+            txt_power_time.text = string.Format("{0:00}:{1:00}", now.Hour, now.Minute);
 
             yield return new WaitForSeconds(1f);
         }
@@ -4084,7 +4275,7 @@ public class UiManager : MonoBehaviour
     }
 
     public void Setting_Music()
-    {     
+    {
         PlayerPrefs.SetInt("music", PlayerPrefs.GetInt("music", 1) == 1 ? 0 : 1);
         Set_Music();
     }
@@ -4156,11 +4347,21 @@ public class UiManager : MonoBehaviour
 
     public void Setting_Exit()
     {
+        PopupManager.Open_Popup(ExitPopup);
 
     }
 
+    public void App_Exit()
+    {
+        Debug.Log("게임 종료");
+        Application.Quit();
+
+    }
+
+
     public void Setting_Help()
     {
+        PopupManager.Open_Popup(HelpPopup);
 
     }
 
@@ -4170,6 +4371,24 @@ public class UiManager : MonoBehaviour
         txt_setting_version.text = "ver " + Application.version;
     }
 
+    #endregion
+
+    #region Post
+
+    public void Set_Post_Panel()
+    {
+        foreach (var item in BackEndDataManager.instance.Post_Data.post_Info)
+        {
+            Post_Panel post = Instantiate(Post_Panel, scroll_Post.transform
+          .Find("Viewport/Content")).GetComponent<Post_Panel>();
+
+            post.Set_Post(item);
+        }
+
+        Totem_.totem_Lv = Character_Lv.lv_1;
+
+    }
+    
     #endregion
 
 }

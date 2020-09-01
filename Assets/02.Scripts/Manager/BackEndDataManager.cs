@@ -26,6 +26,12 @@ public class Player_Data
     public string str_nick { get; set; }
     [DynamoDBProperty]
     public string str_Time_Check { get; set; }
+    [DynamoDBProperty]
+    public int int_progress_reward { get; set; }
+    [DynamoDBProperty]
+    public int int_progress_reward_type { get; set; }
+    [DynamoDBProperty]
+    public int int_progress_reward_val { get; set; }
 }
 
 [DynamoDBTable("character_info")]
@@ -150,6 +156,29 @@ public class Coupon_Data
 
 }
 
+[DynamoDBTable("coupon")]
+public class Coupon
+{
+    [DynamoDBHashKey] // Hash key.
+    public string id { get; set; }
+    [DynamoDBProperty]
+    public string date { get; set; }
+    [DynamoDBProperty]
+    public List<Item_Info> item_Info { get; set; }
+
+}
+
+
+[DynamoDBTable("post_info")]
+public class Post_Data
+{
+    [DynamoDBHashKey] // Hash key.
+    public string id { get; set; }
+    [DynamoDBProperty]
+    public List<Post_info> post_Info { get; set; }
+
+}
+
 public class Item_Info
 {
     public int type { get; set; }
@@ -158,7 +187,7 @@ public class Item_Info
 
 public class Roon_Info
 {
-    public int type  = -1;
+    public int type = -1;
 }
 
 public class Weapon_info
@@ -226,9 +255,16 @@ public class Totem_info
 }
 
 public class Coupon_info
-{  
+{
     public string str_coupon { get; set; }
     public string str_date { get; set; }
+}
+
+public class Post_info
+{
+    public string str_name { get; set; }
+    public string date { get; set; }
+    public List<Item_Info> item_Info { get; set; }
 }
 
 public class BackEndDataManager : MonoBehaviour
@@ -246,6 +282,7 @@ public class BackEndDataManager : MonoBehaviour
     Job_Data job_Data = new Job_Data();
     Totem_Data totem_Data = new Totem_Data();
     Coupon_Data coupon_Data = new Coupon_Data();
+    Post_Data post_Data = new Post_Data();
 
     DynamoDBContext context;
     AmazonDynamoDBClient DBclient;
@@ -262,6 +299,7 @@ public class BackEndDataManager : MonoBehaviour
     public Job_Data Job_Data { get => job_Data; }
     public Totem_Data Totem_Data { get => totem_Data; }
     public Coupon_Data Coupon_Data { get => coupon_Data; }
+    public Post_Data Post_Data { get => post_Data; }
 
     public BigInteger Int_exp { get => int_exp; }
 
@@ -280,6 +318,7 @@ public class BackEndDataManager : MonoBehaviour
     public List<Dictionary<string, object>> roon_csv_data;         //던전 정보
     public List<Dictionary<string, object>> job_csv_data;         //던전 정보
     public List<Dictionary<string, object>> totem_csv_data;         //던전 정보
+    public List<Dictionary<string, object>> progress_reward_csv_data;         //던전 정보
 
     public Item_s underground_item_ = new Item_s();         //던전 정보
 
@@ -339,6 +378,8 @@ public class BackEndDataManager : MonoBehaviour
         roon_csv_data = CSVReader.Read("roon");
         job_csv_data = CSVReader.Read("job");
         totem_csv_data = CSVReader.Read("totem");
+        progress_reward_csv_data = CSVReader.Read("progress_reward");
+
         foreach (var data in skill_csv_data)
         {
             Skill skill = new Skill
@@ -439,27 +480,28 @@ public class BackEndDataManager : MonoBehaviour
     public void Check_Cupon(string txt)
     {
 
-        ScanRequest request = new ScanRequest()
+        context.LoadAsync(txt, (AmazonDynamoDBResult<Coupon> result) =>
         {
-            TableName = "coupon"
-        };
 
-        Dictionary<string, AttributeValue> t = null;
-
-        DBclient.ScanAsync(request, (result) =>
-        {
-             t = result.Response.Items.Find(x => x["id"].S.Equals(txt));
-
-            if (t == null)
+            if (result.Exception != null)
             {
+                Debug.Log("쿠폰 없음");
+                UiManager.instance.Result_Coupon(Cupon_Type.fail);
+                return;
+            }
+
+            if (result.Result == null)
+            {
+                Debug.Log("쿠폰 없음");
                 UiManager.instance.Result_Coupon(Cupon_Type.fail);
 
             }
             else
             {
-                Debug.Log(t["date"].S.ToString());
+                Coupon coupon = result.Result;
+                Debug.Log("쿠폰 있음 " + coupon.id);
 
-                DateTime GiftTime = DateTime.Parse(t["date"].S.ToString());
+                DateTime GiftTime = DateTime.Parse(coupon.date);
 
                 TimeSpan LateTime = GiftTime - DateTime.Now;
 
@@ -470,10 +512,12 @@ public class BackEndDataManager : MonoBehaviour
                 }
                 else
                 {
+
                     Coupon_info _Info = coupon_Data.coupon_info.Find(x => x.str_coupon.Equals(txt));
 
                     if (_Info == null)
                     {
+                        //쓴 쿠폰
                         Coupon_info cou = new Coupon_info
                         {
                             str_coupon = txt,
@@ -481,7 +525,29 @@ public class BackEndDataManager : MonoBehaviour
                         };
 
                         coupon_Data.coupon_info.Add(cou);
+
+                        //우편 저장
+                        List<Item_Info> item_Info = new List<Item_Info>();
+
+                        foreach (var item in coupon.item_Info)
+                        {
+                            item_Info.Add(item);
+
+                        }
+
+                        Post_info post_ = new Post_info
+                        {
+                            str_name = "쿠폰 보상입니다.",
+                            date = DateTime.Now.AddDays(7).ToString(),
+                            item_Info = item_Info
+
+                        };
+
+                        post_Data.post_Info.Add(post_);
+
                         Save_Coupon_Data();
+                        Save_Post_Data();
+
 
                         UiManager.instance.Result_Coupon(Cupon_Type.Sussece);
 
@@ -495,11 +561,7 @@ public class BackEndDataManager : MonoBehaviour
                 }
             }
 
-        });
-
-
-      
-
+        }, null);
 
     }
 
@@ -541,6 +603,7 @@ public class BackEndDataManager : MonoBehaviour
         Check_Job_Data();
         Check_Totem_Data();
         Check_Coupon_Data();
+        Check_Post_Data();
 
     }
 
@@ -956,6 +1019,39 @@ public class BackEndDataManager : MonoBehaviour
         });
     }
 
+    public void Check_Post_Data()
+    {
+        ScanRequest request = new ScanRequest()
+        {
+            TableName = "post_info"
+        };
+
+        DBclient.ScanAsync(request, (result) =>
+        {
+
+            Dictionary<string, AttributeValue> t =
+              result.Response.Items.Find(x => x["id"].S.Equals(BackEndAuthManager.Get_UserId()));
+
+            Debug.Log(t == null ? "post 없음" : "post 있음");
+
+            if (t == null)
+            {
+                post_Data = new Post_Data
+                {
+                    id = BackEndAuthManager.Get_UserId(),
+                    post_Info = new List<Post_info>()
+                };
+
+                Save_Post_Data();
+            }
+            else
+            {
+                Get_Post_Data();
+            }
+
+        });
+    }
+
     #endregion
 
     #region Get_Data
@@ -1210,6 +1306,26 @@ public class BackEndDataManager : MonoBehaviour
         }, null);
     }
 
+    public void Get_Post_Data() //DB에서 캐릭터 정보 받기
+    {
+        Debug.Log("Get_Post_Data");
+
+        context.LoadAsync(BackEndAuthManager.Get_UserId(), (AmazonDynamoDBResult<Post_Data> result) =>
+        {
+            // id가 abcd인 캐릭터 정보를 DB에서 받아옴
+            if (result.Exception != null)
+            {
+                Debug.Log(result.Exception);
+                return;
+            }
+
+            post_Data = result.Result;
+
+            Sucess_Data(Data_Type.post_info);
+
+
+        }, null);
+    }
 
     #endregion
 
@@ -1362,6 +1478,20 @@ public class BackEndDataManager : MonoBehaviour
             if (result.Exception == null)
             {
                 Sucess_Data(Data_Type.coupon_info);
+
+            }
+            else
+                Debug.Log(result.Exception);
+        });
+    }
+
+    public void Save_Post_Data() //DB에서 캐릭터 정보 받기
+    {
+        context.SaveAsync(post_Data, (result) =>
+        {
+            if (result.Exception == null)
+            {
+                Sucess_Data(Data_Type.post_info);
 
             }
             else
@@ -1664,7 +1794,7 @@ public class BackEndDataManager : MonoBehaviour
             case Item_Type.heart:
                 break;
             case Item_Type.guild_coin:
-               UiManager.instance.Set_Txt_Guild_Coin();
+                UiManager.instance.Set_Txt_Guild_Coin();
                 break;
             case Item_Type.weapon_limit_stone_d:
                 break;
@@ -1775,6 +1905,7 @@ public class BackEndDataManager : MonoBehaviour
             Set_Item(Item_Type.upgrade_ticket, 2, Calculate_Type.plus);
 
             player_Data.str_Time_Check = WebCheck().ToString();
+            player_Data.int_progress_reward = 0;
             Save_Player_Data();
         }
         else
@@ -1794,6 +1925,8 @@ public class BackEndDataManager : MonoBehaviour
                 Set_Item(Item_Type.upgrade_ticket, 2, Calculate_Type.plus);
 
                 player_Data.str_Time_Check = WebCheck().ToString();
+                player_Data.int_progress_reward = 0;
+
                 Save_Player_Data();
             }
         }

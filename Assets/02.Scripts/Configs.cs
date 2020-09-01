@@ -18,7 +18,8 @@ public enum Data_Type
     pet_info,
     job_info,
     totem_info,
-    coupon_info
+    coupon_info,
+    post_info
 }
 
 public enum Character_Lv
@@ -260,6 +261,32 @@ public enum Cupon_Type
     Sussece,
     fail,
     overlab
+}
+
+public enum Help_Type
+{
+    skill,
+    weapom,
+    job,
+    costume,
+    totem,roon,
+    guild,
+    dungeon,
+    quest,
+    pet
+}
+
+public enum Progress_Reward_Type
+{
+    skill,
+    weapom,
+    job,
+    costume,
+    totem, roon,
+    guild,
+    dungeon,
+    quest,
+    pet
 }
 
 public class Skill_s
