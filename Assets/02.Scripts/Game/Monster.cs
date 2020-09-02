@@ -134,7 +134,7 @@ public class Monster : MonoBehaviour
             case Stage_State.stage:
                 PlayManager.instance.Change_State(Player_State.Run);
                 Add_Stage_Data();
-
+                UiManager.instance.Check_Progress_Reward(Progress_Reward_Type.monster,1);
                 break;
             case Stage_State.underground:
                 PlayManager.instance.Change_State(Player_State.Run);
@@ -211,6 +211,8 @@ public class Monster : MonoBehaviour
         switch (monster_Type)
         {
             case Monster_Type.Basic:
+
+                UiManager.instance.Check_Progress_Reward(Progress_Reward_Type.stage_clear,1);
 
                 BackEndDataManager.instance.Stage_Data.int_step += 1;
                 BackEndDataManager.instance.Add_Exp(BackEndDataManager.instance.Monster_Exp(false));

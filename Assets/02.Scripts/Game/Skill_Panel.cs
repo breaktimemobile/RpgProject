@@ -110,6 +110,7 @@ public class Skill_Panel : MonoBehaviour
 
         if (BackEndDataManager.instance.Get_Item((Item_Type)skill.price_type) >= total)
         {
+            UiManager.instance.Check_Progress_Reward(Progress_Reward_Type.skill_upgrade, (int)Skill_s.skill_lv);
 
             Skill_info skill_Info = BackEndDataManager.instance.Skill_Data.skill_Info.Find(x => x.int_num.Equals(skill.num));
 

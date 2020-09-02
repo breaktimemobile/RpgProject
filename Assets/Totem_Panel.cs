@@ -101,6 +101,8 @@ public class Totem_Panel : MonoBehaviour
     {
         if (BackEndDataManager.instance.Get_Item((Item_Type)data["price_type"]) >= Totem_.Get_Price((int)data["num"]))
         {
+            UiManager.instance.Check_Progress_Reward(Progress_Reward_Type.totem_upgrade, (int)Totem_.totem_Lv);
+
             BackEndDataManager.instance.Set_Item((Item_Type)data["price_type"], 
                 Totem_.Get_Price((int)data["num"]), Calculate_Type.mius);
 

@@ -145,6 +145,8 @@ public class Job_Panel : MonoBehaviour
                 info_.int_lv += (int)Job_.Job_Lv;
             }
 
+            UiManager.instance.Check_Progress_Reward(Progress_Reward_Type.job_upgrade, (int)Job_.Job_Lv);
+
             BackEndDataManager.instance.Save_Job_Data();
 
             Set_Item();

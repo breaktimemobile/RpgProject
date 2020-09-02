@@ -19,7 +19,8 @@ public enum Data_Type
     job_info,
     totem_info,
     coupon_info,
-    post_info
+    post_info,
+    game_info
 }
 
 public enum Character_Lv
@@ -59,6 +60,12 @@ public enum Weapon_Popup
     mix,
     roon,
     decom
+}
+
+public enum Quest_Popup
+{
+    accumulate,
+    daily
 }
 
 public enum Icon_Content
@@ -278,15 +285,101 @@ public enum Help_Type
 
 public enum Progress_Reward_Type
 {
-    skill,
-    weapom,
-    job,
-    costume,
-    totem, roon,
-    guild,
-    dungeon,
-    quest,
-    pet
+    monster,
+    job_upgrade,
+    weapon_gacha,
+    weapon_upgrade,
+    shield_gacha,
+    shield_upgrade,
+    accessory_gacha,
+    accessory_upgrade,
+    pet_upgrade,
+    level_upgrade,
+    stage_clear,
+    skill_upgrade,
+    totem_upgrade,
+    weapon_mix,
+    upgrade_upgrade
+}
+
+public enum Quest_Type
+{
+    chearacter_lv,
+    wepon_get,
+    shield_get,
+    accessory_get,
+    weapon_upgrade,
+    shield_upgrade,
+    accessory_upgrade,
+    weapon_mix,
+    shield_mix,
+    accessory_mix,
+    monster,
+    boss,
+    upgrade_stone,
+    limit_stone,
+    black_stone,
+    totem_upgrade,
+    skill_upgrade,
+    upderground_clear,
+    upgrade_clear,
+    hell_clear,
+    pet_skill_upgrade,
+    crystal,
+    coin,
+    steel,
+    player_level
+
+}
+
+public enum Game_Info_Type
+{
+    join_time,
+    join_day,
+    monster,
+    boss,
+    daily_quest,
+    daily_quest_clear,
+    undergroind_join,
+    undergroind_clear,
+    upgrade_join,
+    upgrade_clear,
+    hell_join,
+    hell_clear,
+    skill_upgrade,
+    upgrade_upgrade,
+    pet_upgrade,
+    weapon_upgradem,
+    weapon_mix,
+    weapon_roon,
+    weapon_decom,
+    shield_upgradem,
+    shield_mix,
+    shield_roon,
+    shield_decom,
+    accessory_upgradem,
+    accessory_mix,
+    accessory_roon,
+    accessory_decom,
+    dia_get,
+    dia_use,
+    coin_get,
+    coin_use,
+    upgrade_stone_get,
+    upgrade_stone_use,
+    limit_stone_get,
+    limit_stone_use,
+    steel_get,
+    steel_use,
+    soul_stone_get,
+    soul_stone_use,
+    black_stone_get,
+    black_stone_use,
+    roon_get,
+    gold_goblin,
+    gift_get,
+    roulette_get,
+    ads_get
 }
 
 public class Skill_s
@@ -905,7 +998,6 @@ public class Totem_
         return total;
     }
 }
-
 
 public class Utill
 {

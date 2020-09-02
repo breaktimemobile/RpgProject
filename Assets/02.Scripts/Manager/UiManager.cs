@@ -43,6 +43,7 @@ public class UiManager : MonoBehaviour
     public GameObject ExitPopup;
     public GameObject HelpPopup;
     public GameObject PostPopup;
+    public GameObject QuestPopup;
 
     #endregion
 
@@ -118,6 +119,7 @@ public class UiManager : MonoBehaviour
     private Text txt_progress_val;
 
     private Button btn_post;
+    private Button btn_quest;
 
     #endregion
 
@@ -768,6 +770,19 @@ public class UiManager : MonoBehaviour
 
     #endregion
 
+    #region QuestPopup
+
+    Button btn_quest_close;
+
+    Button btn_daily_quest;
+    Button btn_accumulate_quest;
+
+    Transform scroll_daily_quset;
+    Transform scroll_accumulate_quest;
+
+    Text txt_quset_time;
+
+    #endregion
 
     #region Prefabs
 
@@ -785,6 +800,7 @@ public class UiManager : MonoBehaviour
     public GameObject Job_Panel;
     public GameObject totem_Panel;
     public GameObject Post_Panel;
+    public GameObject Quest_Panel;
 
     #endregion
 
@@ -832,6 +848,7 @@ public class UiManager : MonoBehaviour
         ExitPopup = Popup.Find("ExitPopup").gameObject;
         HelpPopup = Popup.Find("HelpPopup").gameObject;
         PostPopup = Popup.Find("PostPopup").gameObject;
+        QuestPopup = Popup.Find("QuestPopup").gameObject;
 
         #endregion
 
@@ -906,6 +923,9 @@ public class UiManager : MonoBehaviour
         txt_progress_val = btn_progress_reward.transform.Find("txt_progress_val").GetComponent<Text>();
 
         btn_post = obj_Btns.transform.Find("btn_post").GetComponent<Button>();
+
+        btn_quest = obj_Btns.transform.Find("btn_quest").GetComponent<Button>();
+
         #endregion
 
         #region obj_Content
@@ -1568,6 +1588,20 @@ public class UiManager : MonoBehaviour
         btn_Post_Close = PostPopup.transform.Find("btn_Post_Close").GetComponent<Button>();
 
         #endregion
+
+        #region QuestPopup
+
+        btn_quest_close = QuestPopup.transform.Find("btn_quest_close").GetComponent<Button>();
+
+        btn_daily_quest = QuestPopup.transform.Find("btn_daily_quest").GetComponent<Button>();
+        btn_accumulate_quest = QuestPopup.transform.Find("btn_accumulate_quest").GetComponent<Button>();
+
+        scroll_daily_quset = QuestPopup.transform.Find("scroll_daily_quset");
+        scroll_accumulate_quest = QuestPopup.transform.Find("scroll_accumulate_quest");
+
+        txt_quset_time = QuestPopup.transform.Find("txt_quset_time").GetComponent<Text>();
+
+        #endregion
     }
 
     private void Check_Popup(GameObject Popup)
@@ -1653,6 +1687,9 @@ public class UiManager : MonoBehaviour
         btn_Inventory.onClick.AddListener(() => PopupManager.Open_Popup(InventoryPopup));
         btn_setting.onClick.AddListener(() => PopupManager.Open_Popup(SettingPopup));
         btn_post.onClick.AddListener(() => PopupManager.Open_Popup(PostPopup));
+        btn_quest.onClick.AddListener(() => Change_Quest_Popup(Quest_Popup.daily));
+        btn_quest.onClick.AddListener(() => PopupManager.Open_Popup(QuestPopup));
+        btn_progress_reward.onClick.AddListener(() => Add_Progress_Reward());
 
         #endregion
 
@@ -1887,6 +1924,16 @@ public class UiManager : MonoBehaviour
         btn_Post_Close.onClick.AddListener(() => PopupManager.Close_Popup());
 
         #endregion
+
+        #region QuestPopup
+
+        btn_quest_close.onClick.AddListener(() => PopupManager.Close_Popup());
+        
+        btn_daily_quest.onClick.AddListener(() => Change_Quest_Popup(Quest_Popup.daily));
+        btn_accumulate_quest.onClick.AddListener(() => Change_Quest_Popup(Quest_Popup.accumulate));
+
+        #endregion
+
     }
 
     private void Start()
@@ -1895,6 +1942,83 @@ public class UiManager : MonoBehaviour
         Change_Icon_Content(Icon_Content.Character);
         Change_Content_Content(Character_Contnet.State);
 
+    }
+
+    public void Set_Ui()
+    {
+        Set_Progress_Reward_Txt();
+
+        Set_Item_Img();
+
+        Set_Img_Character();
+        Set_Txt_Lv();
+        Set_Txt_NickName();
+        Set_Txt_Exp();
+        Set_Txt_Steel();
+        Set_Txt_Coin();
+        Set_Txt_Crystal();
+        Set_Txt_Chapter();
+        Set_Txt_Stage();
+        Set_Txt_Soul_Stone();
+        Set_Txt_Upgrade_Stone();
+        Set_Txt_Underground_Ticket();
+        Check_Underground_Ticket();
+        Set_Txt_Upgrade_Ticket();
+        Set_Txt_Black_Stone();
+        Set_Txt_Hell_Ticket();
+        Set_Txt_Mileage();
+        Set_Txt_Guild_Coin();
+
+        Set_Character_Name();
+        Set_Character_Lv();
+        Set_Character_obj();
+        Set_Character_Stat();
+        Set_Buy_Lv();
+
+        Set_Inventory();
+        Set_Sword_Panel();
+        Set_Shield_Panel();
+        Set_Accessory_Panel();
+        Set_Content_Panel();
+        Set_Underground_Panel();
+        Set_Upgrade_Panel();
+        Set_Skill_Panel();
+        Set_Upgrade_Stat();
+        Set_Hell_Panel();
+        Set_Pet_Panel();
+        Set_Job_Panel();
+        Set_Totem_Panel();
+        Set_Post_Panel();
+        Set_Quest_Panel();
+
+        Pet_Init();
+        Set_MyRoon();
+
+        Set_Music();
+        Set_Effect();
+        Set_Push();
+        Set_Grapic();
+    }
+
+    public string GetGoldString(BigInteger gold)
+    {
+        if (gold >= 1000)
+        {
+            BigInteger total_Gold = gold;
+
+            int count = gold.ToString("n0").Split(',').Length - 1;
+
+            for (int i = 0; i < count - 1; i++)
+            {
+                gold /= 1000;
+            }
+
+            float so = (int)gold / 1000.0f;
+
+            return so.ToString("n2") + (char)(64 + count);
+        }
+
+        return gold.ToString("n0");
     }
 
     #region 닉네임 체크
@@ -1941,113 +2065,6 @@ public class UiManager : MonoBehaviour
     }
 
     #endregion
-
-    public string GetGoldString(BigInteger gold)
-    {
-        if (gold >= 1000)
-        {
-            BigInteger total_Gold = gold;
-
-            int count = gold.ToString("n0").Split(',').Length - 1;
-
-            for (int i = 0; i < count - 1; i++)
-            {
-                gold /= 1000;
-            }
-
-            float so = (int)gold / 1000.0f;
-
-            return so.ToString("n2") + (char)(64 + count);
-        }
-
-        return gold.ToString("n0");
-    }
-
-    public void Set_progress_reward()
-    {
-        if (BackEndDataManager.instance.Player_Data.int_progress_reward > 4)
-        {
-            btn_progress_reward.gameObject.SetActive(false);
-
-        }
-        else
-        {
-            btn_progress_reward.gameObject.SetActive(true);
-
-            int ran = Random.Range(0, BackEndDataManager.instance.progress_reward_csv_data.Count);
-            Dictionary<string, object> pairs = BackEndDataManager.instance.progress_reward_csv_data[ran];
-
-            BackEndDataManager.instance.Player_Data.int_progress_reward_type = ran;
-            BackEndDataManager.instance.Player_Data.int_progress_reward_val = 0;
-
-            txt_progress_name.text = pairs["name"].ToString();
-            txt_progress_val.text = string.Format("{0}/{1}", BackEndDataManager.instance.Player_Data.int_progress_reward_val
-                , BackEndDataManager.instance.progress_reward_csv_data[ran]["end"].ToString());
-        }
-    }
-
-    public void Check_progress_reward()
-    {
-
-        btn_progress_reward.interactable = false;
-
-        txt_progress_name.text = "";
-        txt_progress_val.text = "";
-
-    }
-
-    public void Set_Ui()
-    {
-        Set_Item_Img();
-
-        Set_Img_Character();
-        Set_Txt_Lv();
-        Set_Txt_NickName();
-        Set_Txt_Exp();
-        Set_Txt_Steel();
-        Set_Txt_Coin();
-        Set_Txt_Crystal();
-        Set_Txt_Chapter();
-        Set_Txt_Stage();
-        Set_Txt_Soul_Stone();
-        Set_Txt_Upgrade_Stone();
-        Set_Txt_Underground_Ticket();
-        Check_Underground_Ticket();
-        Set_Txt_Upgrade_Ticket();
-        Set_Txt_Black_Stone();
-        Set_Txt_Hell_Ticket();
-        Set_Txt_Mileage();
-        Set_Txt_Guild_Coin();
-
-        Set_Character_Name();
-        Set_Character_Lv();
-        Set_Character_obj();
-        Set_Character_Stat();
-        Set_Buy_Lv();
-
-        Set_Inventory();
-        Set_Sword_Panel();
-        Set_Shield_Panel();
-        Set_Accessory_Panel();
-        Set_Content_Panel();
-        Set_Underground_Panel();
-        Set_Upgrade_Panel();
-        Set_Skill_Panel();
-        Set_Upgrade_Stat();
-        Set_Hell_Panel();
-        Set_Pet_Panel();
-        Set_Job_Panel();
-        Set_Totem_Panel();
-        Set_Post_Panel();
-
-        Pet_Init();
-        Set_MyRoon();
-
-        Set_Music();
-        Set_Effect();
-        Set_Push();
-        Set_Grapic();
-    }
 
     #region PlayerUI 세팅
 
@@ -2362,8 +2379,8 @@ public class UiManager : MonoBehaviour
 
     public void Change_Help_Contnet(Help_Type popup)
     {
-         submit_skill.SetActive(popup.Equals(Help_Type.skill));
-         submit_weapon.SetActive(popup.Equals(Help_Type.weapom));
+        submit_skill.SetActive(popup.Equals(Help_Type.skill));
+        submit_weapon.SetActive(popup.Equals(Help_Type.weapom));
         submit_job.SetActive(popup.Equals(Help_Type.job));
         submit_costume.SetActive(popup.Equals(Help_Type.costume));
         submit_totem.SetActive(popup.Equals(Help_Type.totem));
@@ -2377,7 +2394,7 @@ public class UiManager : MonoBehaviour
 
     }
 
-    
+
     public void Change_Goods_Contnet(Item_Type popup)
     {
         PopupManager.Close_Popup();
@@ -2453,26 +2470,6 @@ public class UiManager : MonoBehaviour
 
     }
 
-    bool ispopup = false;
-
-    private void Update()
-    {
-        if (Input.GetKey(KeyCode.Escape) && !ispopup)
-        {
-            StartCoroutine("Co_Close_Popop");
-            PopupManager.Close_Popup();
-        }
-    }
-
-    IEnumerator Co_Close_Popop()
-    {
-        ispopup = true;
-
-        yield return new WaitForSeconds(0.1f);
-
-        ispopup = false;
-    }
-
     public void Change_Content_Popup(Popup_Type popup_Type)
     {
         switch (popup_Type)
@@ -2493,6 +2490,33 @@ public class UiManager : MonoBehaviour
         }
     }
 
+    public void Change_Quest_Popup(Quest_Popup popup)
+    {
+        scroll_accumulate_quest.gameObject.SetActive(popup.Equals(Quest_Popup.accumulate));
+        scroll_daily_quset.gameObject.SetActive(popup.Equals(Quest_Popup.daily));
+    }
+
+    bool ispopup = false;
+
+    private void Update()
+    {
+        if (Input.GetKey(KeyCode.Escape) && !ispopup)
+        {
+            StartCoroutine("Co_Close_Popop");
+            PopupManager.Close_Popup();
+        }
+    }
+
+    IEnumerator Co_Close_Popop()
+    {
+        ispopup = true;
+
+        yield return new WaitForSeconds(0.1f);
+
+        ispopup = false;
+    }
+
+  
     #endregion
 
     #region Content
@@ -3005,6 +3029,8 @@ public class UiManager : MonoBehaviour
 
     public void Upgrade_Buy(Character_Lv character_Lv)
     {
+        UiManager.instance.Check_Progress_Reward(Progress_Reward_Type.upgrade_upgrade, (int)character_Lv);
+
         int lv = BackEndDataManager.instance.Character_Data.Int_Upgrade_Lv;
         BackEndDataManager.instance.Character_Data.Int_Upgrade_Lv += (int)character_Lv;
         BackEndDataManager.instance.Save_Character_Data();
@@ -3108,6 +3134,8 @@ public class UiManager : MonoBehaviour
 
         if (BackEndDataManager.instance.Get_Item(Pet_.Pet_Price_Type()) >= bigInteger)
         {
+            UiManager.instance.Check_Progress_Reward(Progress_Reward_Type.pet_upgrade, (int)_Lv);
+
             if (pet_info == null)
             {
                 pet_info = new Pet_info
@@ -3589,6 +3617,25 @@ public class UiManager : MonoBehaviour
 
         if (BackEndDataManager.instance.Get_Item((Item_Type)my_data["upgrade_type"]) >= big)
         {
+            switch (Weapon_.Weapon_Content)
+            {
+                case Weapon_Content.Sword:
+                    Check_Progress_Reward(Progress_Reward_Type.weapon_upgrade, 1);
+
+                    break;
+                case Weapon_Content.Shield:
+                    Check_Progress_Reward(Progress_Reward_Type.shield_upgrade, 1);
+
+                    break;
+                case Weapon_Content.Accessory:
+                    Check_Progress_Reward(Progress_Reward_Type.accessory_upgrade, 1);
+
+                    break;
+                case Weapon_Content.Costume:
+                    break;
+                default:
+                    break;
+            }
             BackEndDataManager.instance.Set_Item((Item_Type)my_data["upgrade_type"], big, Calculate_Type.mius);
 
             my_Info.int_lv += 1;
@@ -3705,6 +3752,8 @@ public class UiManager : MonoBehaviour
 
     public void Weapon_Mix()
     {
+        UiManager.instance.Check_Progress_Reward(Progress_Reward_Type.weapon_mix, Weapon_.Mix_Count);
+
         BackEndDataManager.instance.Set_Item((Item_Type)my_data["upgrade_type"],
             (int)my_data["mix"] * Weapon_.Mix_Count, Calculate_Type.mius);
 
@@ -4388,7 +4437,123 @@ public class UiManager : MonoBehaviour
         Totem_.totem_Lv = Character_Lv.lv_1;
 
     }
-    
+
     #endregion
 
+    #region Progress_Reward
+    //텍스트
+    public void Set_Progress_Reward_Txt()
+    {
+        if (BackEndDataManager.instance.Player_Data.int_progress_reward > 4)
+        {
+            btn_progress_reward.gameObject.SetActive(false);
+
+        }
+        else
+        {
+
+            if (BackEndDataManager.instance.Player_Data.int_progress_reward_type == -1)
+            {
+                Reset_Progress_Reward();
+                return;
+            }
+            else
+            {
+
+                btn_progress_reward.gameObject.SetActive(true);
+
+                int my = BackEndDataManager.instance.Player_Data.int_progress_reward_type;
+                Dictionary<string, object> pairs = BackEndDataManager.instance.progress_reward_csv_data[my];
+
+                txt_progress_name.text = pairs["name"].ToString();
+
+                int max = (int)pairs["max"];
+
+                txt_progress_val.text = string.Format("{0}/{1}", BackEndDataManager.instance.Player_Data.int_progress_reward_val
+                    , pairs["max"].ToString());
+
+                btn_progress_reward.interactable = BackEndDataManager.instance.Player_Data.int_progress_reward_val >= max;
+
+            }
+
+        }
+    }
+
+    //체크
+    public void Check_Progress_Reward(Progress_Reward_Type _Reward_Type, int val)
+    {
+        Progress_Reward_Type my = (Progress_Reward_Type)BackEndDataManager.instance.Player_Data.int_progress_reward_type;
+
+        if (my.Equals(_Reward_Type))
+        {
+            BackEndDataManager.instance.Player_Data.int_progress_reward_val += 1;
+            BackEndDataManager.instance.Save_Player_Data();
+        }
+
+        int max = (int)BackEndDataManager.instance.progress_reward_csv_data[(int)my]["max"];
+
+        txt_progress_val.text = string.Format("{0}/{1}",
+            BackEndDataManager.instance.Player_Data.int_progress_reward_val, max);
+
+        btn_progress_reward.interactable = BackEndDataManager.instance.Player_Data.int_progress_reward_val >= max;
+
+    }
+
+    public void Add_Progress_Reward()
+    {
+        int my = BackEndDataManager.instance.Player_Data.int_progress_reward_type;
+
+        Dictionary<string, object> pairs = BackEndDataManager.instance.progress_reward_csv_data[my];
+
+        int reward_type = (int)pairs["reward_type_0"];
+        int reward_val = (int)pairs["reward_val_0"];
+
+        BackEndDataManager.instance.Set_Item((Item_Type)reward_type, reward_val, Calculate_Type.plus);
+
+        BackEndDataManager.instance.Player_Data.int_progress_reward += 1;
+        BackEndDataManager.instance.Save_Player_Data();
+
+        Reset_Progress_Reward();
+    }
+
+    //얻음
+    public void Reset_Progress_Reward()
+    {
+        int ran = Random.Range(0, BackEndDataManager.instance.progress_reward_csv_data.Count);
+        Dictionary<string, object> pairs = BackEndDataManager.instance.progress_reward_csv_data[ran];
+
+        BackEndDataManager.instance.Player_Data.int_progress_reward_type = ran;
+        BackEndDataManager.instance.Player_Data.int_progress_reward_val = 0;
+        BackEndDataManager.instance.Save_Player_Data();
+
+        Set_Progress_Reward_Txt();
+    }
+
+    #endregion
+
+
+    #region Quest
+
+    public void Set_Quest_Panel()
+    {
+
+        foreach (var item in BackEndDataManager.instance.daily_quest_csv_data)
+        {
+            Quest_Panel post = Instantiate(Quest_Panel, scroll_daily_quset.transform
+          .Find("Viewport/Content")).GetComponent<Quest_Panel>();
+
+            post.Set_Quest(item);
+        }
+
+        foreach (var item in BackEndDataManager.instance.accumulate_quest_csv_data)
+        {
+            Quest_Panel post = Instantiate(Quest_Panel, scroll_accumulate_quest.transform
+          .Find("Viewport/Content")).GetComponent<Quest_Panel>();
+
+            post.Set_Quest(item);
+        }
+
+    }
+
+    #endregion
 }

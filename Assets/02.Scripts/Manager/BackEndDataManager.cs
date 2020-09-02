@@ -179,6 +179,17 @@ public class Post_Data
 
 }
 
+
+[DynamoDBTable("game_info")]
+public class Game_Data
+{
+    [DynamoDBHashKey] // Hash key.
+    public string id { get; set; }
+    [DynamoDBProperty]
+    public List<Game_info> game_Info { get; set; }
+
+}
+
 public class Item_Info
 {
     public int type { get; set; }
@@ -260,6 +271,12 @@ public class Coupon_info
     public string str_date { get; set; }
 }
 
+public class Game_info
+{
+    public int int_num { get; set; }
+    public int int_val { get; set; }
+}
+
 public class Post_info
 {
     public string str_name { get; set; }
@@ -283,6 +300,7 @@ public class BackEndDataManager : MonoBehaviour
     Totem_Data totem_Data = new Totem_Data();
     Coupon_Data coupon_Data = new Coupon_Data();
     Post_Data post_Data = new Post_Data();
+    Game_Data game_Data = new Game_Data();
 
     DynamoDBContext context;
     AmazonDynamoDBClient DBclient;
@@ -300,6 +318,7 @@ public class BackEndDataManager : MonoBehaviour
     public Totem_Data Totem_Data { get => totem_Data; }
     public Coupon_Data Coupon_Data { get => coupon_Data; }
     public Post_Data Post_Data { get => post_Data; }
+    public Game_Data Game_Data { get => game_Data; }
 
     public BigInteger Int_exp { get => int_exp; }
 
@@ -319,6 +338,8 @@ public class BackEndDataManager : MonoBehaviour
     public List<Dictionary<string, object>> job_csv_data;         //던전 정보
     public List<Dictionary<string, object>> totem_csv_data;         //던전 정보
     public List<Dictionary<string, object>> progress_reward_csv_data;         //던전 정보
+    public List<Dictionary<string, object>> accumulate_quest_csv_data;         //던전 정보
+    public List<Dictionary<string, object>> daily_quest_csv_data;         //던전 정보
 
     public Item_s underground_item_ = new Item_s();         //던전 정보
 
@@ -379,6 +400,8 @@ public class BackEndDataManager : MonoBehaviour
         job_csv_data = CSVReader.Read("job");
         totem_csv_data = CSVReader.Read("totem");
         progress_reward_csv_data = CSVReader.Read("progress_reward");
+        accumulate_quest_csv_data = CSVReader.Read("accumulate_quest");
+        daily_quest_csv_data = CSVReader.Read("daily_quest");
 
         foreach (var data in skill_csv_data)
         {
@@ -745,8 +768,8 @@ public class BackEndDataManager : MonoBehaviour
                             type = 1,
                             str_val = "100"
                         }
-                    }
-
+                    },
+                    roon_Info = new List<Roon_Info>()
                 };
 
                 Save_Item_Data();
@@ -865,6 +888,22 @@ public class BackEndDataManager : MonoBehaviour
                             int_Max_Boss =0
 
                         }
+                    },
+                    upgrade_info = new List<Upgrade_info>
+                    {
+                        new Upgrade_info
+                        {
+                            int_num = 0
+                        }
+
+                    },
+                    hell_info = new List<Hell_info>
+                    {
+                        new Hell_info
+                        {
+                            int_num = 0
+                        }
+
                     }
                 };
 
@@ -1047,6 +1086,39 @@ public class BackEndDataManager : MonoBehaviour
             else
             {
                 Get_Post_Data();
+            }
+
+        });
+    }
+
+    public void Check_Game_Data()
+    {
+        ScanRequest request = new ScanRequest()
+        {
+            TableName = "game_info"
+        };
+
+        DBclient.ScanAsync(request, (result) =>
+        {
+
+            Dictionary<string, AttributeValue> t =
+              result.Response.Items.Find(x => x["id"].S.Equals(BackEndAuthManager.Get_UserId()));
+
+            Debug.Log(t == null ? "game 없음" : "game 있음");
+
+            if (t == null)
+            {
+                game_Data = new Game_Data
+                {
+                    id = BackEndAuthManager.Get_UserId(),
+                    game_Info = new List<Game_info>()
+                };
+
+                Save_Game_Data();
+            }
+            else
+            {
+                Get_Game_Data();
             }
 
         });
@@ -1327,6 +1399,27 @@ public class BackEndDataManager : MonoBehaviour
         }, null);
     }
 
+    public void Get_Game_Data() //DB에서 캐릭터 정보 받기
+    {
+        Debug.Log("Get_Game_Data");
+
+        context.LoadAsync(BackEndAuthManager.Get_UserId(), (AmazonDynamoDBResult<Game_Data> result) =>
+        {
+            // id가 abcd인 캐릭터 정보를 DB에서 받아옴
+            if (result.Exception != null)
+            {
+                Debug.Log(result.Exception);
+                return;
+            }
+
+            game_Data = result.Result;
+
+            Sucess_Data(Data_Type.game_info);
+
+
+        }, null);
+    }
+
     #endregion
 
     #region Save_Data
@@ -1498,6 +1591,21 @@ public class BackEndDataManager : MonoBehaviour
                 Debug.Log(result.Exception);
         });
     }
+
+    public void Save_Game_Data() //DB에서 캐릭터 정보 받기
+    {
+        context.SaveAsync(game_Data, (result) =>
+        {
+            if (result.Exception == null)
+            {
+                Sucess_Data(Data_Type.game_info);
+
+            }
+            else
+                Debug.Log(result.Exception);
+        });
+    }
+
 
     #endregion
 
@@ -1859,6 +1967,30 @@ public class BackEndDataManager : MonoBehaviour
         Save_Content_Data();
     }
 
+    public void Check_Game_Info(Game_Info_Type _Info_Type)
+    {
+
+       Game_info _Info = Game_Data.game_Info.Find(x=> x.int_num.Equals((int)_Info_Type));
+       if (_Info == null)
+        {
+            _Info = new Game_info
+            {
+                int_num = (int)_Info_Type,
+                int_val = 1
+            };
+
+            Game_Data.game_Info.Add(_Info);
+        }
+        else
+        {
+            _Info.int_val += 1;
+
+        }
+
+
+        Save_Game_Data();
+    }
+
     #region Network
 
     public DateTime WebCheck()
@@ -1906,6 +2038,9 @@ public class BackEndDataManager : MonoBehaviour
 
             player_Data.str_Time_Check = WebCheck().ToString();
             player_Data.int_progress_reward = 0;
+            player_Data.int_progress_reward_type = -1;
+            player_Data.int_progress_reward_val = 0;
+
             Save_Player_Data();
         }
         else
@@ -1926,6 +2061,8 @@ public class BackEndDataManager : MonoBehaviour
 
                 player_Data.str_Time_Check = WebCheck().ToString();
                 player_Data.int_progress_reward = 0;
+                player_Data.int_progress_reward_type = -1;
+                player_Data.int_progress_reward_val = 0;
 
                 Save_Player_Data();
             }

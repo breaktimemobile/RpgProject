@@ -129,6 +129,7 @@ public class Player_stat
 
     public static void Add_Lv(int lv)
     {
+        UiManager.instance.Check_Progress_Reward(Progress_Reward_Type.level_upgrade,lv);
 
         BackEndDataManager.instance.Character_Data.int_character_Lv += lv;
 
