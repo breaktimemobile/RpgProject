@@ -25,25 +25,28 @@ public class UiManager : MonoBehaviour
     private GameObject InventoryPopup;
     private GameObject WeaponPopup;
     public GameObject UndergroundDungeon;
-    public GameObject UndergroundRewardPopup;
+    private GameObject UndergroundRewardPopup;
     public GameObject UpgradeDungeon;
-    public GameObject UpgradeRewardPopup;
+    private GameObject UpgradeRewardPopup;
     public GameObject HellDungeon;
-    public GameObject HellRewardPopup;
-    public GameObject PetPopup;
-    public GameObject ShopPopup;
-    public GameObject GoodsPopup;
-    public GameObject SettingPopup;
-    public GameObject RepaerPopup;
-    public GameObject LanguagePopup;
-    public GameObject CuponPopup;
-    public GameObject PowerPopup;
-    public GameObject LogoutPopup;
-    public GameObject MailPopup;
-    public GameObject ExitPopup;
-    public GameObject HelpPopup;
-    public GameObject PostPopup;
-    public GameObject QuestPopup;
+    private GameObject HellRewardPopup;
+    private GameObject PetPopup;
+    private GameObject ShopPopup;
+    private GameObject GoodsPopup;
+    private GameObject SettingPopup;
+    private GameObject RepaerPopup;
+    private GameObject LanguagePopup;
+    private GameObject CuponPopup;
+    private GameObject PowerPopup;
+    private GameObject LogoutPopup;
+    private GameObject MailPopup;
+    private GameObject ExitPopup;
+    private GameObject HelpPopup;
+    private GameObject PostPopup;
+    private GameObject QuestPopup;
+    private GameObject QuestItemPopup;
+    private GameObject GiftPopup;
+    private GameObject CalendarPopup;
 
     #endregion
 
@@ -120,6 +123,11 @@ public class UiManager : MonoBehaviour
 
     private Button btn_post;
     private Button btn_quest;
+
+    private Button btn_gift;
+    private Text txt_gift_time;
+
+    private Button btn_calendar;
 
     #endregion
 
@@ -784,6 +792,32 @@ public class UiManager : MonoBehaviour
 
     #endregion
 
+    #region QuestItemPopup
+
+    Button btn_quest_item;
+    Image img_quset_item;
+    Text txt_quset_item;
+
+    #endregion
+
+    #region GiftPopup
+
+    Image img_gift;
+    Text txt_gift;
+    Button btn_gift_ads;
+    Button btn_gift_get;
+
+    #endregion
+
+    #region CalendarPopup
+
+    List<Calendar_panel> calendar_Panels = new List<Calendar_panel>();
+    Button btn_calendar_get;
+    Button btn_calendar_close;
+
+    #endregion
+
+
     #region Prefabs
 
     public GameObject txt_Damege;
@@ -849,6 +883,9 @@ public class UiManager : MonoBehaviour
         HelpPopup = Popup.Find("HelpPopup").gameObject;
         PostPopup = Popup.Find("PostPopup").gameObject;
         QuestPopup = Popup.Find("QuestPopup").gameObject;
+        QuestItemPopup = Popup.Find("QuestItemPopup").gameObject;
+        GiftPopup = Popup.Find("GiftPopup").gameObject;
+        CalendarPopup = Popup.Find("CalendarPopup").gameObject;
 
         #endregion
 
@@ -925,6 +962,11 @@ public class UiManager : MonoBehaviour
         btn_post = obj_Btns.transform.Find("btn_post").GetComponent<Button>();
 
         btn_quest = obj_Btns.transform.Find("btn_quest").GetComponent<Button>();
+
+        btn_gift = obj_Btns.transform.Find("btn_gift").GetComponent<Button>();
+        txt_gift_time = btn_gift.transform.Find("txt_gift_time").GetComponent<Text>();
+
+        btn_calendar = obj_Btns.transform.Find("btn_calendar").GetComponent<Button>();
 
         #endregion
 
@@ -1602,6 +1644,33 @@ public class UiManager : MonoBehaviour
         txt_quset_time = QuestPopup.transform.Find("txt_quset_time").GetComponent<Text>();
 
         #endregion
+
+        #region QuestItemPopup
+
+        btn_quest_item = QuestItemPopup.transform.Find("btn_quest_item").GetComponent<Button>();
+        img_quset_item = btn_quest_item.transform.Find("img_quset_item").GetComponent<Image>();
+        txt_quset_item = btn_quest_item.transform.Find("txt_quset_item").GetComponent<Text>();
+
+        #endregion
+
+        #region GiftPopup
+
+        img_gift = GiftPopup.transform.Find("img_gift").GetComponent<Image>();
+        txt_gift = GiftPopup.transform.Find("txt_gift").GetComponent<Text>();
+        btn_gift_ads = GiftPopup.transform.Find("btn_gift_ads").GetComponent<Button>();
+        btn_gift_get = GiftPopup.transform.Find("btn_gift_get").GetComponent<Button>();
+
+        #endregion
+
+
+        #region CalendarPopup
+
+        calendar_Panels = CalendarPopup.transform.GetComponentsInChildren<Calendar_panel>(true).ToList();
+       btn_calendar_get = CalendarPopup.transform.Find("btn_calendar_get").GetComponent<Button>();
+       btn_calendar_close = CalendarPopup.transform.Find("btn_calendar_close").GetComponent<Button>();
+
+        #endregion
+
     }
 
     private void Check_Popup(GameObject Popup)
@@ -1689,7 +1758,13 @@ public class UiManager : MonoBehaviour
         btn_post.onClick.AddListener(() => PopupManager.Open_Popup(PostPopup));
         btn_quest.onClick.AddListener(() => Change_Quest_Popup(Quest_Popup.daily));
         btn_quest.onClick.AddListener(() => PopupManager.Open_Popup(QuestPopup));
+        btn_quest.onClick.AddListener(() => BackEndDataManager.instance.Check_Time_Item());
+
         btn_progress_reward.onClick.AddListener(() => Add_Progress_Reward());
+
+        btn_gift.onClick.AddListener(() => Set_Gift());
+
+        btn_calendar.onClick.AddListener(() => PopupManager.Open_Popup(CalendarPopup));
 
         #endregion
 
@@ -1928,12 +2003,33 @@ public class UiManager : MonoBehaviour
         #region QuestPopup
 
         btn_quest_close.onClick.AddListener(() => PopupManager.Close_Popup());
-        
+
         btn_daily_quest.onClick.AddListener(() => Change_Quest_Popup(Quest_Popup.daily));
         btn_accumulate_quest.onClick.AddListener(() => Change_Quest_Popup(Quest_Popup.accumulate));
 
         #endregion
 
+
+        #region QuestItemPopup
+
+        btn_quest_item.onClick.AddListener(() => QuestItem_Exit());
+
+        #endregion
+
+
+        #region GiftPopup
+
+        btn_gift_ads.onClick.AddListener(() => Get_Ads_Gift());
+        btn_gift_get.onClick.AddListener(() => Get_Gift());
+
+        #endregion
+
+        #region CalendarPopup
+        
+        btn_calendar_get.onClick.AddListener(() => Get_Calendar());
+        btn_calendar_close.onClick.AddListener(() => PopupManager.Close_Popup());
+
+        #endregion
     }
 
     private void Start()
@@ -1941,6 +2037,7 @@ public class UiManager : MonoBehaviour
         Check_Nick_Popup();
         Change_Icon_Content(Icon_Content.Character);
         Change_Content_Content(Character_Contnet.State);
+        StartCoroutine("Co_Join_Time");
 
     }
 
@@ -1975,6 +2072,8 @@ public class UiManager : MonoBehaviour
         Set_Character_Stat();
         Set_Buy_Lv();
 
+        Set_Quest_Panel();
+
         Set_Inventory();
         Set_Sword_Panel();
         Set_Shield_Panel();
@@ -1989,7 +2088,6 @@ public class UiManager : MonoBehaviour
         Set_Job_Panel();
         Set_Totem_Panel();
         Set_Post_Panel();
-        Set_Quest_Panel();
 
         Pet_Init();
         Set_MyRoon();
@@ -1998,6 +2096,10 @@ public class UiManager : MonoBehaviour
         Set_Effect();
         Set_Push();
         Set_Grapic();
+
+        Check_Gift();
+
+        Set_Calendar();
     }
 
     public string GetGoldString(BigInteger gold)
@@ -2516,7 +2618,7 @@ public class UiManager : MonoBehaviour
         ispopup = false;
     }
 
-  
+
     #endregion
 
     #region Content
@@ -2602,6 +2704,8 @@ public class UiManager : MonoBehaviour
 
     public void Open_Underground()
     {
+        Game_info_.Set_Game_Info(Game_Info_Type.undergroind_join, 1);
+
         Reset_Underground_Item();
 
         img_Underground_Reward_0.sprite = Underground_.Get_Img_Reward_0();
@@ -2627,6 +2731,8 @@ public class UiManager : MonoBehaviour
 
     public void Set_Underground_Reward()
     {
+        Game_info_.Set_Game_Info(Game_Info_Type.undergroind_clear, 1);
+
         Debug.Log("Lb v " + Underground_.Underground_Lv);
 
         BackEndDataManager.instance.Set_Item(Underground_.Get_Reward_0_Type(), Underground_.Get_Reward_0(), Calculate_Type.plus);
@@ -2785,6 +2891,9 @@ public class UiManager : MonoBehaviour
 
     public void Open_Upgrade()
     {
+
+        Game_info_.Set_Game_Info(Game_Info_Type.upgrade_join, 1);
+
         img_Upgrade_Reward_0.sprite = Upgrade_.Get_Img_Reward_0();
         img_Upgrade_Reward_1.sprite = Upgrade_.Get_Img_Reward_1();
         txt_Upgrade_Reward_0.text = GetGoldString(Upgrade_.Get_Reward_0());
@@ -2809,6 +2918,8 @@ public class UiManager : MonoBehaviour
 
         if (isSuccess)
         {
+            Game_info_.Set_Game_Info(Game_Info_Type.upgrade_clear, 1);
+
             BackEndDataManager.instance.Set_Item(Upgrade_.Get_Reward_0_Type(), Upgrade_.Get_Reward_0(), Calculate_Type.plus);
             BackEndDataManager.instance.Set_Item(Upgrade_.Get_Reward_1_Type(), Upgrade_.Get_Reward_1(), Calculate_Type.plus);
 
@@ -2876,6 +2987,8 @@ public class UiManager : MonoBehaviour
 
     public void Open_Hell()
     {
+        Game_info_.Set_Game_Info(Game_Info_Type.hell_join, 1);
+
         img_Hell_Reward_0.sprite = Hell_.Get_Img_Reward_0();
         img_Hell_Reward_1.sprite = Hell_.Get_Img_Reward_1();
 
@@ -2898,6 +3011,9 @@ public class UiManager : MonoBehaviour
 
     public void Set_Hell_Reward()
     {
+
+        Game_info_.Set_Game_Info(Game_Info_Type.hell_clear, 1);
+
         Debug.Log("Lb v " + Underground_.Underground_Lv);
 
         BackEndDataManager.instance.Set_Item(Hell_.Get_Reward_0_Type(), Hell_.Get_Reward_0(), Calculate_Type.plus);
@@ -3029,6 +3145,8 @@ public class UiManager : MonoBehaviour
 
     public void Upgrade_Buy(Character_Lv character_Lv)
     {
+        Game_info_.Set_Game_Info(Game_Info_Type.upgrade_upgrade, (int)character_Lv);
+
         UiManager.instance.Check_Progress_Reward(Progress_Reward_Type.upgrade_upgrade, (int)character_Lv);
 
         int lv = BackEndDataManager.instance.Character_Data.Int_Upgrade_Lv;
@@ -3134,6 +3252,8 @@ public class UiManager : MonoBehaviour
 
         if (BackEndDataManager.instance.Get_Item(Pet_.Pet_Price_Type()) >= bigInteger)
         {
+            Game_info_.Set_Game_Info(Game_Info_Type.pet_upgrade, (int)_Lv);
+
             UiManager.instance.Check_Progress_Reward(Progress_Reward_Type.pet_upgrade, (int)_Lv);
 
             if (pet_info == null)
@@ -3621,14 +3741,18 @@ public class UiManager : MonoBehaviour
             {
                 case Weapon_Content.Sword:
                     Check_Progress_Reward(Progress_Reward_Type.weapon_upgrade, 1);
+                    Game_info_.Set_Game_Info(Game_Info_Type.weapon_upgrade, 1);
+                    Quest_.Check_Daily_Quest(Daily_Quest_Type.weapon_upgrade, 1);
 
                     break;
                 case Weapon_Content.Shield:
                     Check_Progress_Reward(Progress_Reward_Type.shield_upgrade, 1);
+                    Game_info_.Set_Game_Info(Game_Info_Type.shield_upgrade, 1);
 
                     break;
                 case Weapon_Content.Accessory:
                     Check_Progress_Reward(Progress_Reward_Type.accessory_upgrade, 1);
+                    Game_info_.Set_Game_Info(Game_Info_Type.accessory_upgrade, 1);
 
                     break;
                 case Weapon_Content.Costume:
@@ -3752,7 +3876,6 @@ public class UiManager : MonoBehaviour
 
     public void Weapon_Mix()
     {
-        UiManager.instance.Check_Progress_Reward(Progress_Reward_Type.weapon_mix, Weapon_.Mix_Count);
 
         BackEndDataManager.instance.Set_Item((Item_Type)my_data["upgrade_type"],
             (int)my_data["mix"] * Weapon_.Mix_Count, Calculate_Type.mius);
@@ -3786,12 +3909,20 @@ public class UiManager : MonoBehaviour
         {
             case Weapon_Content.Sword:
                 weapon_s = popup_Sword.GetComponentsInChildren<Weapon_Panel>(true).ToList();
+                Check_Progress_Reward(Progress_Reward_Type.weapon_mix, Weapon_.Mix_Count);
+                Game_info_.Set_Game_Info(Game_Info_Type.weapon_mix, Weapon_.Mix_Count);
+                Quest_.Check_Daily_Quest(Daily_Quest_Type.weapon_mix, Weapon_.Mix_Count);
+
                 break;
             case Weapon_Content.Shield:
                 weapon_s = popup_Shield.GetComponentsInChildren<Weapon_Panel>(true).ToList();
+                Game_info_.Set_Game_Info(Game_Info_Type.shield_mix, Weapon_.Mix_Count);
+
                 break;
             case Weapon_Content.Accessory:
                 weapon_s = popup_Accessory.GetComponentsInChildren<Weapon_Panel>(true).ToList();
+                Game_info_.Set_Game_Info(Game_Info_Type.accessory_mix, Weapon_.Mix_Count);
+
                 break;
             case Weapon_Content.Costume:
                 break;
@@ -3921,6 +4052,25 @@ public class UiManager : MonoBehaviour
 
     public void Roon_Mount()
     {
+        switch (Weapon_.Weapon_Content)
+        {
+            case Weapon_Content.Sword:
+                Game_info_.Set_Game_Info(Game_Info_Type.weapon_roon, Weapon_.Mix_Count);
+
+                break;
+            case Weapon_Content.Shield:
+                Game_info_.Set_Game_Info(Game_Info_Type.shield_roon, Weapon_.Mix_Count);
+
+                break;
+            case Weapon_Content.Accessory:
+                Game_info_.Set_Game_Info(Game_Info_Type.accessory_roon, Weapon_.Mix_Count);
+
+                break;
+            case Weapon_Content.Costume:
+                break;
+            default:
+                break;
+        }
 
         my_Info.list_roon[Weapon_.roon_Slot.int_slot].int_roon = Weapon_.roon_Info;
 
@@ -4075,12 +4225,18 @@ public class UiManager : MonoBehaviour
         {
             case Weapon_Content.Sword:
                 weapon_s = popup_Sword.GetComponentsInChildren<Weapon_Panel>(true).ToList();
+                Game_info_.Set_Game_Info(Game_Info_Type.weapon_decom, Weapon_.Decom_Count);
+
                 break;
             case Weapon_Content.Shield:
                 weapon_s = popup_Shield.GetComponentsInChildren<Weapon_Panel>(true).ToList();
+                Game_info_.Set_Game_Info(Game_Info_Type.shield_decom, Weapon_.Decom_Count);
+
                 break;
             case Weapon_Content.Accessory:
                 weapon_s = popup_Accessory.GetComponentsInChildren<Weapon_Panel>(true).ToList();
+                Game_info_.Set_Game_Info(Game_Info_Type.accessory_decom, Weapon_.Decom_Count);
+
                 break;
             case Weapon_Content.Costume:
                 break;
@@ -4153,17 +4309,17 @@ public class UiManager : MonoBehaviour
 
                 if (job_.str_time == "")
                 {
-                    job_.str_time = DateTime.Now.AddSeconds(job_time + 1).ToString();
+                    job_.str_time = BackEndDataManager.instance.WebCheck().AddSeconds(job_time + 1).ToString();
                     BackEndDataManager.instance.Save_Job_Data();
                 }
 
                 DateTime GiftTime = DateTime.Parse(job_.str_time);
 
-                TimeSpan LateTime = GiftTime - DateTime.Now;
+                TimeSpan LateTime = GiftTime - BackEndDataManager.instance.WebCheck();
 
                 if (LateTime.TotalSeconds < 1)
                 {
-                    job_.str_time = DateTime.Now.AddSeconds(job_time + 1).ToString();
+                    job_.str_time = BackEndDataManager.instance.WebCheck().AddSeconds(job_time + 1).ToString();
                     BackEndDataManager.instance.Save_Job_Data();
 
                     GiftTime = DateTime.Parse(job_.str_time);
@@ -4309,9 +4465,9 @@ public class UiManager : MonoBehaviour
 
         while (true)
         {
-            DateTime now = DateTime.Now;
 
-            txt_power_time.text = string.Format("{0:00}:{1:00}", now.Hour, now.Minute);
+            txt_power_time.text = string.Format("{0:00}:{1:00}", BackEndDataManager.instance.WebCheck().Hour,
+                BackEndDataManager.instance.WebCheck().Minute);
 
             yield return new WaitForSeconds(1f);
         }
@@ -4534,26 +4690,249 @@ public class UiManager : MonoBehaviour
 
     #region Quest
 
-    public void Set_Quest_Panel()
+    List<Quest_Panel> daily_quest_panel = new List<Quest_Panel>();
+    List<Quest_Panel> accumulate_quest_panel = new List<Quest_Panel>();
+
+    private void Set_Quest_Panel()
     {
 
         foreach (var item in BackEndDataManager.instance.daily_quest_csv_data)
         {
-            Quest_Panel post = Instantiate(Quest_Panel, scroll_daily_quset.transform
+            Quest_Panel obj = Instantiate(Quest_Panel, scroll_daily_quset.transform
           .Find("Viewport/Content")).GetComponent<Quest_Panel>();
 
-            post.Set_Quest(item);
+            obj.Set_Quest(item, Quest_Type.daily);
+            daily_quest_panel.Add(obj);
         }
 
         foreach (var item in BackEndDataManager.instance.accumulate_quest_csv_data)
         {
-            Quest_Panel post = Instantiate(Quest_Panel, scroll_accumulate_quest.transform
+            Quest_Panel obj = Instantiate(Quest_Panel, scroll_accumulate_quest.transform
           .Find("Viewport/Content")).GetComponent<Quest_Panel>();
 
-            post.Set_Quest(item);
+            obj.Set_Quest(item, Quest_Type.accumulate);
+            accumulate_quest_panel.Add(obj);
+
         }
+
+        StartCoroutine("Co_Quest_Time");
+
+    }
+
+    public void Set_Quest_(Quest_Type quest_Type, int num)
+    {
+        switch (quest_Type)
+        {
+            case Quest_Type.daily:
+                daily_quest_panel.Find(x => x.num.Equals(num)).Set_Val();
+
+                break;
+            case Quest_Type.accumulate:
+
+
+                accumulate_quest_panel.Find(x => x.game_info_type.Equals(num))?.Set_Val();
+
+                break;
+            default:
+                break;
+        }
+    }
+
+    IEnumerator Co_Quest_Time()
+    {
+        while (true)
+        {
+
+            TimeSpan now = new DateTime(BackEndDataManager.instance.WebCheck().Year,
+                BackEndDataManager.instance.WebCheck().Month,
+                BackEndDataManager.instance.WebCheck().AddDays(1).Day, 0, 0, 0) - BackEndDataManager.instance.WebCheck();
+
+            txt_quset_time.text = string.Format("{0} {1:00}:{2:00}:{3:00}", "남은시간", now.Hours, now.Minutes, now.Seconds);
+
+            yield return new WaitForSeconds(1f);
+        }
+    }
+
+    #endregion
+
+    #region QuestItemPopup
+
+    public void Set_QuestItem(Item_Type type, BigInteger val)
+    {
+        img_quset_item.sprite = Utill.Get_Item_Sp(type);
+        txt_quset_item.text = val.ToString();
+
+        StopCoroutine("Co_QuestItem_Exit");
+
+        StartCoroutine("Co_QuestItem_Exit");
+    }
+
+    IEnumerator Co_QuestItem_Exit()
+    {
+        QuestItemPopup.SetActive(true);
+
+        yield return new WaitForSeconds(3.0f);
+
+        QuestItemPopup.SetActive(false);
+    }
+
+    private void QuestItem_Exit()
+    {
+        StopCoroutine("Co_QuestItem_Exit");
+        QuestItemPopup.SetActive(false);
 
     }
 
     #endregion
+
+    IEnumerator Co_Join_Time()
+    {
+        while (true)
+        {
+            Game_info_.Set_Game_Info(Game_Info_Type.join_time, 1);
+            yield return new WaitForSeconds(1.0f);
+        }
+    }
+
+
+
+
+    #region Gift
+
+    public void Set_Gift()
+    {
+        Debug.Log("한번누름..");
+        Item_s.Get_Random_Gift_Item();
+
+        img_gift.sprite = Utill.Get_Item_Sp((Item_Type)Item_s.selet_item.item_num);
+        txt_gift.text = Item_s.selet_item.val.ToString();
+
+        GiftPopup.SetActive(true);
+
+        DateTime Web = BackEndDataManager.instance.WebCheck();
+
+        BackEndDataManager.instance.Player_Data.str_Gift_Check = Web.AddHours(1).ToString();
+        BackEndDataManager.instance.Save_Player_Data();
+
+        Check_Gift();
+    }
+
+    public void Get_Ads_Gift()
+    {
+        Item item = Item_s.selet_item;
+        BackEndDataManager.instance.Set_Item((Item_Type)item.item_num, item.val * 2, Calculate_Type.plus);
+
+        GiftPopup.SetActive(false);
+
+    }
+
+    public void Get_Gift()
+    {
+        Item item = Item_s.selet_item;
+        BackEndDataManager.instance.Set_Item((Item_Type)item.item_num, item.val, Calculate_Type.plus);
+
+        GiftPopup.SetActive(false);
+
+    }
+
+    public void Check_Gift()
+    {
+        DateTime Web = BackEndDataManager.instance.WebCheck();
+
+        if (String.IsNullOrEmpty(BackEndDataManager.instance.Player_Data.str_Gift_Check))
+        {
+            btn_gift.interactable = true;
+            txt_gift_time.gameObject.SetActive(false);
+        }
+        else
+        {
+            DateTime date = DateTime.Parse(BackEndDataManager.instance.Player_Data.str_Gift_Check);
+
+            TimeSpan timeSpan = date - Web;
+
+            if (timeSpan.TotalSeconds < 0)
+            {
+                btn_gift.interactable = true;
+                txt_gift_time.gameObject.SetActive(false);
+            }
+            else
+            {
+                StartCoroutine("Co_Gift_Time");
+                btn_gift.interactable = false;
+                txt_gift_time.gameObject.SetActive(true);
+            }
+
+
+        }
+    }
+
+    IEnumerator Co_Gift_Time()
+    {
+        while (true)
+        {
+            DateTime Web = BackEndDataManager.instance.WebCheck();
+
+            DateTime date = DateTime.Parse(BackEndDataManager.instance.Player_Data.str_Gift_Check);
+
+            TimeSpan timeSpan = date - Web;
+
+            if (timeSpan.TotalSeconds < 0)
+            {
+                btn_gift.interactable = true;
+                txt_gift_time.gameObject.SetActive(false);
+                StopCoroutine("Co_Gift_Time");
+            }
+            else
+            {
+                txt_gift_time.text = string.Format("{0:00}:{1:00}", timeSpan.Minutes, timeSpan.Seconds);
+
+            }
+
+            yield return new WaitForSeconds(1.0f);
+        }
+    }
+
+    #endregion
+
+    #region Calendar
+
+    public void Set_Calendar()
+    {
+
+        for (int i = 0; i < calendar_Panels.Count; i++)
+        {
+            calendar_Panels[i].Set_Item(i);
+        }
+
+        Check_Calendar();
+
+    }
+
+    public void Check_Calendar()
+    {
+        if (!BackEndDataManager.instance.Player_Data.is_calendar)
+        {
+            PopupManager.Open_Popup(CalendarPopup);
+
+            
+        }
+
+        btn_calendar_get.interactable = !BackEndDataManager.instance.Player_Data.is_calendar && BackEndDataManager.instance.Player_Data.int_calendar < 25;
+
+
+    }
+
+    public void Get_Calendar()
+    {
+        BackEndDataManager.instance.Player_Data.is_calendar = true;
+        BackEndDataManager.instance.Player_Data.int_calendar += 1;
+
+        calendar_Panels.Find(x => x.int_day.Equals(BackEndDataManager.instance.Player_Data.int_calendar-1)).Check();
+
+        BackEndDataManager.instance.Save_Player_Data();
+        Check_Calendar();
+    }
+
+    #endregion
+
 }

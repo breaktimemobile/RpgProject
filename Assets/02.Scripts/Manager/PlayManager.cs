@@ -227,14 +227,31 @@ public class PlayManager : MonoBehaviour
                     }
                     else
                     {
-                        sc_Monster.Set_Monster(Monster_Type.Basic, BackEndDataManager.instance.Monster_Hp(false));
+                        if(Random.Range(0,100) < 5)
+                        {
+                            sc_Monster.Set_Monster(Monster_Type.goblin, BackEndDataManager.instance.Monster_Hp(false));
+
+                        }
+                        else
+                        {
+                            sc_Monster.Set_Monster(Monster_Type.Basic, BackEndDataManager.instance.Monster_Hp(false));
+
+                        }
 
                     }
                 }
                 else
                 {
-                    sc_Monster.Set_Monster(Monster_Type.Basic, BackEndDataManager.instance.Monster_Hp(false));
+                    if (Random.Range(0, 100) < 5)
+                    {
+                        sc_Monster.Set_Monster(Monster_Type.goblin, BackEndDataManager.instance.Monster_Hp(false));
 
+                    }
+                    else
+                    {
+                        sc_Monster.Set_Monster(Monster_Type.Basic, BackEndDataManager.instance.Monster_Hp(false));
+
+                    }
                 }
 
                 break;

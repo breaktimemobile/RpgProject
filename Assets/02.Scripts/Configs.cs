@@ -20,7 +20,8 @@ public enum Data_Type
     totem_info,
     coupon_info,
     post_info,
-    game_info
+    game_info,
+    quest_info
 }
 
 public enum Character_Lv
@@ -276,7 +277,8 @@ public enum Help_Type
     weapom,
     job,
     costume,
-    totem,roon,
+    totem,
+    roon,
     guild,
     dungeon,
     quest,
@@ -302,7 +304,21 @@ public enum Progress_Reward_Type
     upgrade_upgrade
 }
 
-public enum Quest_Type
+public enum Daily_Quest_Type
+{
+    daily_clear,
+    monster,
+    job_upgrade,
+    wepon_get,
+    weapon_upgrade,
+    character_level,
+    skill_upgrade,
+    totem_upgrade,
+    weapon_mix
+
+}
+
+public enum Accumulate_Quest_Type
 {
     chearacter_lv,
     wepon_get,
@@ -335,10 +351,10 @@ public enum Quest_Type
 public enum Game_Info_Type
 {
     join_time,
-    join_day,
+    charactet_lv,
+    player_lv,
     monster,
     boss,
-    daily_quest,
     daily_quest_clear,
     undergroind_join,
     undergroind_clear,
@@ -349,18 +365,23 @@ public enum Game_Info_Type
     skill_upgrade,
     upgrade_upgrade,
     pet_upgrade,
-    weapon_upgradem,
+    weapon_get,
+    weapon_upgrade,
     weapon_mix,
     weapon_roon,
     weapon_decom,
-    shield_upgradem,
+    shield_get,
+    shield_upgrade,
     shield_mix,
     shield_roon,
     shield_decom,
-    accessory_upgradem,
+    accessory_get,
+    accessory_upgrade,
     accessory_mix,
     accessory_roon,
     accessory_decom,
+    job_upgrade,
+    totem_upgrade,
     dia_get,
     dia_use,
     coin_get,
@@ -380,6 +401,13 @@ public enum Game_Info_Type
     gift_get,
     roulette_get,
     ads_get
+
+}
+
+public enum Quest_Type
+{
+    daily,
+    accumulate
 }
 
 public class Skill_s
@@ -438,7 +466,7 @@ public class Calculate
         for (int i = lv; i < lv + end_lv; i++)
         {
             total += base_price + (base_price * percent / 100) * i;
-           // Debug.Log(base_price * percent / 100 + " " +total);
+            // Debug.Log(base_price * percent / 100 + " " +total);
         }
 
         return total;
@@ -489,15 +517,21 @@ public class Index
 public class Item_s
 {
     public static float total;
+    public static float gift_total;
+    public static float gobiln_total;
+
+    public static Item selet_item;
 
     public static List<Item> items = new List<Item>();
+    public static List<Item> gift_items = new List<Item>();
+    public static List<Item> goblin_items = new List<Item>();
 
     public static int Get_Random_Item()
     {
         float selet = 0;
         float weight = 0;
 
-        selet = total * Random.Range(0.0f, 1.0f);
+        selet = total * Random.Range(0.0f, total);
 
         for (int i = 0; i < items.Count; i++)
         {
@@ -512,6 +546,52 @@ public class Item_s
 
         return 0;
     }
+
+    public static void Get_Random_Gift_Item()
+    {
+        float selet = 0;
+        float weight = 0;
+
+        selet = Random.Range(0.0f, gift_total);
+        Debug.Log("SELEECT " + selet);
+
+        for (int i = 0; i < gift_items.Count; i++)
+        {
+            weight += gift_items[i].percent;
+
+            if (selet <= weight)
+            {
+                Debug.Log("이거다 " + gift_items[i].name);
+                selet_item = gift_items[i];
+                break;
+            }
+        }
+    }
+
+    public static Item Get_Random_Goblin_Item()
+    {
+        float selet = 0;
+        float weight = 0;
+
+        selet = Random.Range(0.0f, gift_total);
+        Debug.Log("SELEECT " + selet);
+
+        for (int i = 0; i < goblin_items.Count; i++)
+        {
+            weight += goblin_items[i].percent;
+
+            if (selet <= weight)
+            {
+                Debug.Log("이거다 " + goblin_items[i].name);
+                selet_item = goblin_items[i];
+                return items[i];
+            }
+        }
+
+        return null;
+
+    }
+
 }
 
 public class Item
@@ -519,6 +599,7 @@ public class Item
     public int num;
     public string name;
     public int item_num;
+    public int val;
     public float percent;
 }
 
@@ -570,9 +651,12 @@ public class Underground_
 
     public static void Get_Sweep(int val)
     {
+
+        Game_info_.Set_Game_Info(Game_Info_Type.undergroind_clear, val);
+        Game_info_.Set_Game_Info(Game_Info_Type.undergroind_join, val);
+
         Underground_info Db_Info = BackEndDataManager.instance.Content_Data.underground_info
        .Find(x => x.int_num.Equals(Underground_Lv));
-
 
         underground_Info = Db_Info;
 
@@ -837,7 +921,7 @@ public class Weapon_
     public static Roon_Slot roon_Slot;
 
     public static Roon_Info roon_Info;
-    
+
 }
 
 public class Job_
@@ -963,8 +1047,6 @@ public class Totem_
 
         float resultValue = val + (float)add_result;
 
-        Debug.Log(val + "  " + add_result);
-
         return resultValue;
 
     }
@@ -1053,3 +1135,81 @@ public class Utill
     }
 }
 
+public class Quest_
+{
+    public static void Check_Daily_Quest(Daily_Quest_Type daily_Quest_Type, int val)
+    {
+
+        Quest_info quest_Info = BackEndDataManager.instance.Quest_Data.quest_Info
+            .Find(x => x.int_num.Equals((int)daily_Quest_Type) && x.type.Equals(Quest_Type.daily));
+
+        if (quest_Info == null)
+        {
+            quest_Info = new Quest_info
+            {
+                int_num = (int)daily_Quest_Type,
+                type = Quest_Type.daily,
+                int_clear = 0,
+                int_val = 0
+            };
+
+            BackEndDataManager.instance.Quest_Data.quest_Info.Add(quest_Info);
+            BackEndDataManager.instance.Save_Quest_Data();
+        }
+
+        quest_Info.int_val += val;
+        BackEndDataManager.instance.Save_Quest_Data();
+
+        UiManager.instance.Set_Quest_(Quest_Type.daily, (int)daily_Quest_Type);
+    }
+
+}
+
+public class Game_info_
+{
+    public static void Set_Game_Info(Game_Info_Type _Info_Type, BigInteger val)
+    {
+
+        Game_info _Info = BackEndDataManager.instance.Game_Data.game_Info.Find(x => x.int_num.Equals((int)_Info_Type));
+        if (_Info == null)
+        {
+            _Info = new Game_info
+            {
+                int_num = (int)_Info_Type,
+                str_val = val.ToString()
+            };
+
+            BackEndDataManager.instance.Game_Data.game_Info.Add(_Info);
+        }
+        else
+        {
+            BigInteger total = BigInteger.Parse(_Info.str_val);
+            total += val;
+
+            _Info.str_val = total.ToString();
+
+        }
+
+        UiManager.instance.Set_Quest_(Quest_Type.accumulate, (int)_Info_Type);
+
+
+        BackEndDataManager.instance.Save_Game_Data();
+    }
+
+
+    public static BigInteger Get_Game_info(Game_Info_Type _Info_Type)
+    {
+        if (_Info_Type.Equals(Game_Info_Type.charactet_lv))
+        {
+            return BackEndDataManager.instance.Character_Data.int_character_Lv;
+        }else if (_Info_Type.Equals(Game_Info_Type.player_lv))
+        {
+            return BackEndDataManager.instance.Player_Data.int_lv;
+        }
+
+        Game_info _Info = BackEndDataManager.instance.Game_Data.game_Info.Find(x => x.int_num.Equals((int)_Info_Type));
+
+        return _Info == null ? 0 : BigInteger.Parse(_Info.str_val);
+
+    }
+}

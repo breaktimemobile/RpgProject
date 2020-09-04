@@ -27,11 +27,19 @@ public class Player_Data
     [DynamoDBProperty]
     public string str_Time_Check { get; set; }
     [DynamoDBProperty]
+    public string str_Gift_Check { get; set; }
+    [DynamoDBProperty]
     public int int_progress_reward { get; set; }
     [DynamoDBProperty]
     public int int_progress_reward_type { get; set; }
     [DynamoDBProperty]
     public int int_progress_reward_val { get; set; }
+    [DynamoDBProperty]
+    public string str_calendar_Check { get; set; }
+    [DynamoDBProperty]
+    public int int_calendar { get; set; }
+    [DynamoDBProperty]
+    public bool is_calendar { get; set; }
 }
 
 [DynamoDBTable("character_info")]
@@ -190,6 +198,17 @@ public class Game_Data
 
 }
 
+[DynamoDBTable("quest_info")]
+public class Quest_Data
+{
+    [DynamoDBHashKey] // Hash key.
+    public string id { get; set; }
+    [DynamoDBProperty]
+    public List<Quest_info> quest_Info { get; set; }
+
+}
+
+
 public class Item_Info
 {
     public int type { get; set; }
@@ -274,7 +293,16 @@ public class Coupon_info
 public class Game_info
 {
     public int int_num { get; set; }
+    public string str_val { get; set; }
+}
+
+public class Quest_info
+{
+    public int int_num { get; set; }
+public Quest_Type type { get; set; }
+    public int int_clear { get; set; }
     public int int_val { get; set; }
+
 }
 
 public class Post_info
@@ -287,6 +315,12 @@ public class Post_info
 public class BackEndDataManager : MonoBehaviour
 {
     public static BackEndDataManager instance = null;
+
+    DynamoDBContext context;
+    AmazonDynamoDBClient DBclient;
+    CognitoAWSCredentials credentials;
+
+    #region data
 
     Player_Data player_Data = new Player_Data();
     Character_Data character_Data = new Character_Data();
@@ -301,10 +335,9 @@ public class BackEndDataManager : MonoBehaviour
     Coupon_Data coupon_Data = new Coupon_Data();
     Post_Data post_Data = new Post_Data();
     Game_Data game_Data = new Game_Data();
+    Quest_Data quest_Data = new Quest_Data();
 
-    DynamoDBContext context;
-    AmazonDynamoDBClient DBclient;
-    CognitoAWSCredentials credentials;
+    #endregion
 
     public Player_Data Player_Data { get => player_Data; }
     public Character_Data Character_Data { get => character_Data; }
@@ -319,8 +352,11 @@ public class BackEndDataManager : MonoBehaviour
     public Coupon_Data Coupon_Data { get => coupon_Data; }
     public Post_Data Post_Data { get => post_Data; }
     public Game_Data Game_Data { get => game_Data; }
+    public Quest_Data Quest_Data { get => quest_Data; }
 
     public BigInteger Int_exp { get => int_exp; }
+
+    #region csv
 
     public List<Dictionary<string, object>> underground_dungeon_csv_data;         //던전 정보
     public List<Dictionary<string, object>> sword_csv_data;         //던전 정보
@@ -340,9 +376,10 @@ public class BackEndDataManager : MonoBehaviour
     public List<Dictionary<string, object>> progress_reward_csv_data;         //던전 정보
     public List<Dictionary<string, object>> accumulate_quest_csv_data;         //던전 정보
     public List<Dictionary<string, object>> daily_quest_csv_data;         //던전 정보
+    public List<Dictionary<string, object>> gift_csv_data;         //던전 정보
+    public List<Dictionary<string, object>> goblin_item_csv_data;
 
-    public Item_s underground_item_ = new Item_s();         //던전 정보
-
+    #endregion
 
     private List<bool> Check_Data = new List<bool>();
 
@@ -374,8 +411,6 @@ public class BackEndDataManager : MonoBehaviour
         }
 
         Get_Csv_Data();
-
-        StartCoroutine("WebCheck");
     }
 
     /// <summary>
@@ -402,6 +437,8 @@ public class BackEndDataManager : MonoBehaviour
         progress_reward_csv_data = CSVReader.Read("progress_reward");
         accumulate_quest_csv_data = CSVReader.Read("accumulate_quest");
         daily_quest_csv_data = CSVReader.Read("daily_quest");
+        gift_csv_data = CSVReader.Read("gift");
+        goblin_item_csv_data = CSVReader.Read("goblin_item");
 
         foreach (var data in skill_csv_data)
         {
@@ -431,11 +468,42 @@ public class BackEndDataManager : MonoBehaviour
                 num = int.Parse(data["num"].ToString()),
                 name = data["name"].ToString(),
                 item_num = int.Parse(data["item_num"].ToString()),
+                val = int.Parse(data["val"].ToString()),
                 percent = float.Parse(data["percent"].ToString())
             };
 
             Item_s.items.Add(item_);
             Item_s.total += item_.percent;
+        }
+
+        foreach (var data in gift_csv_data)
+        {
+            Item item_ = new Item
+            {
+                num = int.Parse(data["num"].ToString()),
+                name = data["name"].ToString(),
+                item_num = int.Parse(data["item_num"].ToString()),
+                val = int.Parse(data["val"].ToString()),
+                percent = float.Parse(data["percent"].ToString())
+            };
+
+            Item_s.gift_items.Add(item_);
+            Item_s.gift_total += item_.percent;
+        }
+
+        foreach (var data in goblin_item_csv_data)
+        {
+            Item item_ = new Item
+            {
+                num = int.Parse(data["num"].ToString()),
+                name = data["name"].ToString(),
+                item_num = int.Parse(data["item_num"].ToString()),
+                val = int.Parse(data["val"].ToString()),
+                percent = float.Parse(data["percent"].ToString())
+            };
+
+            Item_s.goblin_items.Add(item_);
+            Item_s.gobiln_total += item_.percent;
         }
 
     }
@@ -526,7 +594,7 @@ public class BackEndDataManager : MonoBehaviour
 
                 DateTime GiftTime = DateTime.Parse(coupon.date);
 
-                TimeSpan LateTime = GiftTime - DateTime.Now;
+                TimeSpan LateTime = GiftTime - BackEndDataManager.instance.WebCheck();
 
                 if (LateTime.TotalSeconds <= 0)
                 {
@@ -544,7 +612,7 @@ public class BackEndDataManager : MonoBehaviour
                         Coupon_info cou = new Coupon_info
                         {
                             str_coupon = txt,
-                            str_date = DateTime.Now.ToString()
+                            str_date = BackEndDataManager.instance.WebCheck().ToString()
                         };
 
                         coupon_Data.coupon_info.Add(cou);
@@ -561,7 +629,7 @@ public class BackEndDataManager : MonoBehaviour
                         Post_info post_ = new Post_info
                         {
                             str_name = "쿠폰 보상입니다.",
-                            date = DateTime.Now.AddDays(7).ToString(),
+                            date = WebCheck().AddDays(7).ToString(),
                             item_Info = item_Info
 
                         };
@@ -627,7 +695,8 @@ public class BackEndDataManager : MonoBehaviour
         Check_Totem_Data();
         Check_Coupon_Data();
         Check_Post_Data();
-
+        Check_Game_Data();
+        Check_Quest_Data();
     }
 
     #region Check_Data
@@ -655,7 +724,8 @@ public class BackEndDataManager : MonoBehaviour
                     int_lv = 1,
                     int_exp = "0",
                     str_nick = "null",
-                    str_Time_Check = "null"
+                    str_Time_Check = "null",
+                    str_Gift_Check = "null"
 
                 };
 
@@ -1124,6 +1194,39 @@ public class BackEndDataManager : MonoBehaviour
         });
     }
 
+    public void Check_Quest_Data()
+    {
+        ScanRequest request = new ScanRequest()
+        {
+            TableName = "quest_info"
+        };
+
+        DBclient.ScanAsync(request, (result) =>
+        {
+
+            Dictionary<string, AttributeValue> t =
+              result.Response.Items.Find(x => x["id"].S.Equals(BackEndAuthManager.Get_UserId()));
+
+            Debug.Log(t == null ? "quest 없음" : "quest 있음");
+
+            if (t == null)
+            {
+                quest_Data = new Quest_Data
+                {
+                    id = BackEndAuthManager.Get_UserId(),
+                    quest_Info = new List<Quest_info>()
+                };
+
+                Save_Quest_Data();
+            }
+            else
+            {
+                Get_Quest_Data();
+            }
+
+        });
+    }
+
     #endregion
 
     #region Get_Data
@@ -1420,6 +1523,27 @@ public class BackEndDataManager : MonoBehaviour
         }, null);
     }
 
+    public void Get_Quest_Data() //DB에서 캐릭터 정보 받기
+    {
+        Debug.Log("Get_Quest_Data");
+
+        context.LoadAsync(BackEndAuthManager.Get_UserId(), (AmazonDynamoDBResult<Quest_Data> result) =>
+        {
+            // id가 abcd인 캐릭터 정보를 DB에서 받아옴
+            if (result.Exception != null)
+            {
+                Debug.Log(result.Exception);
+                return;
+            }
+
+            quest_Data = result.Result;
+
+            Sucess_Data(Data_Type.quest_info);
+
+
+        }, null);
+    }
+
     #endregion
 
     #region Save_Data
@@ -1606,16 +1730,21 @@ public class BackEndDataManager : MonoBehaviour
         });
     }
 
+    public void Save_Quest_Data() //DB에서 캐릭터 정보 받기
+    {
+        context.SaveAsync(quest_Data, (result) =>
+        {
+            if (result.Exception == null)
+            {
+                Sucess_Data(Data_Type.quest_info);
+
+            }
+            else
+                Debug.Log(result.Exception);
+        });
+    }
 
     #endregion
-
-
-    public void Minus_Item(Item_Type item_Type, BigInteger coin)
-    {
-
-        Set_Item(item_Type, coin, Calculate_Type.mius);
-
-    }
 
     public void Add_Exp(BigInteger exp)
     {
@@ -1734,25 +1863,6 @@ public class BackEndDataManager : MonoBehaviour
 
     }
 
-    public void Set_Roon(int type, Calculate_Type calculate)
-    {
-        Roon_Info item_ = new Roon_Info
-        {
-            type = type,
-        };
-
-        if (Item_Data.roon_Info == null)
-        {
-            Item_Data.roon_Info = new List<Roon_Info>();
-
-        }
-
-        Item_Data.roon_Info.Add(item_);
-
-        Save_Item_Data();
-
-    }
-
     public void Set_Item(Item_Type type, BigInteger val, Calculate_Type calculate)
     {
         Item_Info item_Info = item_Data.item_Info.Find(x => x.type.Equals((int)type));
@@ -1794,7 +1904,19 @@ public class BackEndDataManager : MonoBehaviour
             case Item_Type.dia:
                 UiManager.instance.Set_Txt_Crystal();
                 UiManager.instance.Check_Totem_buy();
+                switch (calculate)
+                {
+                    case Calculate_Type.plus:
+                        Game_info_.Set_Game_Info(Game_Info_Type.dia_get, val);
 
+                        break;
+                    case Calculate_Type.mius:
+                        Game_info_.Set_Game_Info(Game_Info_Type.dia_use, val);
+
+                        break;
+                    default:
+                        break;
+                }
                 break;
             case Item_Type.coin:
 
@@ -1802,24 +1924,107 @@ public class BackEndDataManager : MonoBehaviour
                 UiManager.instance.Set_Buy_Lv();
                 UiManager.instance.Check_Btn();
 
+                switch (calculate)
+                {
+                    case Calculate_Type.plus:
+                        Game_info_.Set_Game_Info(Game_Info_Type.coin_get, val);
+
+                        break;
+                    case Calculate_Type.mius:
+                        Game_info_.Set_Game_Info(Game_Info_Type.coin_use, val);
+
+                        break;
+                    default:
+                        break;
+                }
                 break;
             case Item_Type.upgrade_stone:
                 UiManager.instance.Set_Txt_Upgrade_Stone();
 
+                switch (calculate)
+                {
+                    case Calculate_Type.plus:
+                        Game_info_.Set_Game_Info(Game_Info_Type.upgrade_stone_get, val);
+
+                        break;
+                    case Calculate_Type.mius:
+                        Game_info_.Set_Game_Info(Game_Info_Type.upgrade_stone_use, val);
+
+                        break;
+                    default:
+                        break;
+                }
                 break;
             case Item_Type.limit_stone:
+
+                switch (calculate)
+                {
+                    case Calculate_Type.plus:
+                        Game_info_.Set_Game_Info(Game_Info_Type.limit_stone_get, val);
+
+                        break;
+                    case Calculate_Type.mius:
+                        Game_info_.Set_Game_Info(Game_Info_Type.limit_stone_use, val);
+
+                        break;
+                    default:
+                        break;
+                }
+
                 break;
             case Item_Type.steel:
                 UiManager.instance.Set_Txt_Steel();
+
+                switch (calculate)
+                {
+                    case Calculate_Type.plus:
+                        Game_info_.Set_Game_Info(Game_Info_Type.steel_get, val);
+
+                        break;
+                    case Calculate_Type.mius:
+                        Game_info_.Set_Game_Info(Game_Info_Type.steel_use, val);
+
+                        break;
+                    default:
+                        break;
+                }
 
                 break;
             case Item_Type.soul_stone:
                 UiManager.instance.Set_Txt_Soul_Stone();
                 UiManager.instance.Check_Upgrade();
                 UiManager.instance.Set_Skill_Buy();
+
+                switch (calculate)
+                {
+                    case Calculate_Type.plus:
+                        Game_info_.Set_Game_Info(Game_Info_Type.soul_stone_get, val);
+
+                        break;
+                    case Calculate_Type.mius:
+                        Game_info_.Set_Game_Info(Game_Info_Type.soul_stone_use, val);
+
+                        break;
+                    default:
+                        break;
+                }
                 break;
             case Item_Type.black_stone:
                 UiManager.instance.Set_Txt_Black_Stone();
+
+                switch (calculate)
+                {
+                    case Calculate_Type.plus:
+                        Game_info_.Set_Game_Info(Game_Info_Type.black_stone_get, val);
+
+                        break;
+                    case Calculate_Type.mius:
+                        Game_info_.Set_Game_Info(Game_Info_Type.black_stone_use, val);
+
+                        break;
+                    default:
+                        break;
+                }
                 break;
             case Item_Type.topaz:
                 break;
@@ -1936,6 +2141,8 @@ public class BackEndDataManager : MonoBehaviour
 
         Player_stat.Add_Lv((int)character_Lv);
 
+        Quest_.Check_Daily_Quest(Daily_Quest_Type.character_level, (int)character_Lv);
+
     }
 
     public void Check_Underground_Info()
@@ -1967,28 +2174,32 @@ public class BackEndDataManager : MonoBehaviour
         Save_Content_Data();
     }
 
-    public void Check_Game_Info(Game_Info_Type _Info_Type)
+    public void Reset_Daily_Quest()
     {
 
-       Game_info _Info = Game_Data.game_Info.Find(x=> x.int_num.Equals((int)_Info_Type));
-       if (_Info == null)
+        foreach (var data in daily_quest_csv_data)
         {
-            _Info = new Game_info
+            Quest_info quest_Info = Quest_Data.quest_Info
+            .Find(x => x.int_num.Equals((int)data["num"]) && x.type.Equals(Quest_Type.daily));
+
+            if (quest_Info == null)
             {
-                int_num = (int)_Info_Type,
-                int_val = 1
-            };
+                quest_Info = new Quest_info
+                {
+                    int_num = 0,
+                    type = Quest_Type.daily,
+                    int_clear = 0,
+                    int_val = 0
+                };
 
-            Game_Data.game_Info.Add(_Info);
+            }
+
+            quest_Info.int_clear = 0;
+            quest_Info.int_val = 0;
+
         }
-        else
-        {
-            _Info.int_val += 1;
 
-        }
-
-
-        Save_Game_Data();
+        Save_Quest_Data();
     }
 
     #region Network
@@ -2029,6 +2240,9 @@ public class BackEndDataManager : MonoBehaviour
     {
         Debug.Log("player_Data.str_Time_Check " + player_Data.str_Time_Check);
 
+        DateTime date = DateTime.Parse(player_Data.str_Time_Check);
+        DateTime Web = WebCheck();
+
         if (player_Data.str_Time_Check.Equals("null"))
         {
             Debug.Log("널이다");
@@ -2041,13 +2255,13 @@ public class BackEndDataManager : MonoBehaviour
             player_Data.int_progress_reward_type = -1;
             player_Data.int_progress_reward_val = 0;
 
+
+            Reset_Daily_Quest();
             Save_Player_Data();
         }
         else
         {
 
-            DateTime date = DateTime.Parse(player_Data.str_Time_Check);
-            DateTime Web = WebCheck();
 
             Debug.Log(date.Day + " 체크 " + Web.Day);
 
@@ -2063,12 +2277,37 @@ public class BackEndDataManager : MonoBehaviour
                 player_Data.int_progress_reward = 0;
                 player_Data.int_progress_reward_type = -1;
                 player_Data.int_progress_reward_val = 0;
+                player_Data.is_calendar = false;
 
+                Reset_Daily_Quest();
                 Save_Player_Data();
             }
+
+        }
+
+
+        if (string.IsNullOrEmpty(player_Data.str_calendar_Check))
+        {
+            player_Data.str_calendar_Check = WebCheck().ToString();
+            player_Data.int_calendar = 0;
+            player_Data.is_calendar = false;
+
+            Save_Player_Data();
+        }
+
+        if (date.Month != Web.Month)
+        {
+            Debug.Log("월 줘야댐");
+
+            player_Data.str_calendar_Check = WebCheck().ToString();
+            player_Data.int_calendar = 0;
+            Save_Player_Data();
+
         }
 
     }
+
+
 
     #endregion
 

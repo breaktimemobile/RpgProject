@@ -12,7 +12,8 @@ public enum Monster_Type
     Boss,
     underground_Boss,
     upgrade_Boss,
-    hell_Boss
+    hell_Boss,
+    goblin
 
 }
 
@@ -176,12 +177,13 @@ public class Monster : MonoBehaviour
             case Monster_Type.Basic:
 
                 PlayManager.instance.Set_Monster();
-
+                Game_info_.Set_Game_Info(Game_Info_Type.monster,1);
+                Quest_.Check_Daily_Quest(Daily_Quest_Type.monster,1);
                 break;
             case Monster_Type.Boss:
 
                 PlayManager.instance.Stop_Boss_Timer(false);
-
+                Game_info_.Set_Game_Info(Game_Info_Type.boss, 1);
                 break;
             case Monster_Type.underground_Boss:
                 PlayManager.instance.Set_Monster();
@@ -192,6 +194,16 @@ public class Monster : MonoBehaviour
                 break;
             case Monster_Type.hell_Boss:
                 PlayManager.instance.Set_Monster();
+
+                break;
+            case Monster_Type.goblin:
+
+                Item item = Item_s.Get_Random_Goblin_Item();
+
+                BackEndDataManager.instance.Set_Item((Item_Type)item.item_num,item.val,Calculate_Type.plus);
+
+                PlayManager.instance.Set_Monster();
+                Game_info_.Set_Game_Info(Game_Info_Type.gold_goblin, 1);
 
                 break;
             default:
@@ -225,7 +237,7 @@ public class Monster : MonoBehaviour
                         BigInteger.Parse(BackEndDataManager.instance.monster_csv_data[0]["reward_val_" + i].ToString()),
                         false);
 
-                   }
+                }
 
                 break;
 
